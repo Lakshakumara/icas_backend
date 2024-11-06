@@ -2,7 +2,7 @@ echo "------------Task list----------------"
 echo "1. Remove Docker container"
 echo "2. Remove Docker image"
 echo "3. Build and run Docker container"
-echo "4. Remove image and container, Build application and docker image and run docker container"
+echo "4. Remove image and container, Build application and Docker image and run Docker container"
 echo "5. Clean and Build application"
 #..........................................
 read task
@@ -28,7 +28,7 @@ then
 docker images
 echo "Please Enter Imagename"
 read imagename
-echo "Please Enter external port? eg: front->back end port 4200 "
+echo "Please Enter external port? eg: front->back end port 9000 "
 read portout
 echo "Please Enter Internal port? eg: 9000"
 read portin
