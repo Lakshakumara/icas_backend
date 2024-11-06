@@ -2,27 +2,84 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Insurance Claim Progress</title>
+    <style>
+        .footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            text-align: center;
+            border-top: 1px solid #e1e1e1;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .footer span {
+            display: block;
+            margin: 5px 0;
+        }
+
+        .content {
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        .content h3 {
+            color: #2c3e50;
+        }
+
+        .content p {
+            margin: 10px 0;
+        }
+
+        .content a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .content a:hover {
+            background-color: #2980b9;
+        }
+    </style>
+
 </head>
 <body>
-<p>Dear <span th:text="${name}">[Name]</span>,</p>
+<div class="content">
+    <p>Dear <span th:text="${name}">[Name]</span>,</p>
 
-<p>Your insurance claim (ID: <span th:text="${claimId}">[Claim ID]</span>) is currently being processed. Below is the
-    progress of your claim through various stages:</p>
+    <p>Your insurance claim (ID: <span th:text="${claimId}">[Claim ID]</span>) is currently being processed. Below is
+        the
+        progress of your claim through various stages:</p>
 
-<table border="1" cellspacing="0" cellpadding="5">
-    <tr>
-        <th>Stage</th>
-        <th>Status</th>
-    </tr>
-    <tr th:each="stage : ${stages}">
-        <td th:text="${stage.name}">[Stage Name]</td>
-        <td th:text="${stage.status}">[Stage Status]</td>
-    </tr>
-</table>
+    <table border="1" cellspacing="0" cellpadding="5">
+        <tr>
+            <th>Stage</th>
+            <th>Status</th>
+            <th>Remarks</th>
+        </tr>
+        <tr th:each="stage : ${stages}">
+            <td th:text="${stage.name}">[Stage Name]</td>
+            <td th:text="${stage.status}">[Stage Status]</td>
+            <td th:text="${stage.remarks}">[Stage Remarks]</td>
+        </tr>
+    </table>
 
-<p>If you have any questions or need further assistance, please contact our support team.</p>
+    <p>Thank you for registering with OUSL Welfare scheme.</p>
 
-<p>Best regards,</p>
-<p>Your Insurance Company</p>
+    <p>If you have any questions, please contact General Administration division.</p>
+
+    <p>Best regards,</p>
+
+    <p>OUSL Welfare Scheme</p>
+
+</div>
+<footer class="footer">
+    <span>Software Training component by YML Kumara @OUSL 2024</span>
+    <span>Under supervision of Dr. LSK Udugama</span>
+</footer>
 </body>
 </html>

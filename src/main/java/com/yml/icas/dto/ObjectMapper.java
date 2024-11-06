@@ -288,8 +288,6 @@ public class ObjectMapper {
         member.setMDate(memberDTO.getMDate());
         member.setStatus(memberDTO.getStatus());
         member.setDeleted(memberDTO.isDeleted());
-        //member.getRoles().addAll(memberDTO.getRoles().stream().map(s -> new Role(s.getRole()))
-        //       .collect(Collectors.toSet()));
         return member;
     }
 
@@ -347,32 +345,3 @@ public class ObjectMapper {
                 }).collect(Collectors.toSet());
     }
 }
-   /*public static Set<DependantDTO> mapToDependentDTO(Set<MemberDependantData> mdd){
-        return mdd
-                .stream().map(d -> {
-                    DependantDTO dependantDTO = new DependantDTO();
-                    dependantDTO.setId(d.getDependant().getId());
-                    dependantDTO.setName(d.getDependant().getName());
-                    dependantDTO.setNic(d.getDependant().getNic());
-                    dependantDTO.setDob(d.getDependant().getDob());
-                    dependantDTO.setRelationship(d.getRelationship());
-                    dependantDTO.setRegisterYear(d.getRegisterYear());
-                    return dependantDTO;
-                }).collect(Collectors.toSet());
-    }
-
-    public static ClaimOPDDTO mapToClaimOPDDTO(Claim claim) {
-        if (Objects.isNull(claim)) return null;
-        ClaimOPDDTO cd = new ClaimOPDDTO();
-        cd.setId(claim.getId());
-        cd.setMemberId(claim.getMember().getId());
-        cd.setRequestFor(claim.getRequestFor());
-        cd.setCategory(claim.getCategory());
-        cd.setStartDate(claim.getStartDate());
-        cd.setClaimDate(claim.getClaimDate());
-        cd.setRequestAmount(claim.getRequestAmount());
-        cd.setClaimStatus(claim.getClaimStatus());
-        cd.setMember(mapToMemberDTO(claim.getMember()));
-        return cd;
-    }
-    */

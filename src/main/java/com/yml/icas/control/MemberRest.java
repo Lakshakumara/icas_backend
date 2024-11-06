@@ -1,12 +1,10 @@
 package com.yml.icas.control;
 
 import com.yml.icas.dto.MemberDTO;
-import com.yml.icas.model.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,11 +15,11 @@ public interface MemberRest {
     @RequestMapping(method = RequestMethod.PUT, value = "/update/{criteria}")
     ResponseEntity<Integer> updateMember(
             @PathVariable(name = "criteria") String criteria, @RequestBody Map<String, Object> dataSet);
-
+/*
     @PostMapping(path = "/signupOld")
         // not used
     ResponseEntity<byte[]> signup(@RequestBody MemberDTO memberDTO);
-
+*/
     @PostMapping(path = "/signup")
     ResponseEntity<Object> signupNew(@RequestBody MemberDTO memberDTO);
 

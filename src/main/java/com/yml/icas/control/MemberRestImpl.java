@@ -1,20 +1,16 @@
 package com.yml.icas.control;
 
 import com.yml.icas.dto.MemberDTO;
-import com.yml.icas.model.Member;
 import com.yml.icas.service.MemberServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,7 +26,7 @@ public class MemberRestImpl implements MemberRest {
         return memberService.updateMember(criteria, dataSet);
     }
 
-    @Deprecated
+   /* @Deprecated
     @Override
     public ResponseEntity<byte[]> signup(MemberDTO memberDTO) {
         try {
@@ -39,11 +35,12 @@ public class MemberRestImpl implements MemberRest {
             ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }*/
 
     @Override
     public ResponseEntity<Object> signupNew(MemberDTO memberDTO) {
         try {
+            log.info(memberDTO.toString());
             memberService.signUpNew(memberDTO);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{empNo}")
                     .buildAndExpand(memberDTO.getEmpNo()).toUri();

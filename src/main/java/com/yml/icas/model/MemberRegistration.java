@@ -34,4 +34,15 @@ public class MemberRegistration {
 
     @Column(name = "acceptedby")
     private Integer acceptedBy;
+
+    @Override
+    public String toString() {
+        return "MemberRegistration{" +
+                "id=" + id +
+                ", year=" + year +
+                ", schemeType='" + schemeType + '\'' +
+                ", acceptedDate=" + acceptedDate +
+                ", acceptedBy=" + acceptedBy +
+                '}';
+    }
 }

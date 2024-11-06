@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Set;
 
-//@CrossOrigin(origins = {"http://10.72.80.133:4200", "http://localhost:4200"})
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/claim")
 public interface ClaimRest {
 
     @RequestMapping(method = RequestMethod.GET, value = "/voucherIds")
     ResponseEntity<long[]> getVoucherList();
+
     @RequestMapping(method = RequestMethod.GET, value = "/dashboard/{year}/{empNo}")
     ResponseEntity<Set<ClaimDTO>> getDashboardData(@PathVariable(name = "year") Integer year,
                                                    @PathVariable(name = "empNo") String empNo);

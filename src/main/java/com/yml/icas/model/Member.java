@@ -115,4 +115,32 @@ public class Member implements Serializable {
     public Member(Integer id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", empNo='" + empNo + '\'' +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", email='" + email + '\'' +
+                ", contactNo='" + contactNo + '\'' +
+                ", civilStatus='" + civilStatus + '\'' +
+                ", nic='" + nic + '\'' +
+                ", sex='" + sex + '\'' +
+                ", dob=" + dob +
+                ", designation='" + designation + '\'' +
+                ", department='" + department + '\'' +
+                ", password='" + password + '\'' +
+                ", mDate=" + mDate +
+                ", status='" + status + '\'' +
+                ", roles=" + roles +
+                ", deleted=" + deleted +
+                ", registrationOpen=" + registrationOpen +
+                ", memberRegistrations=" + memberRegistrations +
+                ", dependantData=" + dependantData +
+                ", beneficiaryData=" + beneficiaryData +
+                ", claimSet=" + claimSet +
+                '}';
+    }
 }

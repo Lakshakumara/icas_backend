@@ -14,6 +14,9 @@ import com.yml.icas.repository.SchemeDataRepo;
 import com.yml.icas.service.interfaces.ClaimService;
 import com.yml.icas.util.Converter;
 import com.yml.icas.util.MyConstants;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.ExampleMatcher;
@@ -58,6 +61,7 @@ public class ClaimServiceImpl implements ClaimService {
             Claim c = ObjectMapper.mapToClaim(claimDTO);
             log.info("ready to save {}", c);
             claimId = (claimRepo.save(Objects.requireNonNull(c))).getId();
+            notifyClaimProgress(claimDTO);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,14 +70,15 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     public ResponseEntity<Integer> saveOpd(ClaimOPDDTO claimOPDDTO) {
-        Integer serial;
+        Claim claim;
         try {
-            serial = (claimRepo.save(ObjectMapper.mapToClaimOPD(claimOPDDTO))).getId();
+            claim = claimRepo.save(ObjectMapper.mapToClaimOPD(claimOPDDTO));
+            notifyClaimProgress(ObjectMapper.mapToClaimDTO(claim));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(serial, HttpStatus.OK);
+        return new ResponseEntity<>(claim.getId(), HttpStatus.OK);
     }
 
     @Override
@@ -81,22 +86,48 @@ public class ClaimServiceImpl implements ClaimService {
         log.info("received Claim update data Set {}", (Object) dataSets);
         int rows = 0;
         Long voucherId = new Date().getTime();
+        List<Stage> stages = new ArrayList<>();
+        Integer claimId = null;
         for (Map<String, Object> dataSet : dataSets) {
+            claimId = (Integer) dataSet.get("id");
             try {
                 if (dataSet.get("criteria").toString().equalsIgnoreCase("claimreject")) {
-                    rows += claimRepo.claimReject((Integer) dataSet.get("id"),
+                    rows += claimRepo.claimReject(claimId,
                             (String) dataSet.get("claimStatus"),
                             (String) dataSet.get("rejectRemarks"), MyConstants.TODAY());
-                }else if (dataSet.get("criteria").toString().equalsIgnoreCase("headaccept")) {
-                    rows += claimRepo.updateHeadAccept((Integer) dataSet.get("id"),
+                    stages.add(new Stage("Claim Rejected", (String) dataSet.get("rejectRemarks"), MyConstants.TODAY().toString()));
+
+                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("headaccept")) {
+                    rows += claimRepo.updateHeadAccept(claimId,
                             (String) dataSet.get("claimStatus"),
                             (Integer) dataSet.get("acceptedBy"), MyConstants.TODAY());
+                    stages.add(new Stage("Department Approval", "Approved", MyConstants.TODAY().toString()));
+
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("forwordmec")) {
-                    rows += claimRepo.forwardMEC((Integer) dataSet.get("id"),
+                    rows += claimRepo.forwardMEC(claimId,
                             (String) dataSet.get("claimStatus"), MyConstants.TODAY());
+                    stages.add(new Stage("Medical Board Evaluation", "Sent", MyConstants.TODAY().toString()));
+
+                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("mec_approved")) {
+                    rows += claimRepo.mecApproval(claimId,
+                            (String) dataSet.get("claimStatus"));
+                    stages.add(new Stage("Medical Board Evaluation", "Received", MyConstants.TODAY().toString()));
+
+                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("forwordfinance")) {
+                    rows += claimRepo.forwardFinance(claimId,
+                            (String) dataSet.get("claimStatus"), MyConstants.TODAY(),
+                            Double.parseDouble(String.valueOf(dataSet.get("paidAmount"))),
+                            voucherId);
+                    stages.add(new Stage("Payment Processing", String.valueOf(dataSet.get("paidAmount")), MyConstants.TODAY().toString()));
+
+                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("forwordpaid")) {
+                    rows += claimRepo.forwardPaid(claimId,
+                            (String) dataSet.get("claimStatus"), MyConstants.TODAY());
+                    stages.add(new Stage("Shruff", String.valueOf(dataSet.get("paidAmount")), MyConstants.TODAY().toString()));
+
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("opdupdate")) {
                     addClaimData(dataSet);
-                    rows += claimRepo.opdComplete((Integer) dataSet.get("id"),
+                    rows += claimRepo.opdComplete(claimId,
                             (String) dataSet.get("claimStatus"),
                             Converter.toDouble(dataSet.get("deductionAmount")),
                             (String) dataSet.get("mecremarks"),
@@ -107,36 +138,22 @@ public class ClaimServiceImpl implements ClaimService {
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("claimdata")) {
                     rows += addClaimData(dataSet);
                     log.info("data saved {}", rows);
-                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("mec_approved")) {
-                    rows += claimRepo.mecApproval((Integer) dataSet.get("id"),
-                            (String) dataSet.get("claimStatus"));
-
-                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("forwordfinance")) {
-                    rows += claimRepo.forwardFinance((Integer) dataSet.get("id"),
-                            (String) dataSet.get("claimStatus"), MyConstants.TODAY(),
-                            Double.parseDouble(String.valueOf(dataSet.get("paidAmount"))),
-                            voucherId);
-                }else if (dataSet.get("criteria").toString().equalsIgnoreCase("forwordpaid")) {
-                    rows += claimRepo.forwardPaid((Integer) dataSet.get("id"),
-                            (String) dataSet.get("claimStatus"), MyConstants.TODAY());
-                }else if (dataSet.get("criteria").toString().equalsIgnoreCase("finalize")) {
-                    rows += claimRepo.finalize((Integer) dataSet.get("id"),
+                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("finalize")) {
+                    rows += claimRepo.finalize(claimId,
                             Double.parseDouble(String.valueOf(dataSet.get("deductionAmount"))),
                             Double.parseDouble(String.valueOf(dataSet.get("paidAmount"))));
-
-                    log.info("Double.parseDouble((String) dataSet.get(\"deductionAmount\") {} " +
-                            "Double.parseDouble((String) dataSet.get(\"paidAmount\")) {}",
-                            Double.parseDouble(String.valueOf(dataSet.get("deductionAmount"))),
-                            Double.parseDouble(String.valueOf(dataSet.get("paidAmount"))));
+                    stages.add(new Stage("Payment Processing", "Eligible Payment: "+String.valueOf(dataSet.get("paidAmount")),
+                            "Deductions: "+dataSet.get("deductionAmount")));
 
                 }
+
 
             } catch (Exception e) {
                 e.printStackTrace();
                 return new ResponseEntity<>(rows, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-
+        emailClaimProgress(getClaim(claimId), stages);
         return new ResponseEntity<>(rows, HttpStatus.OK);
     }
 
@@ -156,7 +173,6 @@ public class ClaimServiceImpl implements ClaimService {
         claimDataRepo.save(cd);
         return 1;
     }
-
 
     @Override
     public ClaimDTO getClaim(Integer claimId) {
@@ -190,10 +206,10 @@ public class ClaimServiceImpl implements ClaimService {
                                 new Member(id),
                                 Integer.valueOf(params.get("year")),
                                 params.get("claimStatus")));
-                    }else if (Integer.parseInt(params.get("year")) != 0 && params.get("claimStatus").equalsIgnoreCase("%")) {
+                    } else if (Integer.parseInt(params.get("year")) != 0 && params.get("claimStatus").equalsIgnoreCase("%")) {
                         claimList = new HashSet<>(claimRepo.getClaimData(new Member(id),
                                 Integer.valueOf(params.get("year"))));
-                    }else{
+                    } else {
                         claimList = new HashSet<>(claimRepo.getClaimData(
                                 new Member(id), params.get("claimType"),
                                 Integer.valueOf(params.get("year")),
@@ -205,12 +221,10 @@ public class ClaimServiceImpl implements ClaimService {
                         Integer.parseInt(params.get("year")), params.get("claimStatus"));
 
             } else {
-                if (params.get("claimType").equalsIgnoreCase("%")){
+                if (params.get("claimType").equalsIgnoreCase("%")) {
                     log.info("params.get(\"claimStatus\") {}", params.get("claimStatus"));
                     claimList = new HashSet<>(claimRepo.findAllByClaimStatusLike(params.get("claimStatus")));
-                }
-
-                else {
+                } else {
                     log.info("params.get().equalsIgnoreCase {} {}", params.get("claimType"), params.get("claimStatus"));
                     claimList = new HashSet<>(claimRepo
                             .getClaims(params.get("claimType"), params.get("claimStatus")));
@@ -247,7 +261,7 @@ public class ClaimServiceImpl implements ClaimService {
     @Override
     public long[] getVoucherIds() {
         try {
-            return  claimRepo.getVoucherId();
+            return claimRepo.getVoucherId();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -266,7 +280,27 @@ public class ClaimServiceImpl implements ClaimService {
         return ok;
     }
 
-    public void notifyClaimProgress(String email, String name, String claimId, List<Stage> stages) {
+    public void emailClaimProgress(ClaimDTO claimDTO, List<Stage> stages) {
+        // Send claim progress notification email
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("name", claimDTO.getMember().getName());
+        variables.put("claimId", claimDTO.getMember().getId());
+        variables.put("stages", stages);
+        emailService.sendEmail(claimDTO.getMember().getEmail(), claimDTO.getRequestFor() + " Progress", "claim-progress", variables);
+    }
+    public void notifyClaimProgress(ClaimDTO claimDTO) {
+        // Send claim progress notification email
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("name", claimDTO.getMember().getName());
+        variables.put("claimId", claimDTO.getMember().getId());
+        List<Stage> stages = new ArrayList<>();
+        stages.add(new Stage("Online Application", "Received", ""));
+        stages.add(new Stage("Department Head Approval", "Pending", ""));
+        variables.put("stages", stages);
+        emailService.sendEmail(claimDTO.getMember().getEmail(), claimDTO.getRequestFor() + " Progress", "claim-progress", variables);
+    }
+
+  /*  public void notifyClaimProgress(String email, String name, String claimId, List<Stage> stages) {
         // Send claim progress notification email
         Map<String, Object> variables = new HashMap<>();
         variables.put("name", name);
@@ -278,32 +312,15 @@ public class ClaimServiceImpl implements ClaimService {
         } catch (jakarta.mail.MessagingException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }
+
+@Setter
+@Getter
+@AllArgsConstructor
 class Stage {
     private String name;
     private String status;
-
-    // Constructor, getters, and setters
-    public Stage(String name, String status) {
-        this.name = name;
-        this.status = status;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    private String remarks;
 }
