@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Role Update Notification</title>
+</head>
+<body>
+<p>Dear <span th:text="${name}">[Name]</span>,</p>
+
+<p>Your roles have been updated. Here are your new roles:</p>
+
+<ul>
+    <li th:each="role : ${roles}" th:text="${role}">[Role]</li>
+</ul>
+
+<p>If you have any questions or did not request this change, please contact General Administration division.</p>
+
+<p>Best regards,</p>
+<p>Your Company Name</p>
+</body>
+</html>

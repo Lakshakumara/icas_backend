@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,6 +48,8 @@ public class MemberServiceImpl implements MemberService {
     @Autowired
     private BeneficiaryDataRepo beneficiaryDataRepo;
 
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public ResponseEntity<Integer> updateMember(String criteria, Map<String, Object> dataSet) {
@@ -61,12 +64,6 @@ public class MemberServiceImpl implements MemberService {
         } else if (criteria.equalsIgnoreCase("role")) {
             List<String> dd = (List<String>) dataSet.get("newrole");
 
-/**
- * Set<Role> roles = dd.stream()
- *                     .map(Role::new).collect(Collectors.toSet());
- */
-
-
             Set<Role> roles = dd.stream()
                     .map(roleName -> roleRepo.findByRole(roleName))
                     .collect(Collectors.toSet());
@@ -76,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
                 Member mm = memberRepo.getMember((String) dataSet.get("empNo"));
                 mm.setRoles(roles);
                 memberRepo.save(mm);
-                rows+=1;
+                rows += 1;
             }
 
         } else if (criteria.equalsIgnoreCase("memberAccept")) {
@@ -384,9 +381,9 @@ public class MemberServiceImpl implements MemberService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Member> memberPage = null;
         try {
-        if (search != null && !search.isEmpty())
-            memberPage = memberRepo.findByNameContainingIgnoreCase(search, pageable);
-        else memberPage = memberRepo.findAll(pageable);
+            if (search != null && !search.isEmpty())
+                memberPage = memberRepo.findByNameContainingIgnoreCase(search, pageable);
+            else memberPage = memberRepo.findAll(pageable);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -394,10 +391,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public void updateRoles(Integer memberId, List<String> roles) {
-
-        Set<Role> updatedRoles = roles.stream().map(roleName -> {
-            return roleRepo.findByRole(roleName);
-        }).collect(Collectors.toSet());
+        Set<Role> updatedRoles = roles.stream().map(roleName -> roleRepo.findByRole(roleName)).collect(Collectors.toSet());
         Member member = memberRepo.findById(memberId).orElseThrow(() -> new RuntimeException("Member not found"));
 
         // Update the member's roles
@@ -405,5 +399,26 @@ public class MemberServiceImpl implements MemberService {
 
         // Save the member entity
         memberRepo.save(member);
+
+        String email = "lakshakumara@gmail.com";
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("name", member.getName());
+        variables.put("downloadLink", "http://schema/Download");
+        variables.put("roles", roles);
+
+
+        try {
+            emailService.sendEmail(email, "Registration Confirmation", "role-update", variables);
+        } catch (jakarta.mail.MessagingException e) {
+            e.printStackTrace();
+        }
+
+/*
+        // Send email notification
+        String to = "lakshakumara@gmail.com";
+        String subject = "Registration Successful";
+        String text = "Dear \n\nYour registration was successful!";
+        emailService.sendSimpleEmail(to, subject, text);
+        log.info("Main sending complete");*/
     }
 }

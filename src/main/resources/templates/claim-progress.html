@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Insurance Claim Progress</title>
+</head>
+<body>
+<p>Dear <span th:text="${name}">[Name]</span>,</p>
+
+<p>Your insurance claim (ID: <span th:text="${claimId}">[Claim ID]</span>) is currently being processed. Below is the
+    progress of your claim through various stages:</p>
+
+<table border="1" cellspacing="0" cellpadding="5">
+    <tr>
+        <th>Stage</th>
+        <th>Status</th>
+    </tr>
+    <tr th:each="stage : ${stages}">
+        <td th:text="${stage.name}">[Stage Name]</td>
+        <td th:text="${stage.status}">[Stage Status]</td>
+    </tr>
+</table>
+
+<p>If you have any questions or need further assistance, please contact our support team.</p>
+
+<p>Best regards,</p>
+<p>Your Insurance Company</p>
+</body>
+</html>

@@ -16,10 +16,10 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
-logging:
-  level:
-    org:
-      flywaydb: INFO
+  logging:
+    level:
+      org:
+        flywaydb: INFO
 
   jpa:
     show-sql: false
@@ -29,9 +29,16 @@ logging:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-
   mail:
     host: smtp.gmail.com
     port: 587
     username: lakshakumara@gmail.com
-    password: yMl@12
+    password: wcvrldfddzgnjzaz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        debug: true

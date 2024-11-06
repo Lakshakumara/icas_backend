@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,9 @@ public class ClaimServiceImpl implements ClaimService {
     @Autowired
     SchemeDataRepo schemeDataRepo;
 
+    @Autowired
+    private EmailService emailService;
+
     public Integer addClaim(ClaimDTO claimDTO) {
         Integer claimId = null;
         if (claimDTO == null) return claimId;
@@ -59,18 +63,6 @@ public class ClaimServiceImpl implements ClaimService {
         }
         return claimId;
     }
-    /*public Integer addClaimData(ClaimDTO claimDTO) {
-        Integer claimId = null;
-        if(claimDTO == null) return claimId;
-        try {
-            Claim c = ObjectMapper.mapToClaim(claimDTO);
-            log.info("ready to save {}",c);
-            claimId = (claimDataRepo.save(Objects.requireNonNull(c))).getId();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return claimId;
-    }*/
 
     @Override
     public ResponseEntity<Integer> saveOpd(ClaimOPDDTO claimOPDDTO) {
@@ -272,5 +264,46 @@ public class ClaimServiceImpl implements ClaimService {
         }
         log.info("deleted {}", ok);
         return ok;
+    }
+
+    public void notifyClaimProgress(String email, String name, String claimId, List<Stage> stages) {
+        // Send claim progress notification email
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("name", name);
+        variables.put("claimId", claimId);
+        variables.put("stages", stages);
+
+        try {
+            emailService.sendEmail(email, "Insurance Claim Progress", "claim-progress", variables);
+        } catch (jakarta.mail.MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+class Stage {
+    private String name;
+    private String status;
+
+    // Constructor, getters, and setters
+    public Stage(String name, String status) {
+        this.name = name;
+        this.status = status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
