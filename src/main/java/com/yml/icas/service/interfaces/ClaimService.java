@@ -2,6 +2,7 @@ package com.yml.icas.service.interfaces;
 
 import com.yml.icas.dto.ClaimDTO;
 import com.yml.icas.dto.ClaimOPDDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,9 @@ public interface ClaimService {
 
     ClaimDTO getClaim(Integer claimId);
 
-    Set<ClaimDTO> getAllClaim(Map<String, String> params);
+    //Set<ClaimDTO> getAllClaim(Map<String, String> params);
 
-
+    Page<ClaimDTO> getAllClaim(Map<String, String> params);
     Set<ClaimDTO> getDashboardData(Integer year, String empNo);
 
     long[] getVoucherIds();

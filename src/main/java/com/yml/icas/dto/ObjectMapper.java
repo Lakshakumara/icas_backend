@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ObjectMapper {
 
-    public static Claim mapToClaimOPD(ClaimOPDDTO claimOPDDTO) {
+    /*public static Claim mapToClaimOPD(ClaimOPDDTO claimOPDDTO) {
         Claim cd = new Claim();
         if (Objects.isNull(claimOPDDTO)) return cd;
         cd.setId(claimOPDDTO.getId());
@@ -22,61 +22,8 @@ public class ObjectMapper {
         cd.setClaimStatus(claimOPDDTO.getClaimStatus());
         cd.setAcceptedDate(claimOPDDTO.getAcceptedDate());
         return cd;
-    }
+    }*/
 
-    public static Claim mapToClaim(ClaimDTO claimDTO) {
-        if (Objects.isNull(claimDTO)) return null;
-        Claim c = new Claim();
-        c.setId(claimDTO.getId());
-        c.setMember(new Member(claimDTO.getMemberId()));
-        if(claimDTO.getDependant() != null)
-            c.setDependant(new Dependant(claimDTO.getDependant().getId()));
-        c.setCategory(claimDTO.getCategory());
-        c.setRequestFor(claimDTO.getRequestFor());
-
-        c.setInjuryDate(claimDTO.getInjuryDate());
-        c.setInjuryPlace(claimDTO.getInjuryPlace());
-        c.setInjuryHow(claimDTO.getInjuryHow());
-        c.setInjuryNature(claimDTO.getInjuryNature());
-
-        c.setIllnessDate(claimDTO.getIllnessDate());
-        c.setIllnessNature(claimDTO.getIllnessNature());
-        c.setIllnessFirstConsultDate(claimDTO.getIllnessFirstConsultDate());
-        c.setIllnessFirstDr(claimDTO.getIllnessFirstDr());
-        c.setHospitalStartDate(claimDTO.getHospitalStartDate());
-        c.setHospitalEndDate(claimDTO.getHospitalEndDate());
-        c.setInfoTreatment(claimDTO.getInfoTreatment());
-        c.setInfoHospital(claimDTO.getInfoHospital());
-        c.setInfoConsultant(claimDTO.getInfoConsultant());
-
-        c.setClaimDate(claimDTO.getClaimDate());
-        c.setStartDate(claimDTO.getStartDate());
-        c.setRequestAmount(claimDTO.getRequestAmount());
-
-        c.setAcceptedDate(claimDTO.getAcceptedDate());
-        c.setAcceptedBy(claimDTO.getAcceptedBy());
-
-        c.setMecSendDate(claimDTO.getMecSendDate());
-        c.setDeductionAmount(claimDTO.getDeductionAmount());
-        c.setPaidAmount(claimDTO.getPaidAmount());
-        c.setVoucherId(claimDTO.getVoucherId());
-
-        c.setFinanceSendDate(claimDTO.getFinanceSendDate());
-        c.setCompletedDate(claimDTO.getCompletedDate());
-
-        c.setMecRemarks(claimDTO.getMecRemarks());
-        c.setMecReturnDate(claimDTO.getMecReturnDate());
-        c.setRejectedDate(claimDTO.getRejectedDate());
-        c.setRejectRemarks(claimDTO.getRejectRemarks());
-
-        c.setClaimStatus(claimDTO.getClaimStatus());
-        c.setRemarks(claimDTO.getRemarks());
-
-        c.setAppeal(claimDTO.isAppeal());
-        c.setAppealRefId(claimDTO.getAppealRefId());
-        c.setAppealRemarks(claimDTO.getAppealRemarks());
-        return c;
-    }
 
     public static ClaimDTO mapToClaimDTO(Claim claim) {
         if (Objects.isNull(claim)) return null;

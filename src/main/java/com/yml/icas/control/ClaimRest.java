@@ -2,6 +2,8 @@ package com.yml.icas.control;
 
 import com.yml.icas.dto.ClaimDTO;
 import com.yml.icas.dto.ClaimOPDDTO;
+import com.yml.icas.dto.MemberDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +31,10 @@ public interface ClaimRest {
     @RequestMapping(method = RequestMethod.GET, value = "/get/{claimId}")
     ResponseEntity<ClaimDTO> getClaim(@PathVariable(name = "claimId") Integer claimId);
 
+   /* @RequestMapping(method = RequestMethod.GET, value = "/getAll")
+    ResponseEntity<Set<ClaimDTO>> getAllClaim(@RequestParam Map<String, String> params);*/
     @RequestMapping(method = RequestMethod.GET, value = "/getAll")
-    ResponseEntity<Set<ClaimDTO>> getAllClaim(@RequestParam Map<String, String> params);
+    ResponseEntity<Page<ClaimDTO>> getAllClaim(@RequestParam Map<String, String> params);
 
     @RequestMapping(method = RequestMethod.PUT, value = "/update")
     ResponseEntity<Integer> updateClaims(@RequestBody Map<String, Object>[] dataSet);

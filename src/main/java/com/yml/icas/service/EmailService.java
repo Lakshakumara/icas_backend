@@ -36,10 +36,10 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(body, true);
+            mailSender.send(message);
         } catch (MessagingException e) {
             Log.info("Email not sent to " + to);
         }
-        mailSender.send(message);
     }
 
     public void sendEmailWithAttachment(String to, String subject, String templateName, Map<String, Object> variables, File attachment) {
@@ -58,7 +58,7 @@ public class EmailService {
             helper.addAttachment(attachment.getName(), attachment);
 
             mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             // Handle exception here
         }

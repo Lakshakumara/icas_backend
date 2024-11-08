@@ -11,14 +11,15 @@ import java.util.Set;
 
 @NamedQuery(name = "ClaimData.getAnyClaims",
         query = "select :claimType")
-/*@NamedQuery(name = "Claim.getAnyClaims",
-        query = "select c from Claim c where lower(c.category) like lower(:claimType) " +
-                " and lower(c.claimStatus) like lower('%')")*/
 @Setter
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "claim")
+@Table(name = "claim", indexes = {
+        @Index(name = "idx_claim_category", columnList = "category"),
+        @Index(name = "idx_claim_claimdate", columnList = "claimdate"),
+        @Index(name = "idx_claim_claimstatus", columnList = "claimstatus")
+})
 public class Claim {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +38,7 @@ public class Claim {
     /**
      * OPD or SHE(Surgical &Hospital Expenses)
      */
+
     private String category;
     /**
      * Outdoor, Spectacles, covid test etc..
@@ -176,15 +178,4 @@ public class Claim {
 
     @Column(name = "appealremarks")
     private String appealRemarks;
-
-    @Override
-    public String toString() {
-        return "Claim{" +
-                "id=" + id +
-                ", claimData=" + claimData +
-                ", mecRemarks='" + mecRemarks + '\'' +
-                ", mecReturnDate=" + mecReturnDate +
-                ", remarks='" + remarks + '\'' +
-                '}';
-    }
 }

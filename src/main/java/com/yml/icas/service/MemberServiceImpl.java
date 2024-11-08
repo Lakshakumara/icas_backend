@@ -7,27 +7,26 @@ import com.yml.icas.service.interfaces.MemberService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
-import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.yml.icas.util.IcasUtil.genApplication;
-import static com.yml.icas.util.MyConstants.BASE_URL;
 
 @Slf4j
 @Service
 public class MemberServiceImpl implements MemberService {
+
+    @Value("${app.frontend.base-url}")
+    private String baseUrl;
+
     @Autowired
     private MemberRepo memberRepo;
 
@@ -87,8 +86,8 @@ public class MemberServiceImpl implements MemberService {
                     if (member.isPresent()) {
                         variables.put("name", member.get().getName());
                         variables.put("username", member.get().getEmpNo());
-                        variables.put("siteLink", BASE_URL);
-                        variables.put("schemaLink", BASE_URL + "/download/schema/2023");
+                        variables.put("siteLink", baseUrl);
+                        variables.put("schemaLink", baseUrl + "/download/scheme/2023");
                         emailService.sendEmail(
                                 member.get().getEmail(),
                                 "Registration Update",
@@ -262,13 +261,13 @@ public class MemberServiceImpl implements MemberService {
             if (!Objects.isNull(successMember)) {
                 Map<String, Object> variables = new HashMap<>();
                 variables.put("name", successMember.getName());
-                variables.put("schemaLink", BASE_URL + "/download/scheme/2023");
+                variables.put("schemaLink", generateSchemeDownloadLink());
                 successMember = addRegistration(successMember);
                 Optional<Integer> newRegYear = successMember.getMemberRegistrations().stream()
                         .max(Comparator.comparing(MemberRegistration::getYear))
                         .map(MemberRegistration::getYear);
                 if (newRegYear.isPresent()) {
-                    variables.put("applicationLink", BASE_URL + "/download/application/" + newRegYear.get() + "/" + successMember.getEmpNo());
+                    variables.put("applicationLink", baseUrl + "/download/application/" + newRegYear.get() + "/" + successMember.getEmpNo());
                 }
                 emailService.sendEmail(
                         successMember.getEmail(),
@@ -282,6 +281,8 @@ public class MemberServiceImpl implements MemberService {
         }
         return response;
     }
+
+
 
     @Override
     public ResponseEntity<MemberDTO> getMember(String empNo) {
@@ -388,4 +389,9 @@ public class MemberServiceImpl implements MemberService {
 
         emailService.sendEmail(email, "Role Updated", "role-update", variables);
     }
+
+    private String generateSchemeDownloadLink() {
+        return baseUrl + "/download/scheme/2023";
+    }
+
 }

@@ -28,7 +28,9 @@ import java.util.Set;
 @DynamicInsert
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "member", uniqueConstraints = {
+@Table(name = "member", indexes = {
+        @Index(name = "idx_member_name", columnList = "name")
+}, uniqueConstraints = {
         @UniqueConstraint(name = "member_nic_unique", columnNames = "nic")
 })
 public class Member implements Serializable {

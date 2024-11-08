@@ -3,6 +3,8 @@ package com.yml.icas.repository;
 import com.yml.icas.model.Claim;
 import com.yml.icas.model.Member;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +20,7 @@ public interface ClaimRepo extends JpaRepository<Claim, Integer> {
     Claim findClaimById(Integer integer);
 
     List<Claim> findAllByVoucherId(long voucherId);
-
+/*
     @Query(value = "Select c from Claim c where c.member =:member order by c.claimDate ")
     List<Claim> getClaimData(Member member);
 
@@ -37,6 +39,132 @@ public interface ClaimRepo extends JpaRepository<Claim, Integer> {
             " YEAR(c.claimDate)=:year and c.member =:member " +
             "and lower(c.claimStatus) like lower(:claimStatus) order by c.claimDate ")
     List<Claim> getClaimData(Member member, String claimType, Integer year,  String claimStatus);
+*/
+   /* Page<Claim> findAllByClaimStatusLike(String claimStatus, Pageable pageable);
+
+    @Query(value = "Select c from Claim c where c.member =:member order by c.claimDate ")
+    Page<Claim> getClaimData(Member member, Pageable pageable);
+
+    @Query(value = "Select c from Claim c where c.member =:member and YEAR(c.claimDate)=:year order by c.claimDate ")
+    Page<Claim> getClaimData(Member member, Integer year, Pageable pageable);
+
+    @Query(value = "Select c from Claim c where  " +
+            " c.member =:member and lower(c.claimStatus) like lower(:claimStatus) order by c.claimDate ")
+    Page<Claim> getClaimData(Member member, String claimStatus, Pageable pageable);
+
+    @Query(value = "Select c from Claim c where c.member = :member and YEAR(c.claimDate) = :year " +
+            "and lower(c.claimStatus) like lower(:claimStatus) order by c.claimDate")
+    Page<Claim> getClaimData(@Param("member") Member member,
+                             @Param("year") Integer year,
+                             @Param("claimStatus") String claimStatus,
+                             Pageable pageable);
+    @Query(value = "Select c from Claim c where lower(c.category) like (lower(:claimType)) and " +
+            " YEAR(c.claimDate)=:year and c.member =:member " +
+            "and lower(c.claimStatus) like lower(:claimStatus) order by c.claimDate ")
+    Page<Claim> getClaimData(Member member, String claimType, Integer year,  String claimStatus, Pageable pageable);
+*/
+    @Query("SELECT c FROM Claim c WHERE " +
+            "(:searchText IS NULL OR :searchText = '' OR " +
+            "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
+            "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
+            "AND lower(c.claimStatus) LIKE lower(concat('%', :claimStatus, '%')) " +
+            "ORDER BY c.claimDate")
+    Page<Claim> findAllByClaimStatusLike(@Param("claimStatus") String claimStatus,
+                                         @Param("searchText") String searchText,
+                                         Pageable pageable);
+
+    @Query("SELECT c FROM Claim c WHERE " +
+            "(:searchText IS NULL OR :searchText = '' OR " +
+            "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
+            "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
+            "AND c.member = :member " +
+            "ORDER BY c.claimDate")
+    Page<Claim> getClaimData(@Param("member") Member member,
+                             @Param("searchText") String searchText,
+                             Pageable pageable);
+
+    @Query("SELECT c FROM Claim c WHERE " +
+            "(:searchText IS NULL OR :searchText = '' OR " +
+            "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
+            "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
+            "AND c.member = :member " +
+            "AND YEAR(c.claimDate) = :year " +
+            "ORDER BY c.claimDate")
+    Page<Claim> getClaimData(@Param("member") Member member,
+                             @Param("year") Integer year,
+                             @Param("searchText") String searchText,
+                             Pageable pageable);
+
+    @Query("SELECT c FROM Claim c WHERE " +
+            "(:searchText IS NULL OR :searchText = '' OR " +
+            "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
+            "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
+            "AND c.member = :member " +
+            "AND lower(c.claimStatus) LIKE lower(:claimStatus) " +
+            "ORDER BY c.claimDate")
+    Page<Claim> getClaimData(@Param("member") Member member,
+                             @Param("claimStatus") String claimStatus,
+                             @Param("searchText") String searchText,
+                             Pageable pageable);
+
+    @Query("SELECT c FROM Claim c WHERE " +
+            "(:searchText IS NULL OR :searchText = '' OR " +
+            "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
+            "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
+            "AND c.member = :member " +
+            "AND YEAR(c.claimDate) = :year " +
+            "AND lower(c.claimStatus) LIKE lower(:claimStatus) " +
+            "ORDER BY c.claimDate")
+    Page<Claim> getClaimData(@Param("member") Member member,
+                             @Param("year") Integer year,
+                             @Param("claimStatus") String claimStatus,
+                             @Param("searchText") String searchText,
+                             Pageable pageable);
+
+    @Query("SELECT c FROM Claim c WHERE " +
+            "(:searchText IS NULL OR :searchText = '' OR " +
+            "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
+            "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
+            "AND lower(c.category) LIKE lower(:claimType) " +
+            "AND YEAR(c.claimDate) = :year " +
+            "AND c.member = :member " +
+            "AND lower(c.claimStatus) LIKE lower(:claimStatus) " +
+            "ORDER BY c.claimDate")
+    Page<Claim> getClaimDatax(@Param("member") Member member,
+                             @Param("claimType") String claimType,
+                             @Param("year") Integer year,
+                             @Param("claimStatus") String claimStatus,
+                             @Param("searchText") String searchText,
+                             Pageable pageable);
+
+    @Query("SELECT c FROM Claim c WHERE " +
+            "(:searchText IS NULL OR :searchText = '' OR " +
+            "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
+            "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
+
+            "AND (:claimType IS NULL OR :claimType = '%' OR lower(c.category) LIKE lower(:claimType)) " +
+            "AND (:year IS NULL OR :year = 0 OR YEAR(c.claimDate) = :year) " +
+            "AND (:member IS NULL OR c.member = :member) " +
+            "AND (:claimStatus IS NULL OR :claimStatus = '%' OR lower(c.claimStatus) LIKE lower(:claimStatus)) " +
+            "ORDER BY c.claimDate")
+    Page<Claim> getClaimData(@Param("member") Member member,
+                             @Param("claimType") String claimType,
+                             @Param("year") Integer year,
+                             @Param("claimStatus") String claimStatus,
+                             @Param("searchText") String searchText,
+                             Pageable pageable);
+
+    @Query(value = "SELECT c FROM Claim c WHERE " +
+            "(:searchText IS NULL OR :searchText = '' OR " +
+            "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
+            "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
+            "AND lower(c.category) LIKE lower(:claimType) " +
+            "AND lower(c.claimStatus) LIKE lower(:claimStatus) " +
+            "ORDER BY c.claimDate")
+    Page<Claim> getClaims(@Param("claimType") String claimType,
+                          @Param("claimStatus") String claimStatus,
+                          @Param("searchText") String searchText,
+                          Pageable pageable);
 
     @Query(value = "select c from Claim c where c.member =:member and YEAR(c.claimDate)=:year")
     List<Claim> getDashboardData(Member member, Integer year);

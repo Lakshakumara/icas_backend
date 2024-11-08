@@ -8,11 +8,16 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class IcasUtil {
+
+    public static String DatetoString(Date date){
+        return new SimpleDateFormat("yyyy-mm-dd").format(date);
+    }
     public static byte[] genApplication(Member member) {
         Map<String, Object> empParams = new HashMap<>();
         empParams.put("title", "APPLICATION FORM TO JOIN THE MEDICAL WELFARE SCHEME FOR " +
@@ -175,57 +180,4 @@ public class IcasUtil {
             return e.getMessage().getBytes();
         }
     }
-
-     /* @Deprecated
-    public static ResponseEntity<byte[]> generatePdf(Member member) {
-        Map<String, Object> empParams = new HashMap<>();
-        String fileName = member.getName();
-
-        empParams.put("title", "APPLICATION FORM TO JOIN THE MEDICAL WELFARE SCHEME FOR " +
-                "PERMANENT EMPLOYEES IN THE UNIVERSITY");
-        empParams.put("empNo", member.getEmpNo());
-        empParams.put("name", member.getName());
-        empParams.put("address", member.getAddress());
-        empParams.put("email", member.getEmail());
-        empParams.put("contactNo", member.getContactNo());
-        empParams.put("civilStatus", member.getCivilStatus());
-        empParams.put("nic", member.getNic());
-        empParams.put("dob", member.getDob());
-        empParams.put("sex", member.getSex());
-        empParams.put("designation", member.getDesignation());
-        empParams.put("department", member.getDepartment());
-        MemberDTO memberDTO = ObjectMapper.mapToMemberDTO(member);
-        Set<DependantDTO> dependants = memberDTO.getDependants();
-        empParams.put("dependants", new JRBeanCollectionDataSource(dependants));
-
-        Set<BeneficiaryDTO> beneficiaries = memberDTO.getBeneficiaries();
-        empParams.put("beneficiary", new JRBeanCollectionDataSource(beneficiaries));
-
-        try {
-            InputStream reportStream = IcasUtil.class.getResourceAsStream("/memberApplication.jrxml");
-            if (reportStream == null) {
-                throw new FileNotFoundException("JRXML file not found in classpath");
-            }
-
-            JasperPrint empReport = JasperFillManager.fillReport(
-                    JasperCompileManager.compileReport(reportStream), // compile from InputStream
-                    empParams, // dynamic parameters passed
-                    new JREmptyDataSource()
-            );
-
-            HttpHeaders headers = new HttpHeaders();
-            //set the PDF format
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", fileName + ".pdf");
-            //create the report in PDF format
-            log.info("pdf generated");
-            return new ResponseEntity<>
-                    (JasperExportManager.exportReportToPdf(empReport), headers, HttpStatus.OK);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
-
 }

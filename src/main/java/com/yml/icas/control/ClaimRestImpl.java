@@ -2,9 +2,11 @@ package com.yml.icas.control;
 
 import com.yml.icas.dto.ClaimDTO;
 import com.yml.icas.dto.ClaimOPDDTO;
+import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.service.ClaimServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,7 +75,7 @@ public class ClaimRestImpl implements ClaimRest {
         }
     }
 
-    @Override
+    /*@Override
     public ResponseEntity<Set<ClaimDTO>> getAllClaim(Map<String, String> params) {
         try {
             return new ResponseEntity<>(claimService.getAllClaim(params), HttpStatus.OK);
@@ -81,6 +83,11 @@ public class ClaimRestImpl implements ClaimRest {
             ex.printStackTrace();
             return new ResponseEntity<>(new HashSet<>(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }*/
+    @Override
+    public ResponseEntity<Page<ClaimDTO>> getAllClaim(Map<String, String> params) {
+        Page<ClaimDTO> claimDTO = claimService.getAllClaim(params);
+        return ResponseEntity.ok(claimDTO);
     }
 
     @Override
