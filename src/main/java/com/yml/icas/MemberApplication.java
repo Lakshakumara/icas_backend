@@ -38,16 +38,16 @@ public class MemberApplication {
             if (hrRepository.count() == 0) {
                 HR saman = new HR();
                 saman.setEmpNo("100");
-                saman.setName("Super User");
+                saman.setName("Mrs DA Leena Perera");
                 saman.setAddress("Open University, Nawala, Nugegoda");
-                saman.setEmail("admin100@gmail.com");
+                saman.setEmail("daper@ou.ac.lk");
                 saman.setContactNo("0714396100");
                 saman.setCivilStatus("Married");
                 saman.setNic("773661100v");
-                saman.setSex("Male");
+                saman.setSex("Female");
                 saman.setDob(new Date(77, 01, 01));
-                saman.setDesignation("Senior Lecture");
-                saman.setDepartment("Electrical & Computer");
+                saman.setDesignation("Clerk");
+                saman.setDepartment("General Administration Division");
                 saman.setPhotoUrl("");
 
                 HR kamal = new HR();
