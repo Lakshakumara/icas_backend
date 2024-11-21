@@ -9,7 +9,7 @@
     "maxAmount": 13716.0,
     "unit": "month",
     "rate": 1143.0,
-    "category": "SH"
+    "category": "none"
   },
   {
     "id": null,
@@ -21,7 +21,7 @@
     "maxAmount": 16116.0,
     "unit": "month",
     "rate": 1343.0,
-    "category": "SH"
+    "category": "none"
   },
   {
     "id": null,

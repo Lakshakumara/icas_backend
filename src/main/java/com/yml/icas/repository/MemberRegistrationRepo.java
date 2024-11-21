@@ -3,6 +3,8 @@ package com.yml.icas.repository;
 import com.yml.icas.model.Member;
 import com.yml.icas.model.MemberRegistration;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,20 +23,22 @@ public interface MemberRegistrationRepo extends JpaRepository<MemberRegistration
     Integer acceptRegistration(@Param("acceptedBy") Integer acceptedBy,
                                @Param("accepteddate") LocalDate accepteddate, @Param("memberId") Integer memberId);
 
-
-    MemberRegistration findByYearAndMember(@Param("year") Integer year, @Param("member") Member member);
-
     Set<MemberRegistration> findByMember(@Param("member") Member member);
 
-    List<MemberRegistration> findByAcceptedDate(@Param("acceptDate") Date acceptDate);
+    @Query("SELECT r FROM MemberRegistration r WHERE " +
+            "(:filter IS NULL OR :filter = '' OR " +
+            "lower(r.member.empNo) LIKE lower(concat('%', :filter, '%')) OR " +
+            "lower(r.member.name) LIKE lower(concat('%', :filter, '%'))) " +
+            "AND (cast(:acceptedDate as date) IS NULL AND r.acceptedDate IS NULL " +
+            "OR cast(:acceptedDate as date) IS NOT NULL AND r.acceptedDate = cast(:acceptedDate as date)) " +
+            "ORDER BY r.acceptedDate")
+    Page<MemberRegistration> filterRegistration(
+            @Param("filter") String filter,
+            @Param("acceptedDate") Date acceptedDate,
+            Pageable pageable);
 
-    List<MemberRegistration> findByAcceptedDateNull();
 
+    Page<MemberRegistration> findByAcceptedDate(@Param("acceptDate") Date acceptDate, Pageable pageable);
 
-    Set<MemberRegistration> findByAcceptedDateNullAndYear(@Param("year") Integer year);
-/*
-    String queryReportListAndCategoryName = "SELECT * FROM answer INNER JOIN question on answer.question_id = question.id WHERE answer.question_id = :id ORDER BY answer.creation_date DESC";
-
-    @Query(value = queryReportListAndCategoryName, nativeQuery = true)*/
-    // Member findMemberRegistrationByYearAndMember_EmpNo(Integer year, String empNo);
+    Page<MemberRegistration> findByAcceptedDateNull(Pageable pageable);
 }

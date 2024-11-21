@@ -11,7 +11,11 @@ public class HrService {
     @Autowired
     HRDao hrDao;
 
-    public ResponseEntity<HR> getEmployee(String empNo) {
-        return new ResponseEntity<>(hrDao.findByEmpNo(empNo), HttpStatus.OK);
+    public HR getEmployee(String empNo) {
+        return hrDao.findByEmpNo(empNo);
+    }
+
+    public HR save(HR hr) {
+        return hrDao.save(hr);
     }
 }

@@ -25,4 +25,6 @@ public interface ClaimService {
     Set<ClaimDTO> getDashboardData(Integer year, String empNo);
 
     long[] getVoucherIds();
+
+    Page<ClaimDTO> getTest();
 }

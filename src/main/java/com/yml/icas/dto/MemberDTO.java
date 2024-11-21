@@ -23,6 +23,7 @@ public class MemberDTO {
     private String password;
     private Date mDate;
     private String status;
+    private String photoUrl;
     private Integer registrationOpen;
     private Set<RoleDTO> roles = new HashSet<>();
     private boolean deleted;

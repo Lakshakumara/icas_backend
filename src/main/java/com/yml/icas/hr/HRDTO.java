@@ -1,19 +1,12 @@
 package com.yml.icas.hr;
 
-import jakarta.persistence.*;
+
 import lombok.Data;
 
 import java.sql.Date;
-
 @Data
-@Entity(name = "HR")
-@Table(name = "hr")
-public class HR {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+public class HRDTO {
     private Integer id;
-    @Column(name = "empNo", unique = true)
     private String empNo;
     private String name;
     private String address;
@@ -23,7 +16,6 @@ public class HR {
     private String nic;
     private String sex;
 
-    @Temporal(TemporalType.DATE)
     private Date dob;
 
     private String designation;
@@ -31,6 +23,5 @@ public class HR {
     private String photoUrl;
     private boolean deleted = false;
 
-    @Temporal(TemporalType.DATE)
     private java.util.Date deletedDate;
 }

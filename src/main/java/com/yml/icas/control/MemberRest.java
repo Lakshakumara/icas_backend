@@ -27,7 +27,7 @@ public interface MemberRest {
     ResponseEntity<MemberDTO> getMember(@PathVariable(name = "empNo") String empNo);
 
     @RequestMapping(method = RequestMethod.GET, value = "/get")
-    ResponseEntity<Set<MemberDTO>> searchMember(@RequestParam Map<String, Object> searchParams);
+    ResponseEntity<Page<MemberDTO>> searchMember(@RequestParam Map<String, Object> searchParams);
 
     @RequestMapping(method = RequestMethod.GET, value = "/relationship/{rs}")
     ResponseEntity<String[]> getRelationShip(@PathVariable(name = "rs") String rs);

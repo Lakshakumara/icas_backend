@@ -1,31 +1,34 @@
 package com.yml.icas.repository;
 
 import com.yml.icas.model.Member;
-import com.yml.icas.model.Role;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-import java.util.Set;
-
 public interface MemberRepo extends JpaRepository<Member, Integer> {
+    @Query("SELECT m FROM Member m WHERE " +
+            "(:filter IS NULL OR :filter = '' OR " +
+            "lower(m.empNo) LIKE lower(concat('%', :filter, '%')) OR " +
+            "lower(m.name) LIKE lower(concat('%', :filter, '%'))) " +
+            "ORDER BY m.name")
+    Page<Member> getMembers(@Param("filter") String filter, Pageable pageable);
 
-    List<Member> findAllByEmpNoContainsIgnoreCase(String empNo);
+    Page<Member> findAllByEmpNoContainsIgnoreCase(String empNo, Pageable pageable);
 
-    List<Member> findAllByNameContainsIgnoreCase(String name);
-
-    @Query("Select m.id from Member m where lower(m.empNo) = lower(:empNo)")
-    Integer getMemberId(@Param("empNo") String empNo);
+    Page<Member> findAllByNameContainsIgnoreCase(String name, Pageable pageable);
 
     @Query("Select m from Member m where lower(m.empNo) = lower(:empNo)")
     Member getMember(@Param("empNo") String empNo);
 
     Member findByEmpNoIgnoreCase(@Param("empNo") String empNo);
+/*
+
+    Page<Member> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    @Query("Select m.id from Member m where lower(m.empNo) = lower(:empNo)")
+    Integer getMemberId(@Param("empNo") String empNo);
 
     @Query("Select m from Member m, MemberRegistration mr " +
             " where m.id = mr.member.id and mr.year= :regYear")
@@ -33,12 +36,7 @@ public interface MemberRepo extends JpaRepository<Member, Integer> {
 
     @Query("Select m from Member m where m.status = :status")
     Set<Member> findAllByStatusIgnoreCase(@Param("status") String status);
-
-    @Query(value = "SELECT * FROM Users ORDER BY id",
-            countQuery = "SELECT count(*) FROM Users",
-            nativeQuery = true)
-    Page<Member> findAllMembersWithPagination(Pageable pageable);
-
+*/
     @Query(value = "UPDATE Member set registrationOpen =:regYear where deleted = false" +
             " and registrationOpen != :regYear ",
             nativeQuery = true)
@@ -48,6 +46,4 @@ public interface MemberRepo extends JpaRepository<Member, Integer> {
             " and empNo = :empNo ",
             nativeQuery = true)
     Integer updateRegistrationMember(String empNo, Integer regYear);
-
-    Page<Member> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

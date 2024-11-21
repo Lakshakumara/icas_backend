@@ -8,6 +8,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -15,9 +17,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class IcasUtil {
 
-    public static String DatetoString(Date date){
+    public static String DatetoString(Date date) {
         return new SimpleDateFormat("yyyy-mm-dd").format(date);
     }
+
+    public static Date DateToString(Object date) {
+        try {
+            return DateFormat.getDateInstance(DateFormat.SHORT).parse((String) date);
+        } catch (ParseException e) {
+            return null;
+        }
+
+    }
+
+
     public static byte[] genApplication(Member member) {
         Map<String, Object> empParams = new HashMap<>();
         empParams.put("title", "APPLICATION FORM TO JOIN THE MEDICAL WELFARE SCHEME FOR " +
@@ -49,15 +62,15 @@ public class IcasUtil {
 
         empParams.put("beneficiary", new JRBeanCollectionDataSource(memberDTO.getBeneficiaries()));
         try {
-           InputStream reportStream = IcasUtil.class.getResourceAsStream("/memberApplication.jrxml");
-           if (reportStream == null) {
-               throw new FileNotFoundException("JRXML file not found in classpath");
-           }
-           JasperPrint empReport = JasperFillManager.fillReport(
-                   JasperCompileManager.compileReport(reportStream), // compile from InputStream
-                   empParams, // dynamic parameters passed
-                   new JREmptyDataSource()
-           );
+            InputStream reportStream = IcasUtil.class.getResourceAsStream("/memberApplication.jrxml");
+            if (reportStream == null) {
+                throw new FileNotFoundException("JRXML file not found in classpath");
+            }
+            JasperPrint empReport = JasperFillManager.fillReport(
+                    JasperCompileManager.compileReport(reportStream), // compile from InputStream
+                    empParams, // dynamic parameters passed
+                    new JREmptyDataSource()
+            );
             log.info("Generated {} ");
             return JasperExportManager.exportReportToPdf(empReport);
         } catch (Exception e) {
@@ -170,9 +183,9 @@ public class IcasUtil {
 
             JasperPrint empReport =
                     JasperFillManager.fillReport(JasperCompileManager.compileReport(reportStream)
-                    , empParams // dynamic parameters passed
-                    , new JRBeanCollectionDataSource(claimDTO)
-            );
+                            , empParams // dynamic parameters passed
+                            , new JRBeanCollectionDataSource(claimDTO)
+                    );
             return JasperExportManager.exportReportToPdf(empReport);
 
         } catch (Exception e) {

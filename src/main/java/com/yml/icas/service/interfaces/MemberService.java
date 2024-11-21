@@ -20,7 +20,7 @@ public interface MemberService {
 
     ResponseEntity<String[]> getRelationShip(String rs);
 
-    ResponseEntity<Set<MemberDTO>> searchMember(Map<String, Object> searchParams);
+    Page<MemberDTO> searchMember(Map<String, Object> searchParams);
 
     Page<MemberDTO> getMembers(int page, int size, String search);
 

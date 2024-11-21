@@ -62,9 +62,9 @@ public class MemberRestImpl implements MemberRest {
     }
 
     @Override
-    public ResponseEntity<Set<MemberDTO>> searchMember(Map<String, Object> searchParams) {
+    public ResponseEntity<Page<MemberDTO>> searchMember(Map<String, Object> searchParams) {
         try {
-            return memberService.searchMember(searchParams);
+            return new ResponseEntity<>(memberService.searchMember(searchParams), HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

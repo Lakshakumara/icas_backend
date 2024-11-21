@@ -59,7 +59,6 @@ public class DownloadServiceImpl implements DownloadService {
             return new ResponseEntity<>(MyConstants.ERROR_MSG1.getBytes(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @Override
     public ResponseEntity<byte[]> downloadOPDApplication(Integer claimId) {
         try {

@@ -5,14 +5,17 @@ import jakarta.mail.internet.MimeMessage;
 import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmailService {
@@ -25,7 +28,13 @@ public class EmailService {
 
     @Autowired
     private Environment env;
-
+    @Async
+    public CompletableFuture<Void> sendEmailAsync(String email, String subject, String template, Map<String, Object> variables) {
+        // Send the email in the background without blocking the main thread
+        System.out.println("In email Thread");
+        sendEmail(email, subject, template, variables);
+        return CompletableFuture.completedFuture(null); // Return a completed future
+    }
     public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables) {
         Context context = new Context();
         context.setVariables(variables);
@@ -37,12 +46,12 @@ public class EmailService {
             helper.setSubject(subject);
             helper.setText(body, true);
             mailSender.send(message);
-        } catch (MessagingException e) {
-            Log.info("Email not sent to " + to);
+        } catch (Exception e) {
+            Log.info("Email not sent to "+ to);
         }
     }
 
-    public void sendEmailWithAttachment(String to, String subject, String templateName, Map<String, Object> variables, File attachment) {
+    public void sendEmailWithAttachment(String to, String subject, String templateName, Map<String, Object> variables, byte[] attachmentData, String attachmentName) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
 
         try {
@@ -55,7 +64,8 @@ public class EmailService {
             helper.setText(content, true);
 
             // Add attachment
-            helper.addAttachment(attachment.getName(), attachment);
+            ByteArrayResource byteArrayResource = new ByteArrayResource(attachmentData);
+            helper.addAttachment(attachmentName, byteArrayResource);
 
             mailSender.send(mimeMessage);
         } catch (Exception e) {
@@ -65,9 +75,10 @@ public class EmailService {
     }
 
     private String processTemplate(String templateName, Map<String, Object> variables) {
-        // Process the template using Thymeleaf or your template engine
-        // Return the processed content as a string
-        return "<html>Processed content</html>"; // Placeholder, implement your template processing logic
+        Context context = new Context();
+        context.setVariables(variables);
+        String body = templateEngine.process(templateName, context);
+        return body; // Placeholder, implement your template processing logic
     }
 
 }

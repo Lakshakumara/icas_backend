@@ -9,22 +9,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ObjectMapper {
 
-    /*public static Claim mapToClaimOPD(ClaimOPDDTO claimOPDDTO) {
-        Claim cd = new Claim();
-        if (Objects.isNull(claimOPDDTO)) return cd;
-        cd.setId(claimOPDDTO.getId());
-        cd.setMember(new Member(claimOPDDTO.getMemberId()));
-        cd.setRequestFor(claimOPDDTO.getRequestFor());
-        cd.setCategory(claimOPDDTO.getCategory());
-        cd.setStartDate(claimOPDDTO.getStartDate());
-        cd.setClaimDate(claimOPDDTO.getClaimDate());
-        cd.setRequestAmount(claimOPDDTO.getRequestAmount());
-        cd.setClaimStatus(claimOPDDTO.getClaimStatus());
-        cd.setAcceptedDate(claimOPDDTO.getAcceptedDate());
-        return cd;
-    }*/
-
-
     public static ClaimDTO mapToClaimDTO(Claim claim) {
         if (Objects.isNull(claim)) return null;
         ClaimDTO cd = new ClaimDTO();
@@ -93,22 +77,6 @@ public class ObjectMapper {
         return cd;
     }
 
-   /* public static ClaimData mapToClaimData(ClaimDTO claimDTO) {
-        if (Objects.isNull(claimDTO)) return null;
-        ClaimData c = new ClaimData();
-        c.setDeductionAmount(claimDTO.getDeductionAmount());
-        c.setPaidAmount(claimDTO.getPaidAmount());
-        c.setRejectRemarks(claimDTO.getRejectRemarks());
-        c.setRejectedDate(claimDTO.getRejectedDate());
-        c.setRemarks(claimDTO.getRemarks());
-        c.setRequestAmount(claimDTO.getRequestAmount());
-        c.setClaim(new Claim(claimDTO.getId()));
-
-        c.setSchemeData(new SchemeData(claimDTO.getClaimDataDTOS().));
-        return c;
-    }*/
-
-
     public static SchemeDTO mapToSchemeDTO(SchemeData schemeData) {
         if (Objects.isNull(schemeData)) return null;
         return new SchemeDTO(schemeData.getId(), schemeData.getIdText(), schemeData.getTitle(),
@@ -175,6 +143,7 @@ public class ObjectMapper {
         memberDTO.setPassword(member.getPassword());
         memberDTO.setMDate(member.getMDate());
         memberDTO.setStatus(member.getStatus());
+        memberDTO.setPhotoUrl(member.getPhotoUrl());
         memberDTO.setDeleted(member.isDeleted());
         memberDTO.setRegistrationOpen(member.getRegistrationOpen());
 
@@ -234,6 +203,7 @@ public class ObjectMapper {
         member.setPassword(memberDTO.getPassword());
         member.setMDate(memberDTO.getMDate());
         member.setStatus(memberDTO.getStatus());
+        member.setPhotoUrl(memberDTO.getPhotoUrl());
         member.setDeleted(memberDTO.isDeleted());
         return member;
     }
@@ -248,6 +218,18 @@ public class ObjectMapper {
         return dependantDTO;
     }
 
+    public static MemberRegistrationDTO mapToMemberRegistrationDTO(Set<MemberRegistration> memberRegistration) {
+        if (Objects.isNull(memberRegistration)) return null;
+        MemberRegistrationDTO memberRegistrationDTO = new MemberRegistrationDTO();
+        Optional<MemberRegistration> max = memberRegistration.stream().max(Comparator.comparingInt(MemberRegistration::getYear));
+        if (max.isPresent()) {
+            memberRegistrationDTO.setYear(max.get().getYear());
+            memberRegistrationDTO.setSchemeType(max.get().getSchemeType());
+            memberRegistrationDTO.setAcceptedDate(max.get().getAcceptedDate());
+        }
+        return memberRegistrationDTO;
+    }
+
     public static MemberRegistration mapToMemberRegistration(Set<MemberRegistrationDTO> memberRegistrationDTO) {
         if (Objects.isNull(memberRegistrationDTO)) return null;
         MemberRegistration memberRegistration = new MemberRegistration();
@@ -259,18 +241,6 @@ public class ObjectMapper {
             memberRegistration.setAcceptedBy(max.get().getAcceptedBy());
         }
         return memberRegistration;
-    }
-
-    public static MemberRegistrationDTO mapToMemberRegistrationDTO(Set<MemberRegistration> memberRegistration) {
-        if (Objects.isNull(memberRegistration)) return null;
-        MemberRegistrationDTO memberRegistrationDTO = new MemberRegistrationDTO();
-        Optional<MemberRegistration> max = memberRegistration.stream().max(Comparator.comparingInt(MemberRegistration::getYear));
-        if (max.isPresent()) {
-            memberRegistrationDTO.setYear(max.get().getYear());
-            memberRegistrationDTO.setSchemeType(max.get().getSchemeType());
-            memberRegistrationDTO.setAcceptedDate(max.get().getAcceptedDate());
-        }
-        return memberRegistrationDTO;
     }
 
     public static Set<MemberDependantData> mapToMemberDD(MemberDTO memberDTO) {
@@ -291,4 +261,34 @@ public class ObjectMapper {
                     return mdd;
                 }).collect(Collectors.toSet());
     }
+
+    /*public static Claim mapToClaimOPD(ClaimOPDDTO claimOPDDTO) {
+        Claim cd = new Claim();
+        if (Objects.isNull(claimOPDDTO)) return cd;
+        cd.setId(claimOPDDTO.getId());
+        cd.setMember(new Member(claimOPDDTO.getMemberId()));
+        cd.setRequestFor(claimOPDDTO.getRequestFor());
+        cd.setCategory(claimOPDDTO.getCategory());
+        cd.setStartDate(claimOPDDTO.getStartDate());
+        cd.setClaimDate(claimOPDDTO.getClaimDate());
+        cd.setRequestAmount(claimOPDDTO.getRequestAmount());
+        cd.setClaimStatus(claimOPDDTO.getClaimStatus());
+        cd.setAcceptedDate(claimOPDDTO.getAcceptedDate());
+        return cd;
+    }*/
+ /* public static ClaimData mapToClaimData(ClaimDTO claimDTO) {
+        if (Objects.isNull(claimDTO)) return null;
+        ClaimData c = new ClaimData();
+        c.setDeductionAmount(claimDTO.getDeductionAmount());
+        c.setPaidAmount(claimDTO.getPaidAmount());
+        c.setRejectRemarks(claimDTO.getRejectRemarks());
+        c.setRejectedDate(claimDTO.getRejectedDate());
+        c.setRemarks(claimDTO.getRemarks());
+        c.setRequestAmount(claimDTO.getRequestAmount());
+        c.setClaim(new Claim(claimDTO.getId()));
+
+        c.setSchemeData(new SchemeData(claimDTO.getClaimDataDTOS().));
+        return c;
+    }*/
+
 }

@@ -2,7 +2,6 @@ package com.yml.icas.control;
 
 import com.yml.icas.dto.ClaimDTO;
 import com.yml.icas.dto.ClaimOPDDTO;
-import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.service.ClaimServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,15 +74,6 @@ public class ClaimRestImpl implements ClaimRest {
         }
     }
 
-    /*@Override
-    public ResponseEntity<Set<ClaimDTO>> getAllClaim(Map<String, String> params) {
-        try {
-            return new ResponseEntity<>(claimService.getAllClaim(params), HttpStatus.OK);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(new HashSet<>(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
     @Override
     public ResponseEntity<Page<ClaimDTO>> getAllClaim(Map<String, String> params) {
         Page<ClaimDTO> claimDTO = claimService.getAllClaim(params);
@@ -108,6 +98,12 @@ public class ClaimRestImpl implements ClaimRest {
             ex.printStackTrace();
             return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<Page<ClaimDTO>> getTest() {
+        Page<ClaimDTO> claimDTO = claimService.getTest();
+        return ResponseEntity.ok(claimDTO);
     }
 
     public ResponseEntity<Integer> setClaimAccept(ClaimOPDDTO claimOPDDTO) {

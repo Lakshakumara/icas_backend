@@ -85,6 +85,9 @@ public class Member implements Serializable {
     @Column(name = "status", columnDefinition = "TEXT")
     private String status;
 
+    @Column(name = "photourl", columnDefinition = "TEXT")
+    private String photoUrl;
+
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
@@ -103,15 +106,13 @@ public class Member implements Serializable {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<MemberRegistration> memberRegistrations = new HashSet<>();
 
-//@JsonBackReference
-
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<MemberDependantData> dependantData = new HashSet<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<BeneficiaryData> beneficiaryData = new HashSet<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Claim> claimSet = new HashSet<>();
 
     public Member(Integer id) {

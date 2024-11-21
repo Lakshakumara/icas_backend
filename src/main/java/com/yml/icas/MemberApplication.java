@@ -6,7 +6,6 @@ import com.yml.icas.hr.HR;
 import com.yml.icas.hr.HRRepository;
 import com.yml.icas.model.Member;
 import com.yml.icas.model.MemberRegistration;
-import com.yml.icas.model.Role;
 import com.yml.icas.model.SchemeData;
 import com.yml.icas.repository.MemberRegistrationRepo;
 import com.yml.icas.repository.MemberRepo;
@@ -49,11 +48,11 @@ public class MemberApplication {
                 saman.setDob(new Date(77, 01, 01));
                 saman.setDesignation("Senior Lecture");
                 saman.setDepartment("Electrical & Computer");
-
+                saman.setPhotoUrl("");
 
                 HR kamal = new HR();
                 kamal.setEmpNo("101");
-                kamal.setName("Kamal PSR 101");
+                kamal.setName("Kamal PSR");
                 kamal.setAddress("101, Nawala Para, Nugegoda");
                 kamal.setEmail("101kamal@gmail.com");
                 kamal.setContactNo("0714396101");
@@ -63,10 +62,11 @@ public class MemberApplication {
                 kamal.setDob(new Date(85, 02, 01));
                 kamal.setDesignation("Lab Assistant");
                 kamal.setDepartment("Electrical & Computer");
+                kamal.setPhotoUrl("");
 
                 HR wasantha = new HR();
                 wasantha.setEmpNo("102");
-                wasantha.setName("Wasantha RSR 102");
+                wasantha.setName("Wasantha RSR");
                 wasantha.setAddress("102, Nawala, Nugegoda");
                 wasantha.setEmail("102wasantha@gmail.com");
                 wasantha.setContactNo("0714396102");
@@ -76,10 +76,11 @@ public class MemberApplication {
                 wasantha.setDob(new Date(65, 03, 01));
                 wasantha.setDesignation("Labour");
                 wasantha.setDepartment("Electrical & Computer");
+                wasantha.setPhotoUrl("");
 
                 HR lal = new HR();
                 lal.setEmpNo("103");
-                lal.setName("Lal Karunasinghe GWD 103");
+                lal.setName("Lal Karunasinghe GWD");
                 lal.setAddress("103, Nawala, Nugegoda");
                 lal.setEmail("103lal@gmail.com");
                 lal.setContactNo("0714396103");
@@ -89,10 +90,11 @@ public class MemberApplication {
                 lal.setDob(new Date(90, 04, 01));
                 lal.setDesignation("Lecturer");
                 lal.setDepartment("Textile & appereal");
+                lal.setPhotoUrl("");
 
                 HR amila = new HR();
                 amila.setEmpNo("104");
-                amila.setName("Amila Amarakoon W 104");
+                amila.setName("Amila Amarakoon W");
                 amila.setAddress("104/a, Mahaweediya, Balangoda");
                 amila.setEmail("104amila@gmail.com");
                 amila.setContactNo("0714396104");
@@ -102,10 +104,11 @@ public class MemberApplication {
                 amila.setDob(new Date(94, 04, 01));
                 amila.setDesignation("Clerk");
                 amila.setDepartment("Finance Department");
+                amila.setPhotoUrl("");
 
                 HR Neela = new HR();
                 Neela.setEmpNo("105");
-                Neela.setName("Neela Malkanthi ABC 105");
+                Neela.setName("Neela Malkanthi ABC");
                 Neela.setAddress("105/a, Narammala, Alawwa");
                 Neela.setEmail("105neela@gmail.com");
                 Neela.setContactNo("0714396105");
@@ -115,10 +118,11 @@ public class MemberApplication {
                 Neela.setDob(new Date(94, 04, 01));
                 Neela.setDesignation("Clerk");
                 Neela.setDepartment("Botany Department");
+                Neela.setPhotoUrl("");
 
                 HR aruni = new HR();
                 aruni.setEmpNo("106");
-                aruni.setName("aruni Thilakalatha PGD 106");
+                aruni.setName("aruni Thilakalatha PGD");
                 aruni.setAddress("106/a, Malwala, Rathnapura");
                 aruni.setEmail("106aruni@gmail.com");
                 aruni.setContactNo("0714396106");
@@ -128,10 +132,11 @@ public class MemberApplication {
                 aruni.setDob(new Date(92, 04, 01));
                 aruni.setDesignation("Labour");
                 aruni.setDepartment("Education Department");
+                aruni.setPhotoUrl("");
 
                 HR asitha = new HR();
                 asitha.setEmpNo("107");
-                asitha.setName("asitha Kumburegedara ASV 107");
+                asitha.setName("asitha Kumburegedara ASV");
                 asitha.setAddress("107/a, Bambalapitiya, Colombo");
                 asitha.setEmail("107asitha@gmail.com");
                 asitha.setContactNo("0714396107");
@@ -141,10 +146,11 @@ public class MemberApplication {
                 asitha.setDob(new Date(90, 04, 01));
                 asitha.setDesignation("Labour");
                 asitha.setDepartment("Education Department");
+                asitha.setPhotoUrl("");
 
                 HR dar = new HR();
                 dar.setEmpNo("108");
-                dar.setName("Dharshana Kumara ATD 108");
+                dar.setName("Dharshana Kumara ATD");
                 dar.setAddress("108/a, Wallawatta, Colombo");
                 dar.setEmail("108dharshana@gmail.com");
                 dar.setContactNo("0714396108");
@@ -154,10 +160,11 @@ public class MemberApplication {
                 dar.setDob(new Date(75, 03, 01));
                 dar.setDesignation("Development Officer");
                 dar.setDepartment("Education Department");
+                dar.setPhotoUrl("");
 
                 HR kapila = new HR();
                 kapila.setEmpNo("109");
-                kapila.setName("Kapila Lal KEW 109");
+                kapila.setName("Kapila Lal KEW");
                 kapila.setAddress("109/a, Athurugiriya, Colombo");
                 kapila.setEmail("109kapila@gmail.com");
                 kapila.setContactNo("0714396109");
@@ -167,25 +174,27 @@ public class MemberApplication {
                 kapila.setDob(new Date(75, 03, 01));
                 kapila.setDesignation("Development Officer");
                 kapila.setDepartment("Education Department");
+                kamal.setPhotoUrl("");
 
                 HR darmadasa = new HR();
                 darmadasa.setEmpNo("110");
-                darmadasa.setName("Dharshana Kumara KMS 110");
+                darmadasa.setName("Dr.LSk Udugama");
                 darmadasa.setAddress("110/a, Wallawatta, Colombo");
-                darmadasa.setEmail("110dharmadasa@gmail.com");
+                darmadasa.setEmail("udugama@ou.ac.lk");
                 darmadasa.setContactNo("0714396110");
                 darmadasa.setCivilStatus("Married");
                 darmadasa.setNic("810558110v");
                 darmadasa.setSex("Male");
                 darmadasa.setDob(new Date(75, 03, 01));
-                darmadasa.setDesignation("KKS");
-                darmadasa.setDepartment("Textile & appereal");
+                darmadasa.setDesignation("Senior Lecture");
+                darmadasa.setDepartment("Electrical & Computer");
+                darmadasa.setPhotoUrl("");
 
                 HR darmadasa111 = new HR();
                 darmadasa111.setEmpNo("111");
-                darmadasa111.setName("Dharshana Kumara KMS 111");
+                darmadasa111.setName("Dharshana Kumara KMS");
                 darmadasa111.setAddress("110/a, Wallawatta, Colombo");
-                darmadasa111.setEmail("110dharmadasa@gmail.com");
+                darmadasa111.setEmail("udugama@ou.ac.lk");
                 darmadasa111.setContactNo("0714396110");
                 darmadasa111.setCivilStatus("Married");
                 darmadasa111.setNic("810550110v");
@@ -193,13 +202,13 @@ public class MemberApplication {
                 darmadasa111.setDob(new Date(75, 03, 01));
                 darmadasa111.setDesignation("KKS");
                 darmadasa111.setDepartment("Textile & appereal");
-
+                darmadasa111.setPhotoUrl("");
 
                 HR x = new HR();
                 x.setEmpNo("112");
-                x.setName("x Kumara KMS 112");
+                x.setName("x Kumara KMS");
                 x.setAddress("110/a, Wallawatta, Colombo");
-                x.setEmail("110dharmadasa@gmail.com");
+                x.setEmail("udugama@ou.ac.lk");
                 x.setContactNo("0714396110");
                 x.setCivilStatus("Married");
                 x.setNic("850558110v");
@@ -207,13 +216,13 @@ public class MemberApplication {
                 x.setDob(new Date(75, 03, 05));
                 x.setDesignation("KKS");
                 x.setDepartment("Botany Department");
-
+                x.setPhotoUrl("");
 
                 HR wasana = new HR();
                 wasana.setEmpNo("113");
-                wasana.setName("wasana Kumara KMS 113");
+                wasana.setName("wasana Kumara KMS");
                 wasana.setAddress("110/a, Wallawatta, Colombo");
-                wasana.setEmail("110dharmadasa@gmail.com");
+                wasana.setEmail("udugama@ou.ac.lk");
                 wasana.setContactNo("0714396110");
                 wasana.setCivilStatus("Married");
                 wasana.setNic("910558110v");
@@ -221,12 +230,13 @@ public class MemberApplication {
                 wasana.setDob(new Date(75, 12, 04));
                 wasana.setDesignation("KKS");
                 wasana.setDepartment("Botany Department");
+                wasana.setPhotoUrl("");
 
                 HR perera = new HR();
                 perera.setEmpNo("114");
-                perera.setName("perera Kumara KMS 114");
+                perera.setName("perera Kumara KMS");
                 perera.setAddress("110/a, Wallawatta, Colombo");
-                perera.setEmail("110dharmadasa@gmail.com");
+                perera.setEmail("udugama@ou.ac.lk");
                 perera.setContactNo("0714396110");
                 perera.setCivilStatus("Married");
                 perera.setNic("810558120v");
@@ -234,12 +244,13 @@ public class MemberApplication {
                 perera.setDob(new Date(75, 03, 01));
                 perera.setDesignation("Senior Lecture");
                 perera.setDepartment("Education Department");
+                perera.setPhotoUrl("");
 
                 HR z = new HR();
                 z.setEmpNo("115");
-                z.setName("z Kumara KMS 115");
+                z.setName("z Kumara KMS");
                 z.setAddress("110/a, Wallawatta, Colombo");
-                z.setEmail("110dharmadasa@gmail.com");
+                z.setEmail("udugama@ou.ac.lk");
                 z.setContactNo("0714396110");
                 z.setCivilStatus("Married");
                 z.setNic("810558111v");
@@ -247,12 +258,13 @@ public class MemberApplication {
                 z.setDob(new Date(76, 03, 01));
                 z.setDesignation("KKS");
                 z.setDepartment("Botany Department");
+                z.setPhotoUrl("");
 
                 HR a = new HR();
                 a.setEmpNo("116");
-                a.setName("a Kumara KMS 116");
+                a.setName("a Kumara KMS");
                 a.setAddress("110/a, Wallawatta, Colombo");
-                a.setEmail("110dharmadasa@gmail.com");
+                a.setEmail("udugama@ou.ac.lk");
                 a.setContactNo("0714396110");
                 a.setCivilStatus("Married");
                 a.setNic("920558111v");
@@ -260,13 +272,13 @@ public class MemberApplication {
                 a.setDob(new Date(76, 03, 30));
                 a.setDesignation("KKS");
                 a.setDepartment("Botany Department");
-
+                a.setPhotoUrl("");
 
                 HR l = new HR();
                 l.setEmpNo("117");
-                l.setName("z Kumara KMS 117");
+                l.setName("z Kumara KMS");
                 l.setAddress("110/a, Wallawatta, Colombo");
-                l.setEmail("110dharmadasa@gmail.com");
+                l.setEmail("udugama@ou.ac.lk");
                 l.setContactNo("0714396110");
                 l.setCivilStatus("Married");
                 l.setNic("815558111v");
@@ -274,13 +286,13 @@ public class MemberApplication {
                 l.setDob(new Date(76, 03, 01));
                 l.setDesignation("KKS");
                 l.setDepartment("Botany Department");
-
+                l.setPhotoUrl("");
 
                 HR an = new HR();
                 an.setEmpNo("118");
-                an.setName("an Kumara KMS 118");
+                an.setName("an Kumara KMS");
                 an.setAddress("110/a, Wallawatta, Colombo");
-                an.setEmail("110dharmadasa@gmail.com");
+                an.setEmail("udugama@ou.ac.lk");
                 an.setContactNo("0714396110");
                 an.setCivilStatus("Married");
                 an.setNic("810558111v");
@@ -288,13 +300,13 @@ public class MemberApplication {
                 an.setDob(new Date(76, 03, 01));
                 an.setDesignation("KKS");
                 an.setDepartment("Botany Department");
-
+                an.setPhotoUrl("");
 
                 HR momo = new HR();
                 momo.setEmpNo("119");
-                momo.setName("momo Kumara KMS 119");
+                momo.setName("momo Kumara KMS");
                 momo.setAddress("110/a, Wallawatta, Colombo");
-                momo.setEmail("110dharmadasa@gmail.com");
+                momo.setEmail("udugama@ou.ac.lk");
                 momo.setContactNo("0714396110");
                 momo.setCivilStatus("Married");
                 momo.setNic("810058111v");
@@ -302,13 +314,13 @@ public class MemberApplication {
                 momo.setDob(new Date(76, 03, 01));
                 momo.setDesignation("Senior Lecture");
                 momo.setDepartment("Botany Department");
-
+                momo.setPhotoUrl("");
 
                 HR k = new HR();
                 k.setEmpNo("120");
-                k.setName("z Kumara KMS 120");
+                k.setName("z Kumara KMS");
                 k.setAddress("110/a, Wallawatta, Colombo");
-                k.setEmail("110dharmadasa@gmail.com");
+                k.setEmail("lakshakumara@gmail.com");
                 k.setContactNo("0714396110");
                 k.setCivilStatus("Married");
                 k.setNic("930558111v");
@@ -316,11 +328,11 @@ public class MemberApplication {
                 k.setDob(new Date(76, 03, 01));
                 k.setDesignation("KKS");
                 k.setDepartment("Finance Department");
-
+                k.setPhotoUrl("");
 
                 HR amali = new HR();
                 amali.setEmpNo("121");
-                amali.setName("z Kumara KMS 121");
+                amali.setName("z Kumara KMS");
                 amali.setAddress("110/a, Wallawatta, Colombo");
                 amali.setEmail("110dharmadasa@gmail.com");
                 amali.setContactNo("0714396110");
@@ -330,6 +342,7 @@ public class MemberApplication {
                 amali.setDob(new Date(76, 03, 01));
                 amali.setDesignation("Cleark");
                 amali.setDepartment("Finance Department");
+                amali.setPhotoUrl("");
 
                 hrRepository.save(saman);
                 hrRepository.save(kamal);
@@ -384,7 +397,7 @@ public class MemberApplication {
                 mreg.setSchemeType("Individual");
                 memberRegistrationRepo.save(mreg);
             }
-            if(schemeDataRepo.count() == 0) {
+            if (schemeDataRepo.count() == 0) {
                 ObjectMapper mapper = new ObjectMapper();
                 TypeReference<List<SchemeData>> typeReference = new TypeReference<>() {
                 };

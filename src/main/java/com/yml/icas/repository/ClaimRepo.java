@@ -5,6 +5,7 @@ import com.yml.icas.model.Member;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -142,17 +143,18 @@ public interface ClaimRepo extends JpaRepository<Claim, Integer> {
             "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
             "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
 
-            "AND (:claimType IS NULL OR :claimType = '%' OR lower(c.category) LIKE lower(:claimType)) " +
+            "AND (:claimType IS NULL OR :claimType = '%' OR :claimType = '' OR lower(c.category) LIKE lower(:claimType)) " +
             "AND (:year IS NULL OR :year = 0 OR YEAR(c.claimDate) = :year) " +
-            "AND (:member IS NULL OR c.member = :member) " +
-            "AND (:claimStatus IS NULL OR :claimStatus = '%' OR lower(c.claimStatus) LIKE lower(:claimStatus)) " +
+            "AND (:memberId IS NULL OR c.member.id = :memberId) " +
+            "AND (:claimStatus IS NULL OR :claimStatus = '%' OR :claimStatus = '' OR lower(c.claimStatus) LIKE lower(:claimStatus)) " +
             "ORDER BY c.claimDate")
-    Page<Claim> getClaimData(@Param("member") Member member,
+    Page<Claim> getClaimData(@Param("memberId") Integer memberId,
                              @Param("claimType") String claimType,
                              @Param("year") Integer year,
                              @Param("claimStatus") String claimStatus,
                              @Param("searchText") String searchText,
                              Pageable pageable);
+
 
     @Query(value = "SELECT c FROM Claim c WHERE " +
             "(:searchText IS NULL OR :searchText = '' OR " +
@@ -169,13 +171,6 @@ public interface ClaimRepo extends JpaRepository<Claim, Integer> {
     @Query(value = "select c from Claim c where c.member =:member and YEAR(c.claimDate)=:year")
     List<Claim> getDashboardData(Member member, Integer year);
 
-    /**
-     * @param claimType
-     * @param claimStatus
-     * @return
-     */
-    /*@Query(value = "Select c from Claim c where lower(c.category) = lower(:claimType) " +
-            "and lower(c.claimStatus) = lower(:claimStatus)")*/
     @Query(value = "Select * from Claim c where lower(c.category) like (lower(:claimType))  " +
             "and lower(c.claimStatus) like lower(:claimStatus)", nativeQuery = true)
     List<Claim> getClaims(String claimType, String claimStatus);
@@ -249,9 +244,8 @@ public interface ClaimRepo extends JpaRepository<Claim, Integer> {
     int mecApproval(@Param(value = "id") long id,
                     @Param(value = "claimStatus") String claimStatus);
 
-@Query("select distinct c.voucherId from Claim c where c.voucherId != null")
+    @Query("select distinct c.voucherId from Claim c where c.voucherId != null")
     long[] getVoucherId();
-
     @Modifying
     @Transactional
     @Query("update Claim c set c.deductionAmount=:deductionAmount, c.paidAmount=:paidAmount" +

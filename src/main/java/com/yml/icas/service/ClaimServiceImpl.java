@@ -244,16 +244,17 @@ public class ClaimServiceImpl implements ClaimService {
     @Override
     public Page<ClaimDTO> getAllClaim(Map<String, String> params) {
         log.info("getAllClaim params {}", params);
-        Pageable pageable = PageRequest.of(Integer.valueOf(params.get("pageIndex")), Integer.valueOf(params.get("pageSize")));
+        Pageable pageable = PageRequest.of(Integer.valueOf(params.get("pageIndex")),
+                Integer.valueOf(params.get("pageSize")));
         Member member = memberRepo.findByEmpNoIgnoreCase(params.get("empNo"));
+
         Page<Claim> claimList = claimRepo.getClaimData(
-                member,
+                (member == null)?null:member.getId(),
                 params.get("claimType"),
                 (params.get("year").isEmpty())?0:Integer.valueOf(params.get("year")),
                 params.get("claimStatus"),
                 params.get("filter"),
                 pageable);
-
  /*       try {
             if (!params.get("empNo").isEmpty()) {
                 //Member member = memberRepo.findByEmpNoIgnoreCase(params.get("empNo"));
@@ -329,6 +330,27 @@ public class ClaimServiceImpl implements ClaimService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public Page<ClaimDTO> getTest() {
+        Pageable pageable = PageRequest.of(0,5);
+        Member member = memberRepo.findByEmpNoIgnoreCase("100");
+
+        Page<Claim> claimList = claimRepo.getClaimData(
+                member.getId(),
+                "%",
+                0,
+                null,
+                null,
+                pageable);
+        Page<ClaimDTO> cd = claimList.map(ObjectMapper::mapToClaimDTO);
+        log.info("cd {} ",cd.toString());
+        for (ClaimDTO c:cd
+        ) {
+            log.info(String.valueOf(c));
+        }
+        return cd;
     }
 
     public Boolean deleteClaimData(Integer id) {
