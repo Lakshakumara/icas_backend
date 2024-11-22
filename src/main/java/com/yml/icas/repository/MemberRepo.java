@@ -10,9 +10,9 @@ import org.springframework.data.repository.query.Param;
 public interface MemberRepo extends JpaRepository<Member, Integer> {
     @Query("SELECT m FROM Member m WHERE " +
             "(:filter IS NULL OR :filter = '' OR " +
-            "lower(m.empNo) LIKE lower(concat('%', :filter, '%')) OR " +
-            "lower(m.name) LIKE lower(concat('%', :filter, '%'))) " +
-            "ORDER BY m.name")
+            "lower(m.empNo) LIKE lower(concat(:filter, '%')) OR " +
+            "lower(m.name) LIKE lower(concat(:filter, '%')) OR " +
+            "lower(m.name) LIKE lower(concat('% ', :filter, '%'))) ")
     Page<Member> getMembers(@Param("filter") String filter, Pageable pageable);
 
     Page<Member> findAllByEmpNoContainsIgnoreCase(String empNo, Pageable pageable);

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -356,10 +357,21 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    public Pageable createPageable(Map<String, Object> searchParams) {
+        int pageIndex = Integer.parseInt(searchParams.get("pageIndex").toString());
+        int pageSize = Integer.parseInt(searchParams.get("pageSize").toString());
+
+        if (searchParams.containsKey("sortField") && searchParams.get("sortField") != "") {
+            String sortDirection = searchParams.get("sortOrder").toString();
+            String sortField = searchParams.get("sortField").toString();
+            Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+            return PageRequest.of(pageIndex, pageSize, sort);
+        } else return PageRequest.of(pageIndex, pageSize);
+
+    }
     @Override
     public Page<MemberDTO> searchMember(Map<String, Object> searchParams) {
-        Pageable pageable = PageRequest.of(Integer.valueOf(searchParams.get("pageIndex").toString())
-                , Integer.valueOf(searchParams.get("pageSize").toString()));
+        Pageable pageable = createPageable(searchParams);
         try {
             Page<MemberRegistration> mt;
             Page<MemberDTO> memberDTOPage = null;

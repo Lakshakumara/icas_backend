@@ -21,7 +21,9 @@ public class HrControl {
     @GetMapping("/{empNo}")
     public ResponseEntity<HR> getEmployee(@PathVariable("empNo") String empNo) {
         try {
-            return ResponseEntity.ok(hrService.getEmployee(empNo));
+            HR employee = hrService.getEmployee(empNo);
+            System.out.println(employee);
+            return ResponseEntity.ok((employee==null)?new HR():employee);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
