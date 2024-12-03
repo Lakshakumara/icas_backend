@@ -6,7 +6,6 @@ import com.yml.icas.hr.HR;
 import com.yml.icas.hr.HRRepository;
 import com.yml.icas.model.Member;
 import com.yml.icas.model.MemberRegistration;
-import com.yml.icas.model.Role;
 import com.yml.icas.model.SchemeData;
 import com.yml.icas.repository.MemberRegistrationRepo;
 import com.yml.icas.repository.MemberRepo;
@@ -25,7 +24,9 @@ import org.springframework.web.filter.CorsFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Date;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @SpringBootApplication
