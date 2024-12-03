@@ -33,6 +33,7 @@ public class EmailService {
         sendEmail(email, subject, template, variables);
         return CompletableFuture.completedFuture(null); // Return a completed future
     }
+    @Async
     public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables) {
         Context context = new Context();
         context.setVariables(variables);
@@ -48,7 +49,7 @@ public class EmailService {
             Log.info("Email not sent to "+ to);
         }
     }
-
+    @Async
     public void sendEmailWithAttachment(String to, String subject, String templateName, Map<String, Object> variables, byte[] attachmentData, String attachmentName) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
 
@@ -66,9 +67,7 @@ public class EmailService {
             helper.addAttachment(attachmentName, byteArrayResource);
 
             mailSender.send(mimeMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Handle exception here
+        } catch (Exception ignored) {
         }
     }
 

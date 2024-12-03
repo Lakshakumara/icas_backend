@@ -1,12 +1,16 @@
 package com.yml.icas.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
 
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BeneficiaryDTO {
     private Integer id;
     private String name;
@@ -14,5 +18,6 @@ public class BeneficiaryDTO {
     private String relationship;
     private double percent;
     private Date registerDate;
+    private Integer registerYear;
     private boolean deleted = false;
 }

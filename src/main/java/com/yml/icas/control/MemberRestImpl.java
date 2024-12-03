@@ -1,6 +1,10 @@
 package com.yml.icas.control;
 
+import com.yml.icas.dto.BeneficiaryDTO;
+import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
+import com.yml.icas.dto.ObjectMapper;
+import com.yml.icas.model.Member;
 import com.yml.icas.service.MemberServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -20,33 +26,14 @@ public class MemberRestImpl implements MemberRest {
     MemberServiceImpl memberService;
 
     @Override
-    public ResponseEntity<Integer> updateMember(String criteria, Map<String, Object> dataSet) {
-        log.info(criteria +"dataset {}",dataSet);
-        return memberService.updateMember(criteria, dataSet);
-    }
-
-   /* @Deprecated
-    @Override
-    public ResponseEntity<byte[]> signup(MemberDTO memberDTO) {
-        try {
-            return memberService.signUp(memberDTO);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
-
-    @Override
-    public ResponseEntity<Object> signupNew(MemberDTO memberDTO) {
+    public ResponseEntity<MemberDTO> signupNew(MemberDTO memberDTO) {
         try {
             log.info(memberDTO.toString());
-            memberService.signUpNew(memberDTO);
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{empNo}")
-                    .buildAndExpand(memberDTO.getEmpNo()).toUri();
-            return ResponseEntity.created(location).build();
+            Member member = memberService.signUpNew(memberDTO);
+            return ResponseEntity.ok(ObjectMapper.mapToMemberDTO(member));
         } catch (Exception ex) {
             ex.printStackTrace();
-            return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new MemberDTO(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -71,17 +58,34 @@ public class MemberRestImpl implements MemberRest {
     }
 
     @Override
-    public ResponseEntity<String[]> getRelationShip(String rs) {
-        return memberService.getRelationShip(rs);
+    public ResponseEntity<Set<BeneficiaryDTO>> getBeneficiaries(int year, String empNo) {
+        Set<BeneficiaryDTO> beneficiaryDTOS= new HashSet<>();
+        try {
+            beneficiaryDTOS =  memberService.getBeneficiaries(year, empNo);
+            return ResponseEntity.ok(beneficiaryDTOS);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(beneficiaryDTOS, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public ResponseEntity<Page<MemberDTO>> getMembers(int page, int size, String search) {
-        Page<MemberDTO> members = memberService.getMembers(page, size, search);
-        return ResponseEntity.ok(members);
+    @Override
+    public ResponseEntity<String[]> getRelationShip(String rs) {
+        return memberService.getRelationShip(rs);
     }
 
     public ResponseEntity<Void> updateRoles( Integer memberId, UpdateRolesRequest request) {
         memberService.updateRoles(memberId, request.getRoles());
         return ResponseEntity.noContent().build();
     }
+    @Override
+    public ResponseEntity<Integer> updateMember(String criteria, Map<String, Object> dataSet) {
+        log.info(criteria +"dataset {}",dataSet);
+        return memberService.updateMember(criteria, dataSet);
+    }
+
+    /*public ResponseEntity<Page<MemberDTO>> getMembers(int page, int size, String search) {
+        Page<MemberDTO> members = memberService.getMembers(page, size, search);
+        return ResponseEntity.ok(members);
+    }*/
 }

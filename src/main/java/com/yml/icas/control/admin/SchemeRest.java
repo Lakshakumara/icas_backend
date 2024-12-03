@@ -53,10 +53,10 @@ public class SchemeRest {
         }
     }
 
-    @GetMapping(path = "")
-    public ResponseEntity<List<SchemeDTO>> getScheme() {
+    @GetMapping(path = "/{category}")
+    public ResponseEntity<List<SchemeDTO>> getScheme(@PathVariable("category") String category) {
         try {
-            return schemeService.getScheme();
+            return schemeService.getScheme(category);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -67,7 +67,6 @@ public class SchemeRest {
     public ResponseEntity<Set<SchemeTitleDTO>> getSchemeTitles(@PathVariable("category") String category) {
         try {
             Set<SchemeTitleDTO> scheme = schemeService.getSchemeTitles(category);
-
             return new ResponseEntity<>(scheme, HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();

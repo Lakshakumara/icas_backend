@@ -1,7 +1,7 @@
 package com.yml.icas.service;
 
 import com.yml.icas.model.Member;
-import com.yml.icas.repository.MemberRegistrationRepo;
+import com.yml.icas.repository.RegistrationRepo;
 import com.yml.icas.service.interfaces.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class RegistrationServiceImpl implements RegistrationService {
 
     @Autowired
-    MemberRegistrationRepo memberRegistrationRepo;
+    RegistrationRepo memberRegistrationRepo;
 
     @Override
     public Boolean isRegistered(Integer year, String empNo) {

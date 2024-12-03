@@ -13,6 +13,4 @@ public interface SchemeDataRepo extends JpaRepository<SchemeData, Integer> {
 
     @Query("Select s from SchemeData s where s.category=:category order by s.id")
     List<SchemeData> getByCategory(@Param("category") String category);
-
-    //List<SchemeData> findAllBy
 }

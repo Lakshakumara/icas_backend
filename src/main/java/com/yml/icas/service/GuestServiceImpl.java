@@ -3,7 +3,7 @@ package com.yml.icas.service;
 import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.model.Member;
-import com.yml.icas.repository.MemberRegistrationRepo;
+import com.yml.icas.repository.RegistrationRepo;
 import com.yml.icas.repository.MemberRepo;
 import com.yml.icas.service.interfaces.GuestService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class GuestServiceImpl implements GuestService {
     MemberRepo memberRepo;
 
     @Autowired
-    MemberRegistrationRepo memberRegistrationRepo;
+    RegistrationRepo memberRegistrationRepo;
 
     @Override
     public ResponseEntity<Map<String, Object>> memberValidation(Integer year, String empNo) {
@@ -53,8 +53,6 @@ public class GuestServiceImpl implements GuestService {
             }
             statusGest = HttpStatus.OK;
         } catch (Exception ex) {
-            System.out.println("Error: "+ex.toString() );
-            ex.printStackTrace();
             statusGest = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<>(response, statusGest);

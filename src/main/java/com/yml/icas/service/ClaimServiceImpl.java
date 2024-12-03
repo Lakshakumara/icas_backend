@@ -138,7 +138,7 @@ public class ClaimServiceImpl implements ClaimService {
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("forwordpaid")) {
                     rows += claimRepo.forwardPaid(claimId,
                             (String) dataSet.get("claimStatus"), MyConstants.TODAY());
-                    stages.add(new Stage("Shruff", String.valueOf(dataSet.get("paidAmount")), MyConstants.TODAY().toString()));
+                    stages.add(new Stage("Shroff", String.valueOf(dataSet.get("paidAmount")), MyConstants.TODAY().toString()));
 
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("claimdata")) {
                     isEmail = false;
@@ -273,17 +273,14 @@ public class ClaimServiceImpl implements ClaimService {
     public Set<ClaimDTO> getDashboardData(Integer year, String empNo) {
         Set<ClaimDTO> dd;
         try {
-            Member member = memberRepo.getMember(empNo);
-            log.info("member {}", member);
+            Member member = memberRepo.findByEmpNoIgnoreCase(empNo);
             Set<Claim> claimList = new HashSet<>(claimRepo.getDashboardData(
                     member, year));
-            log.info("claimList {}", claimList);
             dd = claimList.stream().map(ObjectMapper::mapToClaimDTO).collect(Collectors.toSet());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-
         return dd;
     }
 
@@ -310,9 +307,7 @@ public class ClaimServiceImpl implements ClaimService {
                 null,
                 pageable);
         Page<ClaimDTO> cd = claimList.map(ObjectMapper::mapToClaimDTO);
-        log.info("cd {} ",cd.toString());
-        for (ClaimDTO c:cd
-        ) {
+        for (ClaimDTO c:cd) {
             log.info(String.valueOf(c));
         }
         return cd;
@@ -347,28 +342,7 @@ public class ClaimServiceImpl implements ClaimService {
         variables.put("stages", stages);
         emailService.sendEmail(claimDTO.getMember().getEmail(), claimDTO.getRequestFor() + " Progress", "claim-progress", variables);
     }
-    public void emailClaimProgress(Claim claim) {
-        log.info("received to emailClaimProgress {}", claim.toString());
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("name", claim.getMember().getName());
-        variables.put("claimId", claim.getMember().getId());
 
-        List<Stage> stages = new ArrayList<>();
-        if(claim.getAcceptedDate() == null) {
-            stages.add(new Stage("Online Application", "Received", DatetoString(claim.getClaimDate())));
-            stages.add(new Stage("Department Head Approval", "Pending", ""));
-        }else {
-            stages.add(new Stage("Online Application", "Received", DatetoString(claim.getClaimDate())));
-            stages.add(new Stage("Department Approval", "Approved", DatetoString(claim.getAcceptedDate())));
-        }
-        if(claim.getMecSendDate() == null){
-
-        }
-        variables.put("stages", stages);
-        emailService.sendEmail(claim.getMember().getEmail(),
-                "Insurance Claim Progress "+claim.getRequestFor(),
-                "claim-progress", variables);
-    }
     private Claim getClaimOPD(ClaimOPDDTO claimOPDDTO) {
         Claim cd = new Claim();
         if (Objects.isNull(claimOPDDTO)) return cd;
@@ -506,5 +480,27 @@ class Stage {
         }
         log.info("getAllClaim for params.get(\"empNo\"){}\n {}", params.get("empNo"), dd);
         return dd;
+    }
+       public void emailClaimProgress(Claim claim) {
+        log.info("received to emailClaimProgress {}", claim.toString());
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("name", claim.getMember().getName());
+        variables.put("claimId", claim.getMember().getId());
+
+        List<Stage> stages = new ArrayList<>();
+        if(claim.getAcceptedDate() == null) {
+            stages.add(new Stage("Online Application", "Received", DatetoString(claim.getClaimDate())));
+            stages.add(new Stage("Department Head Approval", "Pending", ""));
+        }else {
+            stages.add(new Stage("Online Application", "Received", DatetoString(claim.getClaimDate())));
+            stages.add(new Stage("Department Approval", "Approved", DatetoString(claim.getAcceptedDate())));
+        }
+        if(claim.getMecSendDate() == null){
+
+        }
+        variables.put("stages", stages);
+        emailService.sendEmail(claim.getMember().getEmail(),
+                "Insurance Claim Progress "+claim.getRequestFor(),
+                "claim-progress", variables);
     }
 */

@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "member_registration")
-public class MemberRegistration {
+public class Registration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -37,7 +37,7 @@ public class MemberRegistration {
 
     @Override
     public String toString() {
-        return "MemberRegistration{" +
+        return "Registration{" +
                 "id=" + id +
                 ", year=" + year +
                 ", schemeType='" + schemeType + '\'' +
