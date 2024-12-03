@@ -6,15 +6,18 @@ import com.yml.icas.hr.HR;
 import com.yml.icas.hr.HRRepository;
 import com.yml.icas.model.Member;
 import com.yml.icas.model.MemberRegistration;
+import com.yml.icas.model.Role;
 import com.yml.icas.model.SchemeData;
 import com.yml.icas.repository.MemberRegistrationRepo;
 import com.yml.icas.repository.MemberRepo;
+import com.yml.icas.repository.RoleRepo;
 import com.yml.icas.repository.SchemeDataRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -26,6 +29,7 @@ import java.util.*;
 
 @Slf4j
 @SpringBootApplication
+@EnableAsync
 public class MemberApplication {
     public static void main(String[] args) {
         SpringApplication.run(MemberApplication.class, args);
@@ -33,7 +37,7 @@ public class MemberApplication {
 
     @Bean
     CommandLineRunner runner(HRRepository hrRepository, MemberRepo memberRepo, MemberRegistrationRepo memberRegistrationRepo,
-                             SchemeDataRepo schemeDataRepo) {
+                             SchemeDataRepo schemeDataRepo, RoleRepo roleRepo) {
         return args -> {
             if (hrRepository.count() == 0) {
                 HR saman = new HR();
@@ -384,8 +388,8 @@ public class MemberApplication {
                 mr.setStatus("sudo");
                 mr.setDeleted(false);
                 /*Set<Role> roles = new HashSet<>();
-                roles.add(new Role("user"));
-                roles.add(new Role("admin"));
+                roles.add(roleRepo.findByRole("user"));
+                roles.add(roleRepo.findByRole("admin"));
                 mr.getRoles().addAll(roles);*/
                 Member newm = memberRepo.save(mr);
 

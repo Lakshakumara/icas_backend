@@ -14,7 +14,7 @@ spring:
     name: member
   datasource:
     username: postgres
-    url: jdbc:postgresql://10.72.88.38:5432/insurance
+    url: jdbc:postgresql://localhost:5432/insurance
     password: abcd
   flyway:
     enabled: true
@@ -45,4 +45,4 @@ spring:
           starttls:
             enable: true
             required: true
-        debug: false
+        debug: true

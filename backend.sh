@@ -46,7 +46,7 @@ echo "Enter container/s name/s or ID/s to remove image and container.."
 read containerid
 echo "Please Enter Imagename to build docker image"
 read imagename
-echo "Please Enter external port? eg: front->back end port 4200 "
+echo "Please Enter external port? eg: front->back end port 9000 "
 read portout
 echo "Please Enter Internal port? eg: 9000"
 read portin
