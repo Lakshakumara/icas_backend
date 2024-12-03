@@ -12,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 public interface MemberRegistrationRepo extends JpaRepository<MemberRegistration, Integer> {

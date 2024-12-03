@@ -1,12 +1,17 @@
 package com.yml.icas.service;
 
 import com.yml.icas.dto.ClaimDTO;
+import com.yml.icas.dto.ClaimDataDTO;
 import com.yml.icas.dto.ClaimOPDDTO;
 import com.yml.icas.dto.ObjectMapper;
-import com.yml.icas.model.*;
+import com.yml.icas.model.Claim;
+import com.yml.icas.model.ClaimData;
+import com.yml.icas.model.Member;
+import com.yml.icas.model.SchemeData;
 import com.yml.icas.repository.*;
 import com.yml.icas.service.interfaces.ClaimService;
 import com.yml.icas.util.Converter;
+import com.yml.icas.util.IcasUtil;
 import com.yml.icas.util.MyConstants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -71,7 +76,6 @@ public class ClaimServiceImpl implements ClaimService {
             stages.add(new Stage("Online Application", "Received", ""));
             stages.add(new Stage("Department Head Approval", "Pending", ""));
             emailClaimProgress(Objects.requireNonNull(ObjectMapper.mapToClaimDTO(claim)), stages);
-
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -86,6 +90,7 @@ public class ClaimServiceImpl implements ClaimService {
         Long voucherId = new Date().getTime();
         List<Stage> stages = new ArrayList<>();
         Integer claimId = null;
+        boolean isEmail = true;
         for (Map<String, Object> dataSet : dataSets) {
             claimId = (Integer) dataSet.get("id");
             try {
@@ -107,10 +112,22 @@ public class ClaimServiceImpl implements ClaimService {
                     stages.add(new Stage("Medical Board Evaluation", "Sent", MyConstants.TODAY().toString()));
 
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("mec_approved")) {
+                    log.info("received Object {} ", dataSet.get("mecreturndate"));
+                    log.info("received String {} ", (String) dataSet.get("mecreturndate"));
+                    //log.info("received Date {} ", LocalDate.parse((CharSequence) dataSet.get("mecreturndate")));
                     rows += claimRepo.mecApproval(claimId,
-                            (String) dataSet.get("claimStatus"));
+                            (String) dataSet.get("claimStatus"),
+                            (String) dataSet.get("mecremarks"),
+                            MyConstants.TODAY(),
+                            (String) dataSet.get("remarks"));
                     stages.add(new Stage("Medical Board Evaluation", "Received", MyConstants.TODAY().toString()));
 
+                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("voucher")) {
+                    isEmail = false;
+                    rows += claimRepo.finalize(claimId,
+                            Double.parseDouble(String.valueOf(dataSet.get("deductionAmount"))),
+                            Double.parseDouble(String.valueOf(dataSet.get("paidAmount"))),
+                            String.valueOf(dataSet.get("claimStatus")));
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("forwordfinance")) {
                     rows += claimRepo.forwardFinance(claimId,
                             (String) dataSet.get("claimStatus"), MyConstants.TODAY(),
@@ -123,7 +140,17 @@ public class ClaimServiceImpl implements ClaimService {
                             (String) dataSet.get("claimStatus"), MyConstants.TODAY());
                     stages.add(new Stage("Shruff", String.valueOf(dataSet.get("paidAmount")), MyConstants.TODAY().toString()));
 
-                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("opdupdate")) {
+                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("claimdata")) {
+                    isEmail = false;
+                    rows += addClaimData(dataSet);
+                    log.info("data saved {}", rows);
+                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("claimdataupdate")) {
+                    isEmail = false;
+                    rows += updateClaimData(dataSet);
+                    log.info("data saved {}", rows);
+                }
+
+                /*else if (dataSet.get("criteria").toString().equalsIgnoreCase("opdupdate")) {
                     addClaimData(dataSet);
                     rows += claimRepo.opdComplete(claimId,
                             (String) dataSet.get("claimStatus"),
@@ -133,22 +160,13 @@ public class ClaimServiceImpl implements ClaimService {
                             Converter.toDate(dataSet.get("rejecteddate")),
                             (String) dataSet.get("rejectremarks")
                     );
-                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("claimdata")) {
-                    rows += addClaimData(dataSet);
-                    log.info("data saved {}", rows);
-                } else if (dataSet.get("criteria").toString().equalsIgnoreCase("finalize")) {
-                    rows += claimRepo.finalize(claimId,
-                            Double.parseDouble(String.valueOf(dataSet.get("deductionAmount"))),
-                            Double.parseDouble(String.valueOf(dataSet.get("paidAmount"))));
-                    stages.add(new Stage("Payment Processing", "Eligible Payment: " + dataSet.get("paidAmount"),
-                            "Deductions: " + dataSet.get("deductionAmount")));
-                }
+                } */
             } catch (Exception e) {
                 e.printStackTrace();
                 return new ResponseEntity<>(rows, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        emailClaimProgress(getClaim(claimId), stages);
+        if(isEmail) emailClaimProgress(getClaim(claimId), stages);
         return new ResponseEntity<>(rows, HttpStatus.OK);
     }
 
@@ -168,90 +186,37 @@ public class ClaimServiceImpl implements ClaimService {
         claimDataRepo.save(cd);
         return 1;
     }
+    private Integer updateClaimData(Map<String, Object> dataSet) {
+        ClaimData cd = claimDataRepo.getReferenceById((int) dataSet.get("claimDataId"));
+        cd.setRequestAmount(Converter.toDouble(dataSet.get("requestAmount")));
+        cd.setAdjustAmount(Converter.toDouble(dataSet.get("adjustAmount")));
+        cd.setAdjustRemarks((String) dataSet.get("adjustRemarks"));
+        cd.setRemarks((String) dataSet.get("remarks"));
+        cd.setPaidAmount(Converter.toDouble(dataSet.get("paidAmount")));
+        claimDataRepo.save(cd);
+        return 1;
+    }
 
     @Override
     public ClaimDTO getClaim(Integer claimId) {
-        log.info("getClaim received params {}", claimId);
         try {
             Claim claim = claimRepo.findClaimById(claimId);
             return ObjectMapper.mapToClaimDTO(claim);
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
 
-   /* @Override
-    public Set<ClaimDTO> getAllClaim(Map<String, String> params) {
-        log.info("getAllClaim params {}", params);
-        final Set<ClaimDTO> dd = new HashSet<>();
-        try {
-            Set<Claim> claimList = new HashSet<>();
-            if (!params.get("empNo").isEmpty()) {
-                Integer id = memberRepo.getMemberId(params.get("empNo"));
-                if (!Objects.isNull(id)) {
-                    if (Integer.parseInt(params.get("year")) == 0 && !params.get("claimStatus").equalsIgnoreCase("%")) {
-                        claimList = new HashSet<>(claimRepo.getClaimData(
-                                new Member(id),
-                                params.get("claimStatus")));
-                    } else if (Integer.parseInt(params.get("year")) == 0 && params.get("claimStatus").equalsIgnoreCase("%")) {
-                        claimList = new HashSet<>(claimRepo.getClaimData(new Member(id)));
-                    } else if (Integer.parseInt(params.get("year")) != 0 && !params.get("claimStatus").equalsIgnoreCase("%")) {
-                        claimList = new HashSet<>(claimRepo.getClaimData(
-                                new Member(id),
-                                Integer.valueOf(params.get("year")),
-                                params.get("claimStatus")));
-                    } else if (Integer.parseInt(params.get("year")) != 0 && params.get("claimStatus").equalsIgnoreCase("%")) {
-                        claimList = new HashSet<>(claimRepo.getClaimData(new Member(id),
-                                Integer.valueOf(params.get("year"))));
-                    } else {
-                        claimList = new HashSet<>(claimRepo.getClaimData(
-                                new Member(id), params.get("claimType"),
-                                Integer.valueOf(params.get("year")),
-                                params.get("claimStatus")));
-                    }
-                }
-                log.info("params.get(\"empNo\") {}\n year {}\n claimStatus {}",
-                        params.get("empNo"),
-                        Integer.parseInt(params.get("year")), params.get("claimStatus"));
-
-            } else {
-                if (params.get("claimType").equalsIgnoreCase("%")) {
-                    log.info("params.get(\"claimStatus\") {}", params.get("claimStatus"));
-                    claimList = new HashSet<>(claimRepo.findAllByClaimStatusLike(params.get("claimStatus")));
-                } else {
-                    log.info("params.get().equalsIgnoreCase {} {}", params.get("claimType"), params.get("claimStatus"));
-                    claimList = new HashSet<>(claimRepo
-                            .getClaims(params.get("claimType"), params.get("claimStatus")));
-                }
-
-            }
-            String filterText = params.get("filter");
-            if (!filterText.isEmpty()) {
-                claimList = claimList.stream()
-                        .filter(claim -> claim.getMember().getEmpNo().contains(filterText) || claim.getMember().getName().contains(filterText))
-                        .collect(Collectors.toSet());
-            }
-            dd.addAll(claimList.stream().map(ObjectMapper::mapToClaimDTO).collect(Collectors.toSet()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return dd;
-        }
-        log.info("getAllClaim for params.get(\"empNo\"){}\n {}", params.get("empNo"), dd);
-        return dd;
-    }
-*/
     @Override
     public Page<ClaimDTO> getAllClaim(Map<String, String> params) {
         log.info("getAllClaim params {}", params);
-        Pageable pageable = PageRequest.of(Integer.valueOf(params.get("pageIndex")),
-                Integer.valueOf(params.get("pageSize")));
+        Pageable pageable = IcasUtil.createPageable(params);
         Member member = memberRepo.findByEmpNoIgnoreCase(params.get("empNo"));
 
-        Page<Claim> claimList = claimRepo.getClaimData(
+        Page<Claim> claimList = claimRepo.getClaim(
                 (member == null)?null:member.getId(),
                 params.get("claimType"),
-                (params.get("year").isEmpty())?0:Integer.valueOf(params.get("year")),
+                (params.get("year").isEmpty())?0:Integer.parseInt(params.get("year")),
                 params.get("claimStatus"),
                 params.get("filter"),
                 pageable);
@@ -337,7 +302,7 @@ public class ClaimServiceImpl implements ClaimService {
         Pageable pageable = PageRequest.of(0,5);
         Member member = memberRepo.findByEmpNoIgnoreCase("100");
 
-        Page<Claim> claimList = claimRepo.getClaimData(
+        Page<Claim> claimList = claimRepo.getClaim(
                 member.getId(),
                 "%",
                 0,
@@ -353,15 +318,24 @@ public class ClaimServiceImpl implements ClaimService {
         return cd;
     }
 
+    @Override
+    public Page<ClaimDataDTO> getClaimData(Map<String, String> params) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex")),Integer.parseInt(params.get("pageSize")));
+
+        Page<ClaimData> cd = claimDataRepo.getClaimData(Integer.parseInt(params.get("claimId")),
+                pageable);
+        Page<ClaimDataDTO> ret = cd.map(ObjectMapper::mapToClaimDataDTO);
+        log.info("cd {} ",ret);
+        return  ret;
+    }
+
     public Boolean deleteClaimData(Integer id) {
         boolean ok = false;
         try {
             claimDataRepo.deleteById(id);
             ok = true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
-        log.info("deleted {}", ok);
         return ok;
     }
 
@@ -473,3 +447,64 @@ class Stage {
     private String status;
     private String remarks;
 }
+
+  /* @Override
+    public Set<ClaimDTO> getAllClaim(Map<String, String> params) {
+        log.info("getAllClaim params {}", params);
+        final Set<ClaimDTO> dd = new HashSet<>();
+        try {
+            Set<Claim> claimList = new HashSet<>();
+            if (!params.get("empNo").isEmpty()) {
+                Integer id = memberRepo.getMemberId(params.get("empNo"));
+                if (!Objects.isNull(id)) {
+                    if (Integer.parseInt(params.get("year")) == 0 && !params.get("claimStatus").equalsIgnoreCase("%")) {
+                        claimList = new HashSet<>(claimRepo.getClaimData(
+                                new Member(id),
+                                params.get("claimStatus")));
+                    } else if (Integer.parseInt(params.get("year")) == 0 && params.get("claimStatus").equalsIgnoreCase("%")) {
+                        claimList = new HashSet<>(claimRepo.getClaimData(new Member(id)));
+                    } else if (Integer.parseInt(params.get("year")) != 0 && !params.get("claimStatus").equalsIgnoreCase("%")) {
+                        claimList = new HashSet<>(claimRepo.getClaimData(
+                                new Member(id),
+                                Integer.valueOf(params.get("year")),
+                                params.get("claimStatus")));
+                    } else if (Integer.parseInt(params.get("year")) != 0 && params.get("claimStatus").equalsIgnoreCase("%")) {
+                        claimList = new HashSet<>(claimRepo.getClaimData(new Member(id),
+                                Integer.valueOf(params.get("year"))));
+                    } else {
+                        claimList = new HashSet<>(claimRepo.getClaimData(
+                                new Member(id), params.get("claimType"),
+                                Integer.valueOf(params.get("year")),
+                                params.get("claimStatus")));
+                    }
+                }
+                log.info("params.get(\"empNo\") {}\n year {}\n claimStatus {}",
+                        params.get("empNo"),
+                        Integer.parseInt(params.get("year")), params.get("claimStatus"));
+
+            } else {
+                if (params.get("claimType").equalsIgnoreCase("%")) {
+                    log.info("params.get(\"claimStatus\") {}", params.get("claimStatus"));
+                    claimList = new HashSet<>(claimRepo.findAllByClaimStatusLike(params.get("claimStatus")));
+                } else {
+                    log.info("params.get().equalsIgnoreCase {} {}", params.get("claimType"), params.get("claimStatus"));
+                    claimList = new HashSet<>(claimRepo
+                            .getClaims(params.get("claimType"), params.get("claimStatus")));
+                }
+
+            }
+            String filterText = params.get("filter");
+            if (!filterText.isEmpty()) {
+                claimList = claimList.stream()
+                        .filter(claim -> claim.getMember().getEmpNo().contains(filterText) || claim.getMember().getName().contains(filterText))
+                        .collect(Collectors.toSet());
+            }
+            dd.addAll(claimList.stream().map(ObjectMapper::mapToClaimDTO).collect(Collectors.toSet()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return dd;
+        }
+        log.info("getAllClaim for params.get(\"empNo\"){}\n {}", params.get("empNo"), dd);
+        return dd;
+    }
+*/

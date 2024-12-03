@@ -1,10 +1,15 @@
 package com.yml.icas.util;
 
-import com.yml.icas.dto.*;
+import com.yml.icas.dto.ClaimDTO;
+import com.yml.icas.dto.MemberDTO;
+import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.model.Member;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -18,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class IcasUtil {
 
     public static String DatetoString(Date date) {
-        return new SimpleDateFormat("yyyy-mm-dd").format(date);
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 
     public static Date DateToString(Object date) {
@@ -29,7 +34,6 @@ public class IcasUtil {
         }
 
     }
-
 
     public static byte[] genApplication(Member member) {
         Map<String, Object> empParams = new HashMap<>();
@@ -71,10 +75,8 @@ public class IcasUtil {
                     empParams, // dynamic parameters passed
                     new JREmptyDataSource()
             );
-            log.info("Generated {} ");
             return JasperExportManager.exportReportToPdf(empReport);
         } catch (Exception e) {
-            e.printStackTrace();
             return e.getMessage().getBytes();
         }
     }
@@ -86,8 +88,8 @@ public class IcasUtil {
         measureDate.setTime(md);
 
         int years = measureDate.get(Calendar.YEAR) - birthDay.get(Calendar.YEAR);
-        int months = 0;
-        int days = 0;
+        int months;
+        int days;
         int currMonth = measureDate.get(Calendar.MONTH) + 1;
         int birthMonth = birthDay.get(Calendar.MONTH) + 1;
         long ageDaysLong = measureDate.getTime().getTime() - birthDay.getTime().getTime();
@@ -166,7 +168,6 @@ public class IcasUtil {
             return JasperExportManager.exportReportToPdf(empReport);
 
         } catch (Exception e) {
-            e.printStackTrace();
             return e.getMessage().getBytes();
         }
     }
@@ -189,8 +190,47 @@ public class IcasUtil {
             return JasperExportManager.exportReportToPdf(empReport);
 
         } catch (Exception e) {
-            e.printStackTrace();
             return e.getMessage().getBytes();
         }
+    }
+
+    /*public static Pageable createPageable(Map<String, Object> params) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
+                Integer.parseInt(params.get("pageSize").toString()));
+        String sortField = params.get("sortField").toString();
+        String sortDirection = params.get("sortOrder").toString();
+        if(sortField != null && !sortField.isEmpty() && !sortDirection.isEmpty()){
+             // "asc" or "desc
+            Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+            pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
+                    Integer.parseInt(params.get("pageSize").toString()), sort);
+        }
+        return pageable;
+    }*/
+
+    public static Pageable createPageableOjects(Map<String, Object> params) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
+                Integer.parseInt(params.get("pageSize").toString()));
+        String sortField = params.get("sortField").toString();
+        String sortDirection = params.get("sortOrder").toString();
+        if(sortField != null && !sortField.isEmpty() && !sortDirection.isEmpty()){
+            Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+            pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
+                    Integer.parseInt(params.get("pageSize").toString()), sort);
+        }
+        return pageable;
+    }
+    public static Pageable createPageable(Map<String, String> params) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex")),
+                Integer.parseInt(params.get("pageSize")));
+        String sortField = params.get("sortField");
+        String sortDirection = params.get("sortOrder");
+        if(sortField != null && !sortField.isEmpty() && !sortDirection.isEmpty()){
+            // "asc" or "desc
+            Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+            pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex")),
+                    Integer.parseInt(params.get("pageSize")), sort);
+        }
+        return pageable;
     }
 }

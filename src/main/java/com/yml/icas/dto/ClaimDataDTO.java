@@ -9,15 +9,15 @@ import java.util.Date;
 @AllArgsConstructor
 public class ClaimDataDTO {
     private Integer id;
-    private SchemeDTO scheme;
     private String ClaimDataStatus;
-    private Double requestAmount;
-
-    private Date rejectedDate;
-    private String rejectRemarks;
-
     private Double deductionAmount;
     private String deductionRemarks;
     private Double paidAmount;
+    private String rejectRemarks;
+    private Date rejectedDate;
     private String remarks;
+    private SchemeDTO scheme;
+    private Double requestAmount;
+    private Double adjustAmount;
+    private String adjustRemarks;
 }

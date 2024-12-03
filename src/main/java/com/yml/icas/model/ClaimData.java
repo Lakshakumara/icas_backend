@@ -42,11 +42,15 @@ public class ClaimData implements Serializable {
     @Column(name = "deductionremarks")
     private String deductionRemarks;
 
+    @Column(name = "adjustamount")
+    private Double adjustAmount;
+
+    @Column(name = "adjustremarks")
+    private String adjustRemarks;
+
     @Column(name = "paidamount")
     private Double paidAmount;
 
     @Column(name = "remarks")
     private String remarks;
-
-
 }

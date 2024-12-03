@@ -1,6 +1,7 @@
 package com.yml.icas.control;
 
 import com.yml.icas.dto.ClaimDTO;
+import com.yml.icas.dto.ClaimDataDTO;
 import com.yml.icas.dto.ClaimOPDDTO;
 import com.yml.icas.service.ClaimServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -65,9 +66,18 @@ public class ClaimRestImpl implements ClaimRest {
 
     @Override
     public ResponseEntity<ClaimDTO> getClaim(Integer claimId) {
-
         try {
             return new ResponseEntity<>(claimService.getClaim(claimId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<ClaimDataDTO>> getClaimData(Map<String, String> params) {
+        try {
+            return new ResponseEntity<>(claimService.getClaimData(params), HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

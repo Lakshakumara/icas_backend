@@ -1,6 +1,5 @@
 package com.yml.icas.hr;
 
-import com.yml.icas.dto.ClaimDTO;
 import com.yml.icas.repository.SchemeDataRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

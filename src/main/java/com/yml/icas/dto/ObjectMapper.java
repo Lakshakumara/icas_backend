@@ -20,15 +20,18 @@ public class ObjectMapper {
         cd.setDependant(mapToDependant(claim.getDependant()));
         cd.getClaimData().addAll(claim.getClaimData().stream().map(c ->
                         new ClaimDataDTO(c.getId(),
-                                mapToSchemeDTO(c.getSchemeData()),
                                 c.getClaimDataStatus(),
-                                c.getRequestAmount(),
-                                c.getRejectedDate(),
-                                c.getRejectRemarks(),
                                 c.getDeductionAmount(),
                                 c.getDeductionRemarks(),
                                 c.getPaidAmount(),
-                                c.getRemarks()))
+                                c.getRejectRemarks(),
+                                c.getRejectedDate(),
+                                c.getRemarks(),
+                                mapToSchemeDTO(c.getSchemeData()),
+                                c.getRequestAmount(),
+                                c.getAdjustAmount(),
+                                c.getAdjustRemarks())
+                        )
                 .collect(Collectors.toSet()));
         cd.setCategory(claim.getCategory());
         cd.setRequestFor(claim.getRequestFor());
@@ -230,36 +233,23 @@ public class ObjectMapper {
         return memberRegistrationDTO;
     }
 
-    public static MemberRegistration mapToMemberRegistration(Set<MemberRegistrationDTO> memberRegistrationDTO) {
-        if (Objects.isNull(memberRegistrationDTO)) return null;
-        MemberRegistration memberRegistration = new MemberRegistration();
-        Optional<MemberRegistrationDTO> max = memberRegistrationDTO.stream().max(Comparator.comparingInt(MemberRegistrationDTO::getYear));
-        if (max.isPresent()) {
-            memberRegistration.setYear(max.get().getYear());
-            memberRegistration.setSchemeType(max.get().getSchemeType());
-            memberRegistration.setAcceptedDate(max.get().getAcceptedDate());
-            memberRegistration.setAcceptedBy(max.get().getAcceptedBy());
-        }
-        return memberRegistration;
-    }
 
-    public static Set<MemberDependantData> mapToMemberDD(MemberDTO memberDTO) {
-        Set<DependantDTO> dependants = memberDTO.getDependants();
-        return dependants
-                .stream().map(d -> {
-                    Dependant dependant = new Dependant();
-                    dependant.setId(d.getId());
-                    dependant.setName(d.getName());
-                    dependant.setNic(d.getNic());
-                    dependant.setDob(d.getDob());
 
-                    MemberDependantData mdd = new MemberDependantData();
-                    mdd.setRegisterYear(d.getRegisterYear());
-                    mdd.setRelationship(d.getRelationship());
-                    mdd.setDependant(dependant);
-                    //mdd.setMember(member);
-                    return mdd;
-                }).collect(Collectors.toSet());
+    public static ClaimDataDTO mapToClaimDataDTO(ClaimData claimData) {
+        return new ClaimDataDTO(
+                claimData.getId(),
+                claimData.getClaimDataStatus(),
+                claimData.getDeductionAmount(),
+                claimData.getDeductionRemarks(),
+                claimData.getPaidAmount(),
+                claimData.getRejectRemarks(),
+                claimData.getRejectedDate(),
+                claimData.getRemarks(),
+                mapToSchemeDTO(claimData.getSchemeData()),
+                claimData.getRequestAmount(),
+                claimData.getAdjustAmount(),
+                claimData.getAdjustRemarks()
+        );
     }
 
     /*public static Claim mapToClaimOPD(ClaimOPDDTO claimOPDDTO) {
@@ -289,6 +279,38 @@ public class ObjectMapper {
 
         c.setSchemeData(new SchemeData(claimDTO.getClaimDataDTOS().));
         return c;
-    }*/
+    }
+     public static Set<MemberDependantData> mapToMemberDD(MemberDTO memberDTO) {
+        Set<DependantDTO> dependants = memberDTO.getDependants();
+        return dependants
+                .stream().map(d -> {
+                    Dependant dependant = new Dependant();
+                    dependant.setId(d.getId());
+                    dependant.setName(d.getName());
+                    dependant.setNic(d.getNic());
+                    dependant.setDob(d.getDob());
+
+                    MemberDependantData mdd = new MemberDependantData();
+                    mdd.setRegisterYear(d.getRegisterYear());
+                    mdd.setRelationship(d.getRelationship());
+                    mdd.setDependant(dependant);
+                    //mdd.setMember(member);
+                    return mdd;
+                }).collect(Collectors.toSet());
+    }
+public static MemberRegistration mapToMemberRegistration(Set<MemberRegistrationDTO> memberRegistrationDTO) {
+        if (Objects.isNull(memberRegistrationDTO)) return null;
+        MemberRegistration memberRegistration = new MemberRegistration();
+        Optional<MemberRegistrationDTO> max = memberRegistrationDTO.stream().max(Comparator.comparingInt(MemberRegistrationDTO::getYear));
+        if (max.isPresent()) {
+            memberRegistration.setYear(max.get().getYear());
+            memberRegistration.setSchemeType(max.get().getSchemeType());
+            memberRegistration.setAcceptedDate(max.get().getAcceptedDate());
+            memberRegistration.setAcceptedBy(max.get().getAcceptedBy());
+        }
+        return memberRegistration;
+    }
+
+*/
 
 }

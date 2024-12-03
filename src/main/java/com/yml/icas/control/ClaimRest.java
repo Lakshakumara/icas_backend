@@ -1,6 +1,7 @@
 package com.yml.icas.control;
 
 import com.yml.icas.dto.ClaimDTO;
+import com.yml.icas.dto.ClaimDataDTO;
 import com.yml.icas.dto.ClaimOPDDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,10 @@ public interface ClaimRest {
     @RequestMapping(method = RequestMethod.PUT, value = "/update")
     ResponseEntity<Integer> updateClaims(@RequestBody Map<String, Object>[] dataSet);
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/delete/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/claimData")
+    ResponseEntity<Page<ClaimDataDTO>> getClaimData(@RequestParam Map<String, String> params);
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/claimData/delete/{id}")
     ResponseEntity<Boolean> deleteClaimsData(@PathVariable(name = "id") Integer id);
 
     @RequestMapping(method = RequestMethod.GET, value = "/test")
