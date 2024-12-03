@@ -6,8 +6,6 @@ import java.util.Date;
 public class Converter {
     /**
      * default return 0
-     * @param doubleString
-     * @return
      */
     public static Double toDouble(Object doubleString) {
         double d = 0.0;
