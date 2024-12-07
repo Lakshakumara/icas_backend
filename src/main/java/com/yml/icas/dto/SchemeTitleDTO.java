@@ -12,9 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class SchemeTitleDTO {
     private String id;
-
     private List<String> idText = new ArrayList<>();
-
     private String description;
 
     public void addIdText(String idText) {

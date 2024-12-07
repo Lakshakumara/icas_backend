@@ -1,9 +1,6 @@
 package com.yml.icas.service;
 
-import com.yml.icas.dto.ClaimDTO;
-import com.yml.icas.dto.ClaimDataDTO;
-import com.yml.icas.dto.ClaimOPDDTO;
-import com.yml.icas.dto.ObjectMapper;
+import com.yml.icas.dto.*;
 import com.yml.icas.model.Claim;
 import com.yml.icas.model.ClaimData;
 import com.yml.icas.model.Member;
@@ -322,6 +319,17 @@ public class ClaimServiceImpl implements ClaimService {
         Page<ClaimDataDTO> ret = cd.map(ObjectMapper::mapToClaimDataDTO);
         log.info("cd {} ",ret);
         return  ret;
+    }
+
+    @Override
+    public Set<ClaimHistoryDTO> getClaimHistory(Map<String, String> params) {
+        String empNo = params.getOrDefault("empNo", "");
+        List<String> idTextList = params.get("idText") != null
+                ? Arrays.asList(params.get("idText").split(",")) : null;
+        log.info("idTextList: {}", idTextList);
+        Set<ClaimHistoryDTO> ch = claimDataRepo.getTitlePayment(empNo, idTextList);
+        log.info("fetch {}", ch);
+        return ch;
     }
 
     public Boolean deleteClaimData(Integer id) {

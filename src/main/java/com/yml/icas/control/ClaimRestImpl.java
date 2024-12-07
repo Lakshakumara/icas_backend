@@ -1,8 +1,6 @@
 package com.yml.icas.control;
 
-import com.yml.icas.dto.ClaimDTO;
-import com.yml.icas.dto.ClaimDataDTO;
-import com.yml.icas.dto.ClaimOPDDTO;
+import com.yml.icas.dto.*;
 import com.yml.icas.service.ClaimServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,12 +114,18 @@ public class ClaimRestImpl implements ClaimRest {
         return ResponseEntity.ok(claimDTO);
     }
 
-    public ResponseEntity<Integer> setClaimAccept(ClaimOPDDTO claimOPDDTO) {
+    @Override
+    public ResponseEntity<Set<ClaimHistoryDTO>> getClaimHistory(Map<String, String> params) {
+        Set<ClaimHistoryDTO> historyDTOS = claimService.getClaimHistory(params);
+        return ResponseEntity.ok(historyDTOS);
+    }
+
+   /* public ResponseEntity<Integer> setClaimAccept(ClaimOPDDTO claimOPDDTO) {
         try {
             return claimService.saveOpd(claimOPDDTO);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }*/
 }

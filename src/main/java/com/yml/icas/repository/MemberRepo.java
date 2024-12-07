@@ -1,6 +1,5 @@
 package com.yml.icas.repository;
 
-import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.model.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

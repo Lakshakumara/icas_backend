@@ -1,8 +1,6 @@
 package com.yml.icas.control;
 
-import com.yml.icas.dto.ClaimDTO;
-import com.yml.icas.dto.ClaimDataDTO;
-import com.yml.icas.dto.ClaimOPDDTO;
+import com.yml.icas.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,4 +41,7 @@ public interface ClaimRest {
 
     @RequestMapping(method = RequestMethod.GET, value = "/test")
     ResponseEntity<Page<ClaimDTO>> getTest();
+
+    @RequestMapping(method = RequestMethod.GET, value = "/history")
+    ResponseEntity<Set<ClaimHistoryDTO>> getClaimHistory(@RequestParam Map<String, String> params);
 }
