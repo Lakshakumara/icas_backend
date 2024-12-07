@@ -25,7 +25,7 @@ public class BeneficiaryData implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     @ManyToOne
@@ -40,6 +40,9 @@ public class BeneficiaryData implements Serializable {
     @Column(name = "registerdate")
     @Temporal(TemporalType.DATE)
     private Date registerDate;
+
+    @Column(name = "registeryear")
+    private Integer registerYear;
 
     private boolean deleted = false;
 }

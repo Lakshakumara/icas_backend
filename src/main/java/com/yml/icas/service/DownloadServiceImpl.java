@@ -4,9 +4,9 @@ import com.yml.icas.dto.ClaimDTO;
 import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.model.Claim;
 import com.yml.icas.model.Member;
-import com.yml.icas.model.MemberRegistration;
+import com.yml.icas.model.Registration;
 import com.yml.icas.repository.ClaimRepo;
-import com.yml.icas.repository.MemberRegistrationRepo;
+import com.yml.icas.repository.RegistrationRepo;
 import com.yml.icas.repository.MemberRepo;
 import com.yml.icas.service.interfaces.DownloadService;
 import com.yml.icas.util.IcasUtil;
@@ -35,7 +35,7 @@ public class DownloadServiceImpl implements DownloadService {
     ClaimRepo claimRepo;
 
     @Autowired
-    MemberRegistrationRepo memberRegistrationRepo;
+    RegistrationRepo memberRegistrationRepo;
 
     @Override
     public ResponseEntity<byte[]> downloadApplication(Integer year, String empNo) {
@@ -101,10 +101,10 @@ public class DownloadServiceImpl implements DownloadService {
     }
 
     public Member addRegistration(Member member) {
-        Set<MemberRegistration> regData = memberRegistrationRepo.findByMember(new Member(member.getId()));
+        Set<Registration> regData = memberRegistrationRepo.findByMember(new Member(member.getId()));
         member.getMemberRegistrations().addAll(regData.stream()
                 .map(rd -> {
-                    MemberRegistration mr = new MemberRegistration();
+                    Registration mr = new Registration();
                     mr.setSchemeType(rd.getSchemeType());
                     mr.setYear(rd.getYear());
                     mr.setAcceptedDate(rd.getAcceptedDate());

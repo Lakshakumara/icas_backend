@@ -20,12 +20,4 @@ public class SchemeTitleDTO {
     public void addIdText(String idText) {
         this.idText.add(idText);
     }
-
-    @Override
-    public String toString() {
-        return "\nSchemeTitleDTO{" +
-                "id='" + id + '\'' +
-                ", idText=" + idText +
-                '}';
-    }
 }

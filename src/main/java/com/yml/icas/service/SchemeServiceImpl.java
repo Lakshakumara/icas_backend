@@ -6,6 +6,7 @@ import com.yml.icas.dto.SchemeTitleDTO;
 import com.yml.icas.model.SchemeData;
 import com.yml.icas.repository.SchemeDataRepo;
 import com.yml.icas.service.interfaces.SchemeService;
+import com.yml.icas.util.MyConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -24,13 +25,21 @@ public class SchemeServiceImpl implements SchemeService {
     SchemeDataRepo schemeDataRepo;
 
     @Override
-    public ResponseEntity<List<SchemeDTO>> getScheme() {
+    public ResponseEntity<List<SchemeDTO>> getScheme(String category) {
+        List<SchemeDTO> schemeDTOS;
         try {
-            List<SchemeDTO> schemeDTOS = schemeDataRepo
-                    .findAll(Sort.by(Sort.Direction.ASC, "idText"))
-                    .stream()
-                    .map(ObjectMapper::mapToSchemeDTO)
-                    .toList();
+            if(category.equalsIgnoreCase(MyConstants.ALL)){
+                schemeDTOS = schemeDataRepo
+                        .findAll(Sort.by(Sort.Direction.ASC, "idText"))
+                        .stream()
+                        .map(ObjectMapper::mapToSchemeDTO)
+                        .toList();
+            }else{
+                schemeDTOS = schemeDataRepo.getByCategory(category)
+                        .stream()
+                        .map(ObjectMapper::mapToSchemeDTO).toList();
+            }
+            schemeDTOS.forEach(schemeDTO -> log.info(String.valueOf(schemeDTO)));
             return new ResponseEntity<>(schemeDTOS, HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();

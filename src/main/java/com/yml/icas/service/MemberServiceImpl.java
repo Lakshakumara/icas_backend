@@ -38,10 +38,10 @@ public class MemberServiceImpl implements MemberService {
     private RoleRepo roleRepo;
 
     @Autowired
-    private MemberRegistrationRepo memberRegistrationRepo;
+    private RegistrationRepo memberRegistrationRepo;
 
     @Autowired
-    private MemberDependantDataRepo memberDependantDataRepo;
+    private DependantDataRepo memberDependantDataRepo;
 
     @Autowired
     private DependantRepo dependantRepo;
@@ -61,10 +61,11 @@ public class MemberServiceImpl implements MemberService {
         Integer rows = 0;
         if (criteria.equalsIgnoreCase("registerOpen")) {
             if (dataSet.get("selector").toString().equalsIgnoreCase("all")) {
-                rows = memberRepo.updateRegistrationAll((Integer) dataSet.get("year"));
+                memberRepo.updateRegistrationAll((Integer) dataSet.get("year"));
             } else {
-                rows = memberRepo.updateRegistrationMember(dataSet.get("selector").toString(), (Integer) dataSet.get("year"));
+                memberRepo.updateRegistrationMember(dataSet.get("selector").toString(), (Integer) dataSet.get("year"));
             }
+            rows =1;
         } else if (criteria.equalsIgnoreCase("role")) {
             List<String> dd = (List<String>) dataSet.get("newrole");
             Set<Role> roles = dd.stream()
@@ -72,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
                     .collect(Collectors.toSet());
 
             if (dataSet.get("memberId") != null) {
-                Member mm = memberRepo.getMember((String) dataSet.get("empNo"));
+                Member mm = memberRepo.findByEmpNoIgnoreCase((String) dataSet.get("empNo"));
                 mm.setRoles(roles);
                 memberRepo.save(mm);
                 rows += 1;
@@ -107,12 +108,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public Object signUpNew(MemberDTO memberDTO) {
+    public Member signUpNew(MemberDTO memberDTO) {
         log.info("memberDTO received to service" + memberDTO.getMemberRegistrations().toString());
-        Object response = null;
+        Member response = null;
         try {
             if (!validateMemberRest(memberDTO)) {
-                return "invalid data";
+                return new Member();
             }
             Member member = memberRepo.findByEmpNoIgnoreCase(memberDTO.getEmpNo());
             Member mapMember = ObjectMapper.mapToMember(memberDTO);
@@ -143,7 +144,7 @@ public class MemberServiceImpl implements MemberService {
 
             }*/
 
-            MemberRegistration memberRegistration = new MemberRegistration();
+            Registration memberRegistration = new Registration();
             MemberRegistrationDTO temp = (memberDTO.getMemberRegistrations().stream().toList()).get(0);
             memberRegistration.setYear(temp.getYear());
             memberRegistration.setSchemeType(temp.getSchemeType());
@@ -184,8 +185,9 @@ public class MemberServiceImpl implements MemberService {
                 dependant.setNic(d.getNic());
                 dependant.setDob(d.getDob());
                 Dependant newDep = dependantRepo.save(dependant);
-                MemberDependantData mdd = new MemberDependantData();
-                mdd.setRegisterYear(memberRegistration.getYear());
+                DependantData mdd = new DependantData();
+                mdd.setRegisterYear(d.getRegisterYear());
+                mdd.setRegisterDate(d.getRegisterDate());
                 mdd.setRelationship(d.getRelationship());
                 mdd.setDependant(newDep);
                 mdd.setMember(finalMember);
@@ -204,6 +206,7 @@ public class MemberServiceImpl implements MemberService {
                 bnd.setRelationship(d.getRelationship());
                 bnd.setBeneficiary(newBen);
                 bnd.setRegisterDate(d.getRegisterDate());
+                bnd.setRegisterYear(d.getRegisterYear());
                 bnd.setMember(finalMember);
                 beneficiaryDataRepo.save(bnd);
             });
@@ -215,8 +218,8 @@ public class MemberServiceImpl implements MemberService {
                 variables.put("name", successMember.getName());
                 variables.put("schemaLink", generateSchemeDownloadLink());
                 Optional<Integer> newRegYear = successMember.getMemberRegistrations().stream()
-                        .max(Comparator.comparing(MemberRegistration::getYear))
-                        .map(MemberRegistration::getYear);
+                        .max(Comparator.comparing(Registration::getYear))
+                        .map(Registration::getYear);
                 if (newRegYear.isPresent()) {
                     variables.put("applicationLink", baseUrl + "/download/application/" + newRegYear.get() + "/" + successMember.getEmpNo());
                 }
@@ -237,14 +240,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public ResponseEntity<MemberDTO> getMember(String empNo) {
         try {
-            Member member = memberRepo.findByEmpNoIgnoreCase(empNo);
-            if (member == null)
-                return new ResponseEntity<>(new MemberDTO(), HttpStatus.INTERNAL_SERVER_ERROR);
+            Member member = memberRepo.getDTO_empNo(empNo);
+            log.info("fetch member {} ", member);
+            return new ResponseEntity<>(Objects.requireNonNullElseGet(ObjectMapper.mapToMemberDTO(member), MemberDTO::new), HttpStatus.OK);
             //member = addRegistration(member);
-            return new ResponseEntity<>(ObjectMapper.mapToMemberDTO(member), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new MemberDTO(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -284,7 +285,7 @@ public class MemberServiceImpl implements MemberService {
     public Page<MemberDTO> searchMember(Map<String, Object> searchParams) {
         Pageable pageable = IcasUtil.createPageableOjects(searchParams);
         try {
-            Page<MemberRegistration> mt;
+            Page<Registration> mt;
             Page<MemberDTO> memberDTOPage = null;
             /*if (searchParams.get("searchFor").toString().equalsIgnoreCase("notAccept")) {
                 mt = memberRegistrationRepo.findByAcceptedDateNull(pageable);
@@ -346,6 +347,17 @@ public class MemberServiceImpl implements MemberService {
         variables.put("roles", roles);
 
         emailService.sendEmail(email, "Role Updated", "role-update", variables);
+    }
+
+    @Override
+    public Set<BeneficiaryDTO> getBeneficiaries(int year, String empNo) {
+        try {
+            Set<BeneficiaryDTO> beneficiaryDTOS = beneficiaryRepo.findAllByEmpNo(year, empNo);
+            log.info("Dependants {}", beneficiaryDTOS);
+            return beneficiaryDTOS;
+        } catch (Exception ex) {
+            return new HashSet<>();
+        }
     }
 
     private String generateSchemeDownloadLink() {

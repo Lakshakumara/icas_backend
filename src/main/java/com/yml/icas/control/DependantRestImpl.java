@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Slf4j
 @RestController
@@ -22,6 +25,18 @@ public class DependantRestImpl implements DependantRest {
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Set<DependantDTO>> getMemberDependants(int year, String empNo) {
+        Set<DependantDTO> dependants= new HashSet<>();
+        try {
+            dependants =  dependantService.getMemberDependants(year, empNo);
+            return ResponseEntity.ok(dependants);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(dependants, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

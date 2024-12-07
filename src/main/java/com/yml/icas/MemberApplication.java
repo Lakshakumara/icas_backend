@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yml.icas.hr.HR;
 import com.yml.icas.hr.HRRepository;
 import com.yml.icas.model.Member;
-import com.yml.icas.model.MemberRegistration;
+import com.yml.icas.model.Registration;
 import com.yml.icas.model.SchemeData;
-import com.yml.icas.repository.MemberRegistrationRepo;
+import com.yml.icas.repository.RegistrationRepo;
 import com.yml.icas.repository.MemberRepo;
 import com.yml.icas.repository.RoleRepo;
 import com.yml.icas.repository.SchemeDataRepo;
@@ -37,7 +37,7 @@ public class MemberApplication {
     }
 
     @Bean
-    CommandLineRunner runner(HRRepository hrRepository, MemberRepo memberRepo, MemberRegistrationRepo memberRegistrationRepo,
+    CommandLineRunner runner(HRRepository hrRepository, MemberRepo memberRepo, RegistrationRepo memberRegistrationRepo,
                              SchemeDataRepo schemeDataRepo, RoleRepo roleRepo) {
         return args -> {
             if (hrRepository.count() == 0) {
@@ -394,7 +394,7 @@ public class MemberApplication {
                 mr.getRoles().addAll(roles);*/
                 Member newm = memberRepo.save(mr);
 
-                MemberRegistration mreg = new MemberRegistration();
+                Registration mreg = new Registration();
                 mreg.setMember(newm);
                 mreg.setYear(2024);
                 mreg.setAcceptedDate(new java.util.Date());

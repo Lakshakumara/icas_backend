@@ -33,6 +33,12 @@ import java.util.Set;
 }, uniqueConstraints = {
         @UniqueConstraint(name = "member_nic_unique", columnNames = "nic")
 })
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "Member.withRegistrations",
+                attributeNodes = @NamedAttributeNode("memberRegistrations")
+        )
+})
 public class Member implements Serializable {
     private static final long serialVersionId = 4L;
 
@@ -104,12 +110,12 @@ public class Member implements Serializable {
     private Integer registrationOpen = 0;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<MemberRegistration> memberRegistrations = new HashSet<>();
+    private Set<Registration> memberRegistrations = new HashSet<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<MemberDependantData> dependantData = new HashSet<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<DependantData> dependantData = new HashSet<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<BeneficiaryData> beneficiaryData = new HashSet<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -140,10 +146,6 @@ public class Member implements Serializable {
                 ", roles=" + roles +
                 ", deleted=" + deleted +
                 ", registrationOpen=" + registrationOpen +
-                ", memberRegistrations=" + memberRegistrations +
-                ", dependantData=" + dependantData +
-                ", beneficiaryData=" + beneficiaryData +
-                ", claimSet=" + claimSet +
                 '}';
     }
 }

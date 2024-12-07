@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface SchemeService {
-    ResponseEntity<List<SchemeDTO>> getScheme();
+    ResponseEntity<List<SchemeDTO>> getScheme(String category);
 
     ResponseEntity<SchemeDTO> updateScheme(Integer id, SchemeDTO schemeDTO);
 

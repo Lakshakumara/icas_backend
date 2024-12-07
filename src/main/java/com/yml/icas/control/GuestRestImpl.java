@@ -16,7 +16,6 @@ public class GuestRestImpl implements GuestRest {
 
     @Override
     public ResponseEntity<Map<String, Object>> memberValidation(Integer year, String empNo) {
-        System.out.println("GuestRestImpl received year: "+year+" EmpNo: "+empNo );
         return guestService.memberValidation(year, empNo);
     }
 }
