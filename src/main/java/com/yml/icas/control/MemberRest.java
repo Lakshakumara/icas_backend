@@ -1,7 +1,6 @@
 package com.yml.icas.control;
 
 import com.yml.icas.dto.BeneficiaryDTO;
-import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

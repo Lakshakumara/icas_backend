@@ -1,7 +1,6 @@
 package com.yml.icas.control;
 
 import com.yml.icas.dto.BeneficiaryDTO;
-import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.model.Member;
@@ -12,9 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
