@@ -23,5 +23,5 @@ public class HRDTO {
     private String photoUrl;
     private boolean deleted = false;
 
-    private java.util.Date deletedDate;
+    private Date deletedDate;
 }

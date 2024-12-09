@@ -164,7 +164,7 @@ public class ObjectMapper {
         }).collect(Collectors.toSet()));
 
         memberDTO.setCurrentRegistration(mapToMemberRegistrationDTO(member.getMemberRegistrations()));
-
+/*
         memberDTO.setDependants(member.getDependantData().stream().map(d -> {
             DependantDTO dependantDTO = new DependantDTO();
             dependantDTO.setId(d.getDependant().getId());
@@ -185,7 +185,7 @@ public class ObjectMapper {
             beneficiaryDTO.setPercent(b.getPercent());
             beneficiaryDTO.setRegisterDate(b.getRegisterDate());
             return beneficiaryDTO;
-        }).collect(Collectors.toSet()));
+        }).collect(Collectors.toSet()));*/
 
         return memberDTO;
     }
@@ -221,10 +221,10 @@ public class ObjectMapper {
         return dependantDTO;
     }
 
-    public static MemberRegistrationDTO mapToMemberRegistrationDTO(Set<MemberRegistration> memberRegistration) {
+    public static MemberRegistrationDTO mapToMemberRegistrationDTO(Set<Registration> memberRegistration) {
         if (Objects.isNull(memberRegistration)) return null;
         MemberRegistrationDTO memberRegistrationDTO = new MemberRegistrationDTO();
-        Optional<MemberRegistration> max = memberRegistration.stream().max(Comparator.comparingInt(MemberRegistration::getYear));
+        Optional<Registration> max = memberRegistration.stream().max(Comparator.comparingInt(Registration::getYear));
         if (max.isPresent()) {
             memberRegistrationDTO.setYear(max.get().getYear());
             memberRegistrationDTO.setSchemeType(max.get().getSchemeType());

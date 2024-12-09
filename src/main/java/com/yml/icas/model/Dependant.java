@@ -26,7 +26,7 @@ public class Dependant implements Serializable {
     }
 
     @OneToMany(mappedBy = "dependant", cascade = CascadeType.ALL)
-    private Set<MemberDependantData> dependantData = new HashSet<>();
+    private Set<DependantData> dependantData = new HashSet<>();
 
     private String name;
 

@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Slf4j
 @Service
 public class DependantServiceImpl implements DependantService {
@@ -30,15 +33,14 @@ public class DependantServiceImpl implements DependantService {
         }
     }
 
-    /*@Override
-    public Set<DependantDTO> getMemberDependant(int year, String empNo) {
-        log.info("getMemberDependant {}", empNo);
+    @Override
+    public Set<DependantDTO> getMemberDependants(int year, String empNo) {
         try {
-            List<Dependant> dependant = dependantRepo.findAllByEmpNo(year, empNo);
-            return ObjectMapper.mapToDependant(dependant);
+            Set<DependantDTO> dependants = dependantRepo.findAllByEmpNo(year, empNo);
+            log.info("Dependants {}", dependants);
+            return dependants;
         } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
+            return new HashSet<>();
         }
-    }*/
+    }
 }

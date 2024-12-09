@@ -32,5 +32,5 @@ public class HR {
     private boolean deleted = false;
 
     @Temporal(TemporalType.DATE)
-    private java.util.Date deletedDate;
+    private Date deletedDate;
 }

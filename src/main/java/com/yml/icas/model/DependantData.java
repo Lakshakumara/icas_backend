@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Date;
 
-@NamedQuery(name = "MemberDependantData.getAllMembersData", query = " from MemberDependantData m ")
+@NamedQuery(name = "MemberDependantData.getAllMembersData", query = " from DependantData m ")
 
 @Setter
 @Getter
@@ -16,14 +17,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Entity
 @Table(name = "dependant_data")
-public class MemberDependantData implements Serializable {
+public class DependantData implements Serializable {
     private static final long serialVersionId = 5L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -31,7 +32,10 @@ public class MemberDependantData implements Serializable {
 
     @Column(name = "relasionship")
     private String relationship;
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+
+    @Column(name = "registerdate")
+    @Temporal(TemporalType.DATE)
+    private Date registerDate;
 
     @Column(name = "registeryear")
     private Integer registerYear;

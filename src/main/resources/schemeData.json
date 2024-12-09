@@ -222,7 +222,7 @@
     "descriptionen": "Cost of drugs, (excluding Vitamins, Food Supplements, Warm Treatment and Routine Vaccination except Tetanus Toxoid Vaccination) (Vitamins can be reimbursed under the recommendation of UMO If the prescribed vitamins are essential to recover or control the medical condition of the patient.)",
     "descriptionsi": "",
     "descriptionta": "",
-    "maxAmount": 0.0,
+    "maxAmount": 15000.0,
     "unit": "opd_1",
     "rate": 15000.0,
     "category": "OPD"
@@ -282,7 +282,7 @@
     "descriptionen": "Unani & Acupancher treatment under the recommendation of a Medical Officer registered under Medical Council of Unani & Acupancher.",
     "descriptionsi": "",
     "descriptionta": "",
-    "maxAmount": 0.0,
+    "maxAmount": 10000.0,
     "unit": "opd_2",
     "rate": 10000.0,
     "category": "OPD"
@@ -294,7 +294,7 @@
     "descriptionen": "Cost of Lumber Corset under the recommendation of a Specialist Consultations (once in two years)",
     "descriptionsi": "",
     "descriptionta": "",
-    "maxAmount": 0.0,
+    "maxAmount": 10000.0,
     "unit": "opd_2",
     "rate": 10000.0,
     "category": "OPD"
@@ -306,7 +306,7 @@
     "descriptionen": "Additional benefit for the COVID-19 Test (PCR, Rapid Antigen Test etc) under the recommendation of MOH, MBBS qualified Doctor or PHI Open University with the certification signature of the UMO.",
     "descriptionsi": "",
     "descriptionta": "",
-    "maxAmount": 0.0,
+    "maxAmount": 10000.0,
     "unit": "opd_2",
     "rate": 10000.0,
     "category": "OPD"

@@ -30,7 +30,7 @@ public class Claim {
         this.id = id;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     @OneToMany(mappedBy = "claim", cascade = CascadeType.ALL)

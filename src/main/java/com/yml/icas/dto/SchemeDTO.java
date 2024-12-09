@@ -9,23 +9,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SchemeDTO {
     private Integer id;
-
     private String idText;
-
     private String title;
-
     private String descriptionen;
-
     private String descriptionsi;
-
     private String descriptionta;
-
     private double maxAmount;
-
     private String unit;
-
     private double rate;
-
     private String category;
 
     @Override

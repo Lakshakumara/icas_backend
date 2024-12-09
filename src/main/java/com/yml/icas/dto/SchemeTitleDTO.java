@@ -12,20 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 public class SchemeTitleDTO {
     private String id;
-
     private List<String> idText = new ArrayList<>();
-
     private String description;
 
     public void addIdText(String idText) {
         this.idText.add(idText);
-    }
-
-    @Override
-    public String toString() {
-        return "\nSchemeTitleDTO{" +
-                "id='" + id + '\'' +
-                ", idText=" + idText +
-                '}';
     }
 }
