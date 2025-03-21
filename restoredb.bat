@@ -1,6 +1,6 @@
 
 set PGUSER=postgres
-set PGPASSWORD=abcd
+set PGPASSWORD=
 set PGDATABASE=insurance
 set PGHOST=localhost
 set PGPORT=5432
