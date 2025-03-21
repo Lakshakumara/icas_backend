@@ -355,7 +355,7 @@ public class MemberApplication {
                 hrRepository.save(momo);
                 hrRepository.save(k);
                 hrRepository.save(amali);
-*/
+
                 Member mr = new Member();
                 mr.setEmpNo(saman.getEmpNo());
                 mr.setName(saman.getName());
