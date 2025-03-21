@@ -1,13 +1,11 @@
 package com.yml.icas.repository;
 
-import com.yml.icas.dto.HistoryDTO;
 import com.yml.icas.model.SchemeData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Set;
 
 public interface SchemeDataRepo extends JpaRepository<SchemeData, Integer> {
     @Query("Select s from SchemeData s where s.idText=:idText")

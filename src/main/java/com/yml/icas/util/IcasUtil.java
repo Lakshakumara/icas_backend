@@ -1,7 +1,6 @@
 package com.yml.icas.util;
 
 import com.yml.icas.dto.ClaimDTO;
-import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.model.Member;

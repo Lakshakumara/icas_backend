@@ -1,6 +1,5 @@
 package com.yml.icas.control;
 
-import com.yml.icas.dto.HistoryDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

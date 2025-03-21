@@ -1,6 +1,5 @@
 package com.yml.icas.control;
 
-import com.yml.icas.dto.HistoryDTO;
 import com.yml.icas.service.GuestServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

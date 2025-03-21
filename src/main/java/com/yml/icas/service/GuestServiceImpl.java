@@ -1,17 +1,16 @@
 package com.yml.icas.service;
 
-import com.yml.icas.dto.*;
-import com.yml.icas.model.ClaimData;
+import com.yml.icas.dto.ClaimDataHistoryDTO;
+import com.yml.icas.dto.MemberDTO;
+import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.model.Member;
 import com.yml.icas.repository.ClaimDataRepo;
-import com.yml.icas.repository.RegistrationRepo;
 import com.yml.icas.repository.MemberRepo;
+import com.yml.icas.repository.RegistrationRepo;
 import com.yml.icas.repository.SchemeDataRepo;
 import com.yml.icas.service.interfaces.GuestService;
-import com.yml.icas.util.IcasUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

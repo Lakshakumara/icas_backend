@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Set;
-
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/dependant")
 public interface DependantRest {

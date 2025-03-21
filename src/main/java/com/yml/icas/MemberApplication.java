@@ -1,18 +1,6 @@
 package com.yml.icas;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yml.icas.hr.HR;
-import com.yml.icas.hr.HRRepository;
-import com.yml.icas.model.Member;
-import com.yml.icas.model.Registration;
-import com.yml.icas.model.SchemeData;
-import com.yml.icas.repository.RegistrationRepo;
-import com.yml.icas.repository.MemberRepo;
-import com.yml.icas.repository.RoleRepo;
-import com.yml.icas.repository.SchemeDataRepo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -21,12 +9,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 @Slf4j
 @SpringBootApplication
@@ -36,11 +20,11 @@ public class MemberApplication {
         SpringApplication.run(MemberApplication.class, args);
     }
 
-    @Bean
+    /*@Bean
     CommandLineRunner runner(HRRepository hrRepository, MemberRepo memberRepo, RegistrationRepo memberRegistrationRepo,
                              SchemeDataRepo schemeDataRepo, RoleRepo roleRepo) {
         return args -> {
-           /* if (hrRepository.count() == 0) {
+            if (hrRepository.count() == 0) {
                 HR saman = new HR();
                 saman.setEmpNo("100");
                 saman.setName("Mrs DA Leena Perera");
@@ -372,7 +356,7 @@ public class MemberApplication {
                 hrRepository.save(k);
                 hrRepository.save(amali);
 */
-              /*  Member mr = new Member();
+                Member mr = new Member();
                 mr.setEmpNo(saman.getEmpNo());
                 mr.setName(saman.getName());
                 mr.setAddress(saman.getAddress());
@@ -401,8 +385,8 @@ public class MemberApplication {
                 mreg.setAcceptedBy(1);
                 mreg.setSchemeType("Individual");
                 memberRegistrationRepo.save(mreg);
-            }*/
-           /* if (schemeDataRepo.count() == 0) {
+            }
+            if (schemeDataRepo.count() == 0) {
                 ObjectMapper mapper = new ObjectMapper();
                 TypeReference<List<SchemeData>> typeReference = new TypeReference<>() {
                 };
@@ -414,11 +398,11 @@ public class MemberApplication {
                     System.out.println("Unable to save users: " + e.getMessage());
                 }
             }
-            System.out.println("Configuration done");*/
+            System.out.println("Configuration done");
 
             ///System.out.println(guestService.memberValidation(2024,"100"));
         };
-    }
+    }*/
 
     @Bean
     public CorsFilter corsFilter() {

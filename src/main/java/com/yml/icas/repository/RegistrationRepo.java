@@ -1,6 +1,5 @@
 package com.yml.icas.repository;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.yml.icas.dto.RegistrationDTO;
 import com.yml.icas.model.Registration;
 import jakarta.transaction.Transactional;

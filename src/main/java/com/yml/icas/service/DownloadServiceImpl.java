@@ -5,8 +5,6 @@ import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.dto.RegistrationDTO;
 import com.yml.icas.model.Claim;
-import com.yml.icas.model.Member;
-import com.yml.icas.model.Registration;
 import com.yml.icas.repository.*;
 import com.yml.icas.service.interfaces.DownloadService;
 import com.yml.icas.util.IcasUtil;

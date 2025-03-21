@@ -1,12 +1,9 @@
 package com.yml.icas.repository;
 
-import com.yml.icas.model.Dependant;
 import com.yml.icas.model.DependantData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.Date;
 
 public interface DependantDataRepo extends JpaRepository<DependantData, Integer> {
 
