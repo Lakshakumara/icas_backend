@@ -178,4 +178,49 @@ public class Claim {
 
     @Column(name = "appealremarks")
     private String appealRemarks;
+
+    @Override
+    public String toString() {
+        return "Claim{" +
+                "id=" + id +
+                ", member=" + member +
+                ", claimData=" + claimData +
+                ", category='" + category + '\'' +
+                ", requestFor='" + requestFor + '\'' +
+                ", dependant=" + dependant +
+                ", injuryDate=" + injuryDate +
+                ", injuryPlace='" + injuryPlace + '\'' +
+                ", injuryHow='" + injuryHow + '\'' +
+                ", injuryNature='" + injuryNature + '\'' +
+                ", illnessDate=" + illnessDate +
+                ", illnessNature='" + illnessNature + '\'' +
+                ", illnessFirstConsultDate=" + illnessFirstConsultDate +
+                ", illnessFirstDr='" + illnessFirstDr + '\'' +
+                ", hospitalStartDate=" + hospitalStartDate +
+                ", hospitalEndDate=" + hospitalEndDate +
+                ", infoTreatment='" + infoTreatment + '\'' +
+                ", infoHospital='" + infoHospital + '\'' +
+                ", infoConsultant='" + infoConsultant + '\'' +
+                ", claimDate=" + claimDate +
+                ", startDate=" + startDate +
+                ", requestAmount=" + requestAmount +
+                ", acceptedDate=" + acceptedDate +
+                ", acceptedBy=" + acceptedBy +
+                ", mecSendDate=" + mecSendDate +
+                ", deductionAmount=" + deductionAmount +
+                ", paidAmount=" + paidAmount +
+                ", voucherId=" + voucherId +
+                ", financeSendDate=" + financeSendDate +
+                ", completedDate=" + completedDate +
+                ", mecRemarks='" + mecRemarks + '\'' +
+                ", mecReturnDate=" + mecReturnDate +
+                ", rejectedDate=" + rejectedDate +
+                ", rejectRemarks='" + rejectRemarks + '\'' +
+                ", claimStatus='" + claimStatus + '\'' +
+                ", remarks='" + remarks + '\'' +
+                ", appeal=" + appeal +
+                ", appealRefId=" + appealRefId +
+                ", appealRemarks='" + appealRemarks + '\'' +
+                '}';
+    }
 }

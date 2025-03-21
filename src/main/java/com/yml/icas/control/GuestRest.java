@@ -1,6 +1,7 @@
 package com.yml.icas.control;
 
 import com.yml.icas.dto.HistoryDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,6 @@ public interface GuestRest {
                                                          @PathVariable(name = "empNo") String empNo);
 
     @GetMapping()
-    ResponseEntity<Set<HistoryDTO>> getHis();
+    ResponseEntity<Page<Set<Map<String, Object>>>> getHis();
 
 }

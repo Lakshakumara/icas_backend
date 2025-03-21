@@ -22,7 +22,6 @@ public interface ClaimRepo extends JpaRepository<Claim, Integer> {
             "(:searchText IS NULL OR :searchText = '' OR " +
             "lower(c.member.empNo) LIKE lower(concat('%', :searchText, '%')) OR " +
             "lower(c.member.name) LIKE lower(concat('%', :searchText, '%'))) " +
-
             "AND (:claimType IS NULL OR :claimType = '%' OR :claimType = '' OR lower(c.category) LIKE lower(:claimType)) " +
             "AND (:year IS NULL OR :year = 0 OR YEAR(c.claimDate) = :year) " +
             "AND (:memberId IS NULL OR c.member.id = :memberId) " +
@@ -35,7 +34,17 @@ public interface ClaimRepo extends JpaRepository<Claim, Integer> {
                              @Param("searchText") String searchText,
                              Pageable pageable);
 
-    @Query(value = "select c from Claim c where c.member =:member and YEAR(c.claimDate)=:year")
+    @Query("SELECT c FROM Claim c WHERE " +
+            "(:filter IS NULL OR :filter = '' OR " +
+            "lower(c.member.empNo) LIKE lower(concat('%', :filter, '%')) OR " +
+            "lower(c.member.name) LIKE lower(concat('%', :filter, '%'))) " +
+            "AND (:department IS NULL OR :department = '' OR c.member.department=:department) ")
+    Page<Claim> getDepartmentClaim(
+                         @Param("department") String department,
+                         @Param("filter") String filter,
+                         Pageable pageable);
+
+    @Query("select c from Claim c where c.member =:member and YEAR(c.claimDate)=:year")
     List<Claim> getDashboardData(Member member, Integer year);
 
     @Modifying
@@ -82,22 +91,7 @@ public interface ClaimRepo extends JpaRepository<Claim, Integer> {
     int forwardPaid(@Param(value = "id") long id,
                        @Param(value = "claimStatus") String claimStatus,
                        @Param(value = "completeddate") Date completeddate);
-    @Modifying
-    @Transactional
-    @Query("update Claim c set c.claimStatus=:claimStatus," +
-            " c.deductionAmount=:deductionAmount," +
-            " c.mecRemarks=:mecremarks," +
-            " c.mecReturnDate=:mecreturndate," +
-            " c.rejectedDate=:rejecteddate," +
-            " c.rejectRemarks=:rejectremarks" +
-            " where c.id=:id")
-    int opdComplete(@Param(value = "id") long id,
-                    @Param(value = "claimStatus") String claimStatus,
-                    @Param(value = "deductionAmount") Double deductionAmount,
-                    @Param(value = "mecremarks") String mecremarks,
-                    @Param(value = "mecreturndate") Date mecreturndate,
-                    @Param(value = "rejecteddate") Date rejecteddate,
-                    @Param(value = "rejectremarks") String rejectremarks);
+
     @Modifying
     @Transactional
     @Query("update Claim c set c.claimStatus=:claimStatus, c.mecRemarks=:mecremarks,c.mecReturnDate=:mecreturndate, c.remarks=:remarks" +
@@ -108,7 +102,7 @@ public interface ClaimRepo extends JpaRepository<Claim, Integer> {
                     @Param(value = "mecreturndate") Date mecreturndate,
                     @Param(value = "remarks") String remarks);
 
-    @Query("select distinct c.voucherId from Claim c where c.voucherId != null")
+    @Query("select distinct c.voucherId from Claim c where c.voucherId != null ORDER BY c.voucherId DESC LIMIT 20")
     long[] getVoucherId();
 
     @Modifying
@@ -254,4 +248,21 @@ List<Claim> getClaims(String claimType, String claimStatus);
                           @Param("claimStatus") String claimStatus,
                           @Param("searchText") String searchText,
                           Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query("update Claim c set c.claimStatus=:claimStatus," +
+            " c.deductionAmount=:deductionAmount," +
+            " c.mecRemarks=:mecremarks," +
+            " c.mecReturnDate=:mecreturndate," +
+            " c.rejectedDate=:rejecteddate," +
+            " c.rejectRemarks=:rejectremarks" +
+            " where c.id=:id")
+    int opdComplete(@Param(value = "id") long id,
+                    @Param(value = "claimStatus") String claimStatus,
+                    @Param(value = "deductionAmount") Double deductionAmount,
+                    @Param(value = "mecremarks") String mecremarks,
+                    @Param(value = "mecreturndate") Date mecreturndate,
+                    @Param(value = "rejecteddate") Date rejecteddate,
+                    @Param(value = "rejectremarks") String rejectremarks);
  */

@@ -14,7 +14,12 @@ import java.util.Set;
 @Setter
 @Getter
 @NoArgsConstructor
-@Table(name = "dependant")
+//@Table(name = "dependant")
+@Table(name = "dependant", indexes = {
+        @Index(name = "idx_dep_name", columnList = "name")
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "member_nic_unique", columnNames = {"name","nic","dob"})
+})
 public class Dependant implements Serializable {
     private static final long serialVersionId = 3L;
     @Id
@@ -35,5 +40,14 @@ public class Dependant implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date dob;
 
-
+    @Override
+    public String toString() {
+        return "Dependant{" +
+                "id=" + id +
+                ", dependantData=" + dependantData +
+                ", name='" + name + '\'' +
+                ", nic='" + nic + '\'' +
+                ", dob=" + dob +
+                '}';
+    }
 }

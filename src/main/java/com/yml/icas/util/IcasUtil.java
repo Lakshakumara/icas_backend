@@ -1,6 +1,7 @@
 package com.yml.icas.util;
 
 import com.yml.icas.dto.ClaimDTO;
+import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.model.Member;
@@ -35,6 +36,48 @@ public class IcasUtil {
 
     }
 
+    public static byte[] genApplication(MemberDTO memberDTO) {
+        Map<String, Object> empParams = new HashMap<>();
+        empParams.put("title", "APPLICATION FORM TO JOIN THE MEDICAL WELFARE SCHEME FOR " +
+                "PERMANENT EMPLOYEES IN THE UNIVERSITY");
+        String ageText = calAge(memberDTO.getDob(), MyConstants.TODAY());
+
+        memberDTO.getMemberRegistrations().forEach(r -> {
+            empParams.put("schemeType", r.getSchemeType());
+        });
+
+        empParams.put("empNo", memberDTO.getEmpNo());
+        empParams.put("name", memberDTO.getName());
+        empParams.put("address", memberDTO.getAddress());
+        empParams.put("email", memberDTO.getEmail());
+        empParams.put("contactNo", memberDTO.getContactNo());
+        empParams.put("civilStatus", memberDTO.getCivilStatus());
+        empParams.put("nic", memberDTO.getNic());
+        empParams.put("dob", memberDTO.getDob());
+        empParams.put("age", ageText);
+        empParams.put("sex", memberDTO.getSex());
+        empParams.put("designation", memberDTO.getDesignation());
+        empParams.put("department", memberDTO.getDepartment());
+
+        empParams.put("dependants", new JRBeanCollectionDataSource(memberDTO.getDependants()));
+
+        empParams.put("beneficiary", new JRBeanCollectionDataSource(memberDTO.getBeneficiaries()));
+        try {
+            InputStream reportStream = IcasUtil.class.getResourceAsStream("/memberApplication.jrxml");
+            if (reportStream == null) {
+                throw new FileNotFoundException("JRXML file not found in classpath");
+            }
+            JasperPrint empReport = JasperFillManager.fillReport(
+                    JasperCompileManager.compileReport(reportStream), // compile from InputStream
+                    empParams, // dynamic parameters passed
+                    new JREmptyDataSource()
+            );
+            return JasperExportManager.exportReportToPdf(empReport);
+        } catch (Exception e) {
+            return e.getMessage().getBytes();
+        }
+    }
+
     public static byte[] genApplication(Member member) {
         Map<String, Object> empParams = new HashMap<>();
         empParams.put("title", "APPLICATION FORM TO JOIN THE MEDICAL WELFARE SCHEME FOR " +
@@ -43,7 +86,7 @@ public class IcasUtil {
         MemberDTO memberDTO = ObjectMapper.mapToMemberDTO(member);
 
         assert memberDTO != null;
-        String ageText = calAge(memberDTO.getDob(), new Date());
+        String ageText = calAge(memberDTO.getDob(), MyConstants.TODAY());
 
         empParams.put("schemeType", memberDTO.getCurrentRegistration().getSchemeType());
 
@@ -129,7 +172,8 @@ public class IcasUtil {
         return years + "y " + months + "m " + days + "d";
     }
 
-    public static byte[] genOPDApplication(ClaimDTO claimDTO) {
+    public static byte[] genClaimApplication(ClaimDTO claimDTO) {
+        log.info("claimdto ", claimDTO.getDependant());
         Map<String, Object> empParams = new HashMap<>();
         String pdfTemplate = (claimDTO.getCategory().equalsIgnoreCase("opd")) ?
                 "opdApplication" : "SHApplicationFront";
@@ -139,10 +183,9 @@ public class IcasUtil {
         empParams.put("NIC", claimDTO.getMember().getNic());
         empParams.put("department", claimDTO.getMember().getDepartment());
         empParams.put("contactNo", claimDTO.getMember().getContactNo());
-        empParams.put("dependants", new JRBeanCollectionDataSource(claimDTO.getMember().getDependants()));
+        empParams.put("dependants", new JRBeanCollectionDataSource(Collections.singleton(claimDTO.getDependant())));
         Set<ClaimDTO> data = new HashSet<>();
         data.add(claimDTO);
-
         try {
             InputStream reportStream = IcasUtil.class.getResourceAsStream("/" + pdfTemplate + ".jrxml");
             if (reportStream == null) {
@@ -208,29 +251,63 @@ public class IcasUtil {
         return pageable;
     }*/
 
-    public static Pageable createPageableOjects(Map<String, Object> params) {
+    public static Pageable createPageableObjects(Map<String, Object> params) {
         Pageable pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
                 Integer.parseInt(params.get("pageSize").toString()));
         String sortField = params.get("sortField").toString();
         String sortDirection = params.get("sortOrder").toString();
-        if(sortField != null && !sortField.isEmpty() && !sortDirection.isEmpty()){
+        if (sortField != null && !sortField.isEmpty() && !sortDirection.isEmpty()) {
             Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
             pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
                     Integer.parseInt(params.get("pageSize").toString()), sort);
         }
         return pageable;
     }
+
     public static Pageable createPageable(Map<String, String> params) {
         Pageable pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex")),
                 Integer.parseInt(params.get("pageSize")));
         String sortField = params.get("sortField");
         String sortDirection = params.get("sortOrder");
-        if(sortField != null && !sortField.isEmpty() && !sortDirection.isEmpty()){
+        if (sortField != null && !sortField.isEmpty() && !sortDirection.isEmpty()) {
             // "asc" or "desc
             Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
             pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex")),
                     Integer.parseInt(params.get("pageSize")), sort);
         }
         return pageable;
+    }
+
+    public java.util.Date isNIC(String nic) {
+        boolean male = true;
+        switch (nic.length()) {
+            case 9:
+            case 10:
+                nic = "19".concat(nic);
+                break;
+            case 12:
+                break;
+            default:
+                return null;
+        }
+        int data;
+        try {
+            data = Integer.parseInt(nic.substring(0, 7));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, data / 1000);
+        int rest = data % 1000;
+        if ((rest > 366 && rest < 500) || (rest > 866)) return null;
+
+        if (rest > 500) {
+            male = false;
+            rest = rest - 500;
+        }
+        if (calendar.getActualMaximum(Calendar.DAY_OF_YEAR) == 365) rest = (rest > 59) ? rest - 1 : rest;
+
+        calendar.set(Calendar.DAY_OF_YEAR, rest);
+        return calendar.getTime();
     }
 }

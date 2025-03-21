@@ -40,7 +40,7 @@ public class MemberApplication {
     CommandLineRunner runner(HRRepository hrRepository, MemberRepo memberRepo, RegistrationRepo memberRegistrationRepo,
                              SchemeDataRepo schemeDataRepo, RoleRepo roleRepo) {
         return args -> {
-            if (hrRepository.count() == 0) {
+           /* if (hrRepository.count() == 0) {
                 HR saman = new HR();
                 saman.setEmpNo("100");
                 saman.setName("Mrs DA Leena Perera");
@@ -371,8 +371,8 @@ public class MemberApplication {
                 hrRepository.save(momo);
                 hrRepository.save(k);
                 hrRepository.save(amali);
-
-                Member mr = new Member();
+*/
+              /*  Member mr = new Member();
                 mr.setEmpNo(saman.getEmpNo());
                 mr.setName(saman.getName());
                 mr.setAddress(saman.getAddress());
@@ -388,10 +388,10 @@ public class MemberApplication {
                 mr.setMDate(new java.util.Date());
                 mr.setStatus("sudo");
                 mr.setDeleted(false);
-                /*Set<Role> roles = new HashSet<>();
+                Set<Role> roles = new HashSet<>();
                 roles.add(roleRepo.findByRole("user"));
                 roles.add(roleRepo.findByRole("admin"));
-                mr.getRoles().addAll(roles);*/
+                mr.getRoles().addAll(roles);
                 Member newm = memberRepo.save(mr);
 
                 Registration mreg = new Registration();
@@ -401,8 +401,8 @@ public class MemberApplication {
                 mreg.setAcceptedBy(1);
                 mreg.setSchemeType("Individual");
                 memberRegistrationRepo.save(mreg);
-            }
-            if (schemeDataRepo.count() == 0) {
+            }*/
+           /* if (schemeDataRepo.count() == 0) {
                 ObjectMapper mapper = new ObjectMapper();
                 TypeReference<List<SchemeData>> typeReference = new TypeReference<>() {
                 };
@@ -414,7 +414,7 @@ public class MemberApplication {
                     System.out.println("Unable to save users: " + e.getMessage());
                 }
             }
-            System.out.println("Configuration done");
+            System.out.println("Configuration done");*/
 
             ///System.out.println(guestService.memberValidation(2024,"100"));
         };

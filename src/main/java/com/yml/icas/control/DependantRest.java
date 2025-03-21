@@ -14,8 +14,4 @@ import java.util.Set;
 public interface DependantRest {
     @GetMapping(path = "/{depName}")
     ResponseEntity<DependantDTO> getDependant(@PathVariable(name = "depName") String depName);
-
-    @GetMapping(path = "/{year}/{empNo}")
-    ResponseEntity<Set<DependantDTO>> getMemberDependants(@PathVariable(name = "year") int year,
-                                                         @PathVariable(name = "empNo") String empNo);
 }

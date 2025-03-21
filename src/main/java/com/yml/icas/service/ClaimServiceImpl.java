@@ -48,6 +48,9 @@ public class ClaimServiceImpl implements ClaimService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private ClaimRepositoryCustomImpl claimRepository;
+
     public Integer addClaim(ClaimDTO claimDTO) {
         Claim c = null;
         try {
@@ -63,23 +66,41 @@ public class ClaimServiceImpl implements ClaimService {
         }
         return c.getId();
     }
-
-    @Override
-    public ResponseEntity<Integer> saveOpd(ClaimOPDDTO claimOPDDTO) {
-        Claim claim;
-        try {
-            claim = claimRepo.save(getClaimOPD(claimOPDDTO));
-            List<Stage> stages = new ArrayList<>();
-            stages.add(new Stage("Online Application", "Received", ""));
-            stages.add(new Stage("Department Head Approval", "Pending", ""));
-            emailClaimProgress(Objects.requireNonNull(ObjectMapper.mapToClaimDTO(claim)), stages);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(claim.getId(), HttpStatus.OK);
+    private Integer addClaimData(Map<String, Object> dataSet) {
+        SchemeData scheme = schemeDataRepo.findByIdText((String) dataSet.get("idText"));
+        ClaimData cd = new ClaimData();
+        cd.setSchemeData(scheme);
+        cd.setClaim(new Claim((int) dataSet.get("id")));
+        cd.setRequestAmount(Converter.toDouble(dataSet.get("requestAmount")));
+        cd.setClaimDataStatus((String) dataSet.get("claimDataStatus"));
+        cd.setDeductionAmount(Converter.toDouble(dataSet.get("deductionAmount")));
+        cd.setDeductionRemarks((String) dataSet.get("deductionRemarks"));
+        cd.setRejectedDate(Converter.toDate(dataSet.get("rejectDate")));
+        cd.setRejectRemarks((String) dataSet.get("rejectRemarks"));
+        cd.setRemarks((String) dataSet.get("remarks"));
+        log.info("saved ClaimData {}", cd);
+        claimDataRepo.save(cd);
+        return 1;
     }
-
+    private Integer updateClaimData(Map<String, Object> dataSet) {
+        ClaimData cd = claimDataRepo.getReferenceById((int) dataSet.get("claimDataId"));
+        cd.setRequestAmount(Converter.toDouble(dataSet.get("requestAmount")));
+        cd.setAdjustAmount(Converter.toDouble(dataSet.get("adjustAmount")));
+        cd.setAdjustRemarks((String) dataSet.get("adjustRemarks"));
+        cd.setRemarks((String) dataSet.get("remarks"));
+        cd.setPaidAmount(Converter.toDouble(dataSet.get("paidAmount")));
+        claimDataRepo.save(cd);
+        return 1;
+    }
+    public Boolean deleteClaimData(Integer id) {
+        boolean ok = false;
+        try {
+            claimDataRepo.deleteById(id);
+            ok = true;
+        } catch (Exception ignored) {
+        }
+        return ok;
+    }
     @Override
     public ResponseEntity<Integer> updateClaim(Map<String, Object>[] dataSets) {
         log.info("received Claim update data Set {}", (Object) dataSets);
@@ -167,33 +188,6 @@ public class ClaimServiceImpl implements ClaimService {
         return new ResponseEntity<>(rows, HttpStatus.OK);
     }
 
-    private Integer addClaimData(Map<String, Object> dataSet) {
-        SchemeData scheme = schemeDataRepo.findByIdText((String) dataSet.get("idText"));
-        ClaimData cd = new ClaimData();
-        cd.setSchemeData(scheme);
-        cd.setClaim(new Claim((int) dataSet.get("id")));
-        cd.setRequestAmount(Converter.toDouble(dataSet.get("requestAmount")));
-        cd.setClaimDataStatus((String) dataSet.get("claimDataStatus"));
-        cd.setDeductionAmount(Converter.toDouble(dataSet.get("deductionAmount")));
-        cd.setDeductionRemarks((String) dataSet.get("deductionRemarks"));
-        cd.setRejectedDate(Converter.toDate(dataSet.get("rejectDate")));
-        cd.setRejectRemarks((String) dataSet.get("rejectRemarks"));
-        cd.setRemarks((String) dataSet.get("remarks"));
-        log.info("saved ClaimData {}", cd);
-        claimDataRepo.save(cd);
-        return 1;
-    }
-    private Integer updateClaimData(Map<String, Object> dataSet) {
-        ClaimData cd = claimDataRepo.getReferenceById((int) dataSet.get("claimDataId"));
-        cd.setRequestAmount(Converter.toDouble(dataSet.get("requestAmount")));
-        cd.setAdjustAmount(Converter.toDouble(dataSet.get("adjustAmount")));
-        cd.setAdjustRemarks((String) dataSet.get("adjustRemarks"));
-        cd.setRemarks((String) dataSet.get("remarks"));
-        cd.setPaidAmount(Converter.toDouble(dataSet.get("paidAmount")));
-        claimDataRepo.save(cd);
-        return 1;
-    }
-
     @Override
     public ClaimDTO getClaim(Integer claimId) {
         try {
@@ -208,61 +202,28 @@ public class ClaimServiceImpl implements ClaimService {
     public Page<ClaimDTO> getAllClaim(Map<String, String> params) {
         log.info("getAllClaim params {}", params);
         Pageable pageable = IcasUtil.createPageable(params);
-        Member member = memberRepo.findByEmpNoIgnoreCase(params.get("empNo"));
+        Page<Claim> claimList;
 
-        Page<Claim> claimList = claimRepo.getClaim(
-                (member == null)?null:member.getId(),
-                params.get("claimType"),
-                (params.get("year").isEmpty())?0:Integer.parseInt(params.get("year")),
-                params.get("claimStatus"),
-                params.get("filter"),
-                pageable);
- /*       try {
-            if (!params.get("empNo").isEmpty()) {
-                //Member member = memberRepo.findByEmpNoIgnoreCase(params.get("empNo"));
-                if (!Objects.isNull(member)) {
-                    if (Integer.parseInt(params.get("year")) == 0 && !params.get("claimStatus").equalsIgnoreCase("%")) {
-                        claimList = claimRepo.getClaimData(
-                                member,
-                                params.get("claimStatus"), params.get("filter"), pageable);
 
-                    } else if (Integer.parseInt(params.get("year")) == 0 && params.get("claimStatus").equalsIgnoreCase("%")) {
-                        claimList = claimRepo.getClaimData(member, params.get("filter"), pageable);
-
-                    } else if (Integer.parseInt(params.get("year")) != 0 && !params.get("claimStatus").equalsIgnoreCase("%")) {
-                        claimList = claimRepo.getClaimData(member,Integer.valueOf(params.get("year")),
-                                params.get("claimStatus"), params.get("filter"), pageable);
-
-                    } else if (Integer.parseInt(params.get("year")) != 0 && params.get("claimStatus").equalsIgnoreCase("%")) {
-                        claimList = claimRepo.getClaimData(member,
-                                Integer.valueOf(params.get("year")), params.get("filter"), pageable);
-                    } else {
-                        claimList = claimRepo.getClaimData(
-                                member, params.get("claimType"),
-                                Integer.valueOf(params.get("year")),
-                                params.get("claimStatus"), params.get("filter"), pageable);
-                    }
-                }
-
-            } else {
-                if (params.get("claimType").equalsIgnoreCase("%")) {
-                    log.info("params.get(\"claimStatus\") {}", params.get("claimStatus"));
-                    claimList = claimRepo.findAllByClaimStatusLike(params.get("claimStatus"), pageable);
-                } else {
-                    log.info("params.get().equalsIgnoreCase {} {}", params.get("claimType"), params.get("claimStatus"));
-                    claimList = claimRepo.getClaims(params.get("claimType"), params.get("claimStatus"), params.get("filter"), pageable);
-                }
-                claimList = claimRepo.getClaims(params.get("claimType"), params.get("claimStatus"), params.get("filter"), pageable);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String department = params.getOrDefault("department","");
+        if(department.isEmpty()) {
+            Member member = memberRepo.findByEmpNoIgnoreCase(params.get("empNo"));
+            claimList = claimRepo.getClaim(
+                    (member == null) ? null : member.getId(),
+                    params.get("claimType"),
+                    (params.get("year").isEmpty()) ? 0 : Integer.parseInt(params.get("year")),
+                    params.get("claimStatus"),
+                    params.get("filter"),
+                    pageable);
+        }else{
+            claimList = claimRepo.getDepartmentClaim(
+                    department,
+                    params.get("filter"),
+                    pageable);
         }
-*/
+        assert claimList != null;
         Page<ClaimDTO> cd = claimList.map(ObjectMapper::mapToClaimDTO);
-        for (ClaimDTO c:cd
-        ) {
-            log.info(String.valueOf(c));
-        }
+        for (ClaimDTO c:cd) {log.info(String.valueOf(c));}
         return cd;
     }
 
@@ -322,24 +283,53 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     @Override
-    public Set<ClaimHistoryDTO> getClaimHistory(Map<String, String> params) {
+    public Set<HistoryDTO> getClaimHistorySummary(Map<String, String> params) {
+        String empNo=params.getOrDefault("empNo", "");
+        List<String> opd1 = schemeDataRepo.getOPD();
+        Map<String, Object> paymentSummary = claimDataRepo.getPaymentSummary(empNo, opd1);
+        HistoryDTO opd = new HistoryDTO("2,4.1-OPD", opd1, schemeDataRepo.getMaxAmount("2.1"), paymentSummary.get("count"), paymentSummary.get("paid"));
+        opd1 = schemeDataRepo.getSH();
+        paymentSummary = claimDataRepo.getPaymentSummary(empNo, opd1);
+        HistoryDTO sh = new HistoryDTO("1-Surgical & Hospital Expenses", opd1, schemeDataRepo.getMaxAmount("1"), paymentSummary.get("count"), paymentSummary.get("paid"));
+        opd1 = schemeDataRepo.getPA();
+        paymentSummary = claimDataRepo.getPaymentSummary(empNo, opd1);
+        HistoryDTO pa = new HistoryDTO("3-Personal Accident", opd1, schemeDataRepo.getMaxAmount("3.2.a"), paymentSummary.get("count"), paymentSummary.get("paid"));
+        opd1 = schemeDataRepo.getCR();
+        paymentSummary = claimDataRepo.getPaymentSummary(empNo, opd1);
+        HistoryDTO cr = new HistoryDTO("5-Critical Illness", opd1, schemeDataRepo.getMaxAmount("5.1"), paymentSummary.get("count"), paymentSummary.get("paid"));
+
+        Set<HistoryDTO> data = new HashSet<>();
+        data.add(opd);
+        data.add(sh);
+        data.add(pa);
+        data.add(cr);
+        return data;
+    }
+
+    @Override
+    public Page<ClaimHistoryDTO> getClaimDataHistory(Map<String, String> params) {
+        Pageable pageable = IcasUtil.createPageable(params);
         String empNo = params.getOrDefault("empNo", "");
-        List<String> idTextList = params.get("idText") != null
-                ? Arrays.asList(params.get("idText").split(",")) : null;
-        log.info("idTextList: {}", idTextList);
-        Set<ClaimHistoryDTO> ch = claimDataRepo.getTitlePayment(empNo, idTextList);
-        log.info("fetch {}", ch);
+        List<String> idTextList = null;
+        if(!Objects.equals(params.get("idText"), "null")) {
+            idTextList = Arrays.asList(params.get("idText").split(","));
+        }
+        Page<ClaimHistoryDTO> ch = claimDataRepo.getClaimDataHistory(empNo, idTextList, pageable);
+        log.info("params {}\n fetch {}", params, ch);
         return ch;
     }
 
-    public Boolean deleteClaimData(Integer id) {
-        boolean ok = false;
-        try {
-            claimDataRepo.deleteById(id);
-            ok = true;
-        } catch (Exception ignored) {
+    @Override
+    public Page<ClaimDataHistoryDTO> getClaimDataHistoryAll(Map<String, String> params) {
+        Pageable pageable = IcasUtil.createPageable(params);
+        String empNo = params.getOrDefault("empNo", "");
+        List<String> idTextList = null;
+        if(!Objects.equals(params.get("idText"), "null")) {
+            idTextList = Arrays.asList(params.get("idText").split(","));
         }
-        return ok;
+        Page<ClaimDataHistoryDTO> ch = claimDataRepo.getClaimDataHistoryAll(empNo, idTextList, pageable);
+        log.info("params {}\n fetch {}", params, ch);
+        return ch;
     }
 
     public void emailClaimProgress(ClaimDTO claimDTO, List<Stage> stages) {
@@ -349,21 +339,6 @@ public class ClaimServiceImpl implements ClaimService {
         variables.put("claimId", claimDTO.getMember().getId());
         variables.put("stages", stages);
         emailService.sendEmail(claimDTO.getMember().getEmail(), claimDTO.getRequestFor() + " Progress", "claim-progress", variables);
-    }
-
-    private Claim getClaimOPD(ClaimOPDDTO claimOPDDTO) {
-        Claim cd = new Claim();
-        if (Objects.isNull(claimOPDDTO)) return cd;
-        cd.setId(claimOPDDTO.getId());
-        cd.setMember(memberRepo.getReferenceById(claimOPDDTO.getMemberId()));
-        cd.setRequestFor(claimOPDDTO.getRequestFor());
-        cd.setCategory(claimOPDDTO.getCategory());
-        cd.setStartDate(claimOPDDTO.getStartDate());
-        cd.setClaimDate(claimOPDDTO.getClaimDate());
-        cd.setRequestAmount(claimOPDDTO.getRequestAmount());
-        cd.setClaimStatus(claimOPDDTO.getClaimStatus());
-        cd.setAcceptedDate(claimOPDDTO.getAcceptedDate());
-        return cd;
     }
 
     private Claim toClaim(ClaimDTO claimDTO) {
@@ -430,7 +405,44 @@ class Stage {
     private String remarks;
 }
 
-  /* @Override
+  /*
+    private Claim getClaimOPD(ClaimOPDDTO claimOPDDTO) {
+        Claim cd = new Claim();
+        if (Objects.isNull(claimOPDDTO)) return cd;
+        cd.setId(claimOPDDTO.getId());
+        cd.setMember(memberRepo.getReferenceById(claimOPDDTO.getMemberId()));
+        cd.setRequestFor(claimOPDDTO.getRequestFor());
+        cd.setCategory(claimOPDDTO.getCategory());
+        cd.setStartDate(claimOPDDTO.getStartDate());
+        cd.setClaimDate(claimOPDDTO.getClaimDate());
+        cd.setRequestAmount(claimOPDDTO.getRequestAmount());
+        cd.setClaimStatus(claimOPDDTO.getClaimStatus());
+        cd.setAcceptedDate(claimOPDDTO.getAcceptedDate());
+        return cd;
+    }
+   public Page<Claim> searchClaims(Map<String, String> params) {
+        return claimRepository.searchClaims(params);
+    }
+
+
+
+    @Override
+    public ResponseEntity<Integer> saveOpd(ClaimOPDDTO claimOPDDTO) {
+        Claim claim;
+        try {
+            claim = claimRepo.save(getClaimOPD(claimOPDDTO));
+            List<Stage> stages = new ArrayList<>();
+            stages.add(new Stage("Online Application", "Received", ""));
+            stages.add(new Stage("Department Head Approval", "Pending", ""));
+            emailClaimProgress(Objects.requireNonNull(ObjectMapper.mapToClaimDTO(claim)), stages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(claim.getId(), HttpStatus.OK);
+    }
+
+    @Override
     public Set<ClaimDTO> getAllClaim(Map<String, String> params) {
         log.info("getAllClaim params {}", params);
         final Set<ClaimDTO> dd = new HashSet<>();

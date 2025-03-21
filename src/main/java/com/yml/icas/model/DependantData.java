@@ -42,4 +42,16 @@ public class DependantData implements Serializable {
 
     private boolean deleted = false;
 
+    @Override
+    public String toString() {
+        return "DependantData{" +
+                "id=" + id +
+                ", member=" + member +
+                ", dependant=" + dependant +
+                ", relationship='" + relationship + '\'' +
+                ", registerDate=" + registerDate +
+                ", registerYear=" + registerYear +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

@@ -14,4 +14,5 @@ public class ClaimHistoryDTO {
     private Double deductionAmount;
     private Double adjustAmount;
     private Double paidAmount;
+    private Object claimIds;
 }

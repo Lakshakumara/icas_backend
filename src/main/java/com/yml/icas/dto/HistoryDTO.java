@@ -12,5 +12,7 @@ import java.util.List;
 public class HistoryDTO {
     private String category;
     private List<String> idText;
-    private Double maxAmount;
+    private Object maxAmount;
+    private Object itemCount;
+    private  Object totalPaid;
 }

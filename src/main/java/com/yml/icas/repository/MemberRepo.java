@@ -1,5 +1,6 @@
 package com.yml.icas.repository;
 
+import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.model.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,13 @@ public interface MemberRepo extends JpaRepository<Member, Integer> {
     @EntityGraph(value = "Member.withRegistrations", type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT m FROM Member m WHERE LOWER(m.empNo) = LOWER(:empNo)")
     Member getDTO_empNo(@Param("empNo") String empNo);
+
+
+    @Query("SELECT new com.yml.icas.dto.MemberDTO(m.id,m.empNo,m.name,m.address, m.email,m.contactNo, m.civilStatus, m.nic,m.sex, m.dob," +
+            "m.designation, m.department, m.status, m.photoUrl, m.registrationOpen) " +
+            "FROM Member m WHERE LOWER(m.empNo) = LOWER(:empNo)")
+    MemberDTO getMemberDTOEmpNo(@Param("empNo") String empNo);
+
     @Query("UPDATE Member set registrationOpen =:regYear where deleted = false" +
             " and registrationOpen != :regYear ")
     void updateRegistrationAll(Integer regYear);
@@ -33,7 +41,6 @@ public interface MemberRepo extends JpaRepository<Member, Integer> {
     void updateRegistrationMember(String empNo, Integer regYear);
 
     /*
-
 Page<Member> findAllByEmpNoContainsIgnoreCase(String empNo, Pageable pageable);
 @Query("Select m from Member m where lower(m.empNo) = lower(:empNo)")
     Member getMember(@Param("empNo") String empNo);

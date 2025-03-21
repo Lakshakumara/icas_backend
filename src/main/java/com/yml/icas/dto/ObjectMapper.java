@@ -1,6 +1,8 @@
 package com.yml.icas.dto;
 
 import com.yml.icas.model.*;
+import com.yml.icas.util.IcasUtil;
+import com.yml.icas.util.MyConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -17,7 +19,7 @@ public class ObjectMapper {
         cd.setEmpNo(claim.getMember().getEmpNo());
         cd.setName(claim.getMember().getName());
         cd.setMember(mapToMemberDTO(claim.getMember()));
-        cd.setDependant(mapToDependant(claim.getDependant()));
+        cd.setDependant(mapToDependant(claim.getDependant(), MyConstants.getYear(claim.getStartDate())));
         cd.getClaimData().addAll(claim.getClaimData().stream().map(c ->
                         new ClaimDataDTO(c.getId(),
                                 c.getClaimDataStatus(),
@@ -154,11 +156,12 @@ public class ObjectMapper {
                 .collect(Collectors.toSet()));
 
         memberDTO.getMemberRegistrations().addAll(member.getMemberRegistrations().stream().map(r -> {
-            MemberRegistrationDTO rd = new MemberRegistrationDTO();
+            RegistrationDTO rd = new RegistrationDTO();
             rd.setId(r.getId());
             rd.setYear(r.getYear());
             rd.setSchemeType(r.getSchemeType());
             rd.setAcceptedDate(r.getAcceptedDate());
+            rd.setRegisterDate(r.getRegisterDate());
             rd.setAcceptedBy(r.getAcceptedBy());
             return rd;
         }).collect(Collectors.toSet()));
@@ -214,26 +217,42 @@ public class ObjectMapper {
     public static DependantDTO mapToDependant(Dependant dependant) {
         DependantDTO dependantDTO = new DependantDTO();
         if (Objects.isNull(dependant)) return dependantDTO;
-        dependant.setId(dependant.getId());
+        dependantDTO.setId(dependant.getId());
         dependantDTO.setName(dependant.getName());
         dependantDTO.setNic(dependant.getNic());
         dependantDTO.setDob(dependant.getDob());
         return dependantDTO;
     }
-
-    public static MemberRegistrationDTO mapToMemberRegistrationDTO(Set<Registration> memberRegistration) {
+    public static DependantDTO mapToDependant(Dependant dependant, int year) {
+        if (Objects.isNull(dependant)) return null;
+        DependantDTO dependantDTO = new DependantDTO();
+        dependantDTO.setId(dependant.getId());
+        dependantDTO.setName(dependant.getName());
+        dependantDTO.setNic(dependant.getNic());
+        dependantDTO.setDob(dependant.getDob());
+        dependantDTO.setAge(IcasUtil.calAge(dependant.getDob(), MyConstants.TODAY()));
+        dependant.getDependantData().forEach(dd->{
+           if (dd.getRegisterYear() == year){
+               dependantDTO.setRegisterYear(year);
+               dependantDTO.setRegisterDate(dd.getRegisterDate());
+               dependantDTO.setRelationship(dd.getRelationship());
+           }
+        });
+        return dependantDTO;
+    }
+@Deprecated
+    public static RegistrationDTO mapToMemberRegistrationDTO(Set<Registration> memberRegistration) {
         if (Objects.isNull(memberRegistration)) return null;
-        MemberRegistrationDTO memberRegistrationDTO = new MemberRegistrationDTO();
+        RegistrationDTO memberRegistrationDTO = new RegistrationDTO();
         Optional<Registration> max = memberRegistration.stream().max(Comparator.comparingInt(Registration::getYear));
         if (max.isPresent()) {
             memberRegistrationDTO.setYear(max.get().getYear());
             memberRegistrationDTO.setSchemeType(max.get().getSchemeType());
             memberRegistrationDTO.setAcceptedDate(max.get().getAcceptedDate());
+            memberRegistrationDTO.setRegisterDate(max.get().getRegisterDate());
         }
         return memberRegistrationDTO;
     }
-
-
 
     public static ClaimDataDTO mapToClaimDataDTO(ClaimData claimData) {
         return new ClaimDataDTO(
@@ -251,7 +270,7 @@ public class ObjectMapper {
                 claimData.getAdjustRemarks()
         );
     }
-
+}
     /*public static Claim mapToClaimOPD(ClaimOPDDTO claimOPDDTO) {
         Claim cd = new Claim();
         if (Objects.isNull(claimOPDDTO)) return cd;
@@ -312,5 +331,3 @@ public static MemberRegistration mapToMemberRegistration(Set<MemberRegistrationD
     }
 
 */
-
-}

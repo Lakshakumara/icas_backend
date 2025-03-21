@@ -27,16 +27,4 @@ public class DependantRestImpl implements DependantRest {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @Override
-    public ResponseEntity<Set<DependantDTO>> getMemberDependants(int year, String empNo) {
-        Set<DependantDTO> dependants= new HashSet<>();
-        try {
-            dependants =  dependantService.getMemberDependants(year, empNo);
-            return ResponseEntity.ok(dependants);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(dependants, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }

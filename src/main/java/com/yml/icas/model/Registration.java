@@ -25,6 +25,10 @@ public class Registration {
 
     private Integer year;
 
+    @Temporal(TemporalType.DATE)
+    @Column(name = "registerdate")
+    private Date registerDate;
+
     @Column(name = "schemetype")
     private String schemeType;
 
@@ -35,14 +39,4 @@ public class Registration {
     @Column(name = "acceptedby")
     private Integer acceptedBy;
 
-    @Override
-    public String toString() {
-        return "Registration{" +
-                "id=" + id +
-                ", year=" + year +
-                ", schemeType='" + schemeType + '\'' +
-                ", acceptedDate=" + acceptedDate +
-                ", acceptedBy=" + acceptedBy +
-                '}';
-    }
 }

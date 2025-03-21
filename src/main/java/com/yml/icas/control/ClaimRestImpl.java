@@ -51,7 +51,7 @@ public class ClaimRestImpl implements ClaimRest {
         }
     }
 
-    @Override
+   /* @Override
     public ResponseEntity<Integer> opdClaimSave(ClaimOPDDTO claimOPDDTO) {
         //log.info("claimRestImpl {}",claimOPDDTO);
         try {
@@ -60,7 +60,7 @@ public class ClaimRestImpl implements ClaimRest {
             ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }*/
 
     @Override
     public ResponseEntity<ClaimDTO> getClaim(Integer claimId) {
@@ -115,9 +115,21 @@ public class ClaimRestImpl implements ClaimRest {
     }
 
     @Override
-    public ResponseEntity<Set<ClaimHistoryDTO>> getClaimHistory(Map<String, String> params) {
-        Set<ClaimHistoryDTO> historyDTOS = claimService.getClaimHistory(params);
+    public ResponseEntity<Set<HistoryDTO>> getClaimHistorySummary(Map<String, String> params) {
+        Set<HistoryDTO> historyDTOS = claimService.getClaimHistorySummary(params);
         return ResponseEntity.ok(historyDTOS);
+    }
+
+    @Override
+    public ResponseEntity<Page<ClaimHistoryDTO>> getClaimDataHistory(Map<String, String> params) {
+        Page<ClaimHistoryDTO> historyDTOS = claimService.getClaimDataHistory(params);
+        return ResponseEntity.ok(historyDTOS);
+    }
+
+    @Override
+    public ResponseEntity<Page<ClaimDataHistoryDTO>> getClaimDataHistoryAll(Map<String, String> params) {
+        Page<ClaimDataHistoryDTO> claimDataHistoryAll = claimService.getClaimDataHistoryAll(params);
+        return ResponseEntity.ok(claimDataHistoryAll);
     }
 
    /* public ResponseEntity<Integer> setClaimAccept(ClaimOPDDTO claimOPDDTO) {

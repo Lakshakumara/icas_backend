@@ -1,6 +1,7 @@
 package com.yml.icas.repository;
 
-import com.yml.icas.model.Member;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.yml.icas.dto.RegistrationDTO;
 import com.yml.icas.model.Registration;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,7 @@ public interface RegistrationRepo extends JpaRepository<Registration, Integer> {
     Integer acceptRegistration(@Param("acceptedBy") Integer acceptedBy,
                                @Param("accepteddate") LocalDate accepteddate, @Param("memberId") Integer memberId);
 
-    Set<Registration> findByMember(@Param("member") Member member);
+
 
     @Query("SELECT r FROM Registration r WHERE " +
             "(:filter IS NULL OR :filter = '' OR " +
@@ -35,9 +36,9 @@ public interface RegistrationRepo extends JpaRepository<Registration, Integer> {
             @Param("filter") String filter,
             @Param("acceptedDate") Date acceptedDate,
             Pageable pageable);
-
-
-    Page<Registration> findByAcceptedDate(@Param("acceptDate") Date acceptDate, Pageable pageable);
-
-    Page<Registration> findByAcceptedDateNull(Pageable pageable);
+    @Query("SELECT new com.yml.icas.dto.RegistrationDTO(r.id, r.member.id,r.year,r.schemeType,r.registerDate, r.acceptedDate,r.acceptedBy) " +
+            "FROM Registration r " +
+            "WHERE r.member.empNo=:empNo " +
+            "AND (:year IS NULL OR :year = 0 OR r.year = :year)")
+    Set<RegistrationDTO> getMemberRegistration(@Param("year") Integer year, @Param("empNo") String empNo);
 }

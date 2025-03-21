@@ -37,7 +37,14 @@ import java.util.Set;
         @NamedEntityGraph(
                 name = "Member.withRegistrations",
                 attributeNodes = @NamedAttributeNode("memberRegistrations")
-        )
+        ),
+        @NamedEntityGraph(
+                name = "Member.withAllDetails",
+                attributeNodes = {
+                        @NamedAttributeNode("memberRegistrations"),
+                        @NamedAttributeNode("beneficiaryData"),
+                        @NamedAttributeNode("dependantData")
+                }),
 })
 public class Member implements Serializable {
     private static final long serialVersionId = 4L;

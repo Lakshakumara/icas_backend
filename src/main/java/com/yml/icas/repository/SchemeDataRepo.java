@@ -19,18 +19,18 @@ public interface SchemeDataRepo extends JpaRepository<SchemeData, Integer> {
    /* @Query("select new com.yml.icas.dto.HistoryDTO(s.category, s.idText) from SchemeData s ")
     Set<HistoryDTO> getHisCat();*/
 
-    @Query("select s.idText from SchemeData s where s.title !='' and s.category='OPD' order by  s.category, s.idText")
+    @Query("select s.idText from SchemeData s where s.title !='' and s.category='OPD' order by s.idText")
     List<String> getOPD();
 
-    @Query("select s.idText from SchemeData s where s.title !='' and s.category!='OPD' and (s.idText like('1%') or s.idText like('4%')) order by  s.category, s.idText")
+    @Query("select s.idText from SchemeData s where s.title !='' and s.category!='OPD' and (s.idText like('1%') or s.idText like('4%')) order by s.category, s.idText")
     List<String> getSH();
 
-    @Query("select s.idText from SchemeData s where s.title !='' and s.category!='OPD' and s.idText like('3%') order by  s.category, s.idText")
+    @Query("select s.idText from SchemeData s where s.title !='' and s.category!='OPD' and s.idText like('3%') order by s.category, s.idText")
     List<String> getPA();
 
     @Query("select s.idText from SchemeData s where s.title !='' and s.category!='OPD' and s.idText like('5%') order by  s.category, s.idText")
     List<String> getCR();
 
     @Query("select s.maxAmount from SchemeData s where s.idText=:idText")
-    Double getMaxAmount(@Param("idText") String idText);
+    Object getMaxAmount(@Param("idText") String idText);
 }

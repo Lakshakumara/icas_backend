@@ -1,13 +1,13 @@
 package com.yml.icas.service;
 
 import com.yml.icas.dto.ClaimDTO;
+import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.dto.ObjectMapper;
+import com.yml.icas.dto.RegistrationDTO;
 import com.yml.icas.model.Claim;
 import com.yml.icas.model.Member;
 import com.yml.icas.model.Registration;
-import com.yml.icas.repository.ClaimRepo;
-import com.yml.icas.repository.RegistrationRepo;
-import com.yml.icas.repository.MemberRepo;
+import com.yml.icas.repository.*;
 import com.yml.icas.service.interfaces.DownloadService;
 import com.yml.icas.util.IcasUtil;
 import com.yml.icas.util.MyConstants;
@@ -32,6 +32,13 @@ public class DownloadServiceImpl implements DownloadService {
     MemberRepo memberRepo;
 
     @Autowired
+    RegistrationRepo registrationRepo;
+    @Autowired
+    BeneficiaryRepo beneficiaryRepo;
+
+    @Autowired
+    DependantRepo dependantRepo;
+    @Autowired
     ClaimRepo claimRepo;
 
     @Autowired
@@ -40,27 +47,37 @@ public class DownloadServiceImpl implements DownloadService {
     @Override
     public ResponseEntity<byte[]> downloadApplication(Integer year, String empNo) {
         try {
-            Member member = memberRepo.findByEmpNoIgnoreCase(empNo);
-            member = addRegistration(member);
-
-            if (Objects.isNull(member))
-                return new ResponseEntity<>((empNo + " not Found").getBytes(), HttpStatus.INTERNAL_SERVER_ERROR);
-            byte[] pdf = IcasUtil.genApplication(member);
+            Set<RegistrationDTO> memberRegistration = registrationRepo.getMemberRegistration(year, empNo);
+            if (memberRegistration.isEmpty()) {
+                String errorMessage = empNo + " not Found for the Year " + year;
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body(errorMessage.getBytes());
+            }
+            MemberDTO memberDTO = memberRepo.getMemberDTOEmpNo(empNo);
+            memberDTO.setMemberRegistrations(memberRegistration);
+            memberDTO.setBeneficiaries(beneficiaryRepo.getEmployeeBeneficiaries(year, empNo, null));
+            memberDTO.setDependants(dependantRepo.getEmployeeDependants(year, empNo, null));
+            byte[] pdf = IcasUtil.genApplication(memberDTO);
 
             HttpHeaders headers = new HttpHeaders();
             //set the PDF format
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("filename", year + "_" + empNo + ".pdf");
             //create the report in PDF format
-            log.info("fetch Member {}", member);
+            log.info("fetch Member for PDF {}", memberDTO);
             return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
         } catch (Exception e) {
-            log.info(e.toString());
-            return new ResponseEntity<>(MyConstants.ERROR_MSG1.getBytes(), HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error(e.getMessage(), e);
+            String errorMessage = "Internal Server Error: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(errorMessage.getBytes());
         }
     }
+
     @Override
-    public ResponseEntity<byte[]> downloadOPDApplication(Integer claimId) {
+    public ResponseEntity<byte[]> downloadClaimApplication(Integer claimId) {
         try {
             Claim claim = claimRepo.findClaimById(claimId);
             log.info("findClaimById {}", claim);
@@ -68,7 +85,7 @@ public class DownloadServiceImpl implements DownloadService {
                 return new ResponseEntity<>((claimId + " not Found").getBytes(), HttpStatus.INTERNAL_SERVER_ERROR);
             ClaimDTO claimDTO = ObjectMapper.mapToClaimDTO(claim);
             log.info("claimDTO {}", claimDTO);
-            byte[] pdf = IcasUtil.genOPDApplication(claimDTO);
+            byte[] pdf = IcasUtil.genClaimApplication(claimDTO);
 
             HttpHeaders headers = new HttpHeaders();
             //set the PDF format
@@ -98,19 +115,5 @@ public class DownloadServiceImpl implements DownloadService {
             log.info(e.toString());
             return MyConstants.ERROR_MSG1.getBytes();
         }
-    }
-
-    public Member addRegistration(Member member) {
-        Set<Registration> regData = memberRegistrationRepo.findByMember(new Member(member.getId()));
-        member.getMemberRegistrations().addAll(regData.stream()
-                .map(rd -> {
-                    Registration mr = new Registration();
-                    mr.setSchemeType(rd.getSchemeType());
-                    mr.setYear(rd.getYear());
-                    mr.setAcceptedDate(rd.getAcceptedDate());
-                    mr.setAcceptedBy(rd.getAcceptedBy());
-                    return mr;
-                }).collect(Collectors.toSet()));
-        return member;
     }
 }
