@@ -1,5 +1,6 @@
 package com.yml.icas.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class MemberDTO {
     private Integer id;
     private String empNo;
@@ -30,15 +32,31 @@ public class MemberDTO {
     private Set<RoleDTO> roles = new HashSet<>();
     private boolean deleted;
 
-    private MemberRegistrationDTO currentRegistration;
-    private Set<MemberRegistrationDTO> memberRegistrations = new HashSet<>();
+    private RegistrationDTO currentRegistration;
+    private Set<RegistrationDTO> memberRegistrations = new HashSet<>();
     private Set<DependantDTO> dependants = new HashSet<>();
     private Set<BeneficiaryDTO> beneficiaries = new HashSet<>();
 
+    /**
+     *
+     * @param id
+     * @param empNo
+     * @param name
+     * @param address
+     * @param email
+     * @param contactNo
+     * @param civilStatus
+     * @param nic
+     * @param sex
+     * @param dob
+     * @param designation
+     * @param department
+     * @param status
+     * @param photoUrl
+     */
     public MemberDTO(Integer id, String empNo, String name, String address, String email,
                      String contactNo, String civilStatus, String nic, String sex, Date dob,
-                     String designation, String department, String status, String photoUrl,
-                     Set<MemberRegistrationDTO> memberRegistrations) {
+                     String designation, String department, String status, String photoUrl,Integer registrationOpen) {
         this.id = id;
         this.empNo = empNo;
         this.name = name;
@@ -53,6 +71,6 @@ public class MemberDTO {
         this.department = department;
         this.status = status;
         this.photoUrl = photoUrl;
-        this.memberRegistrations = memberRegistrations;
+        this.registrationOpen = registrationOpen;
     }
 }

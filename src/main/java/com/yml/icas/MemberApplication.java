@@ -1,18 +1,6 @@
 package com.yml.icas;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yml.icas.hr.HR;
-import com.yml.icas.hr.HRRepository;
-import com.yml.icas.model.Member;
-import com.yml.icas.model.Registration;
-import com.yml.icas.model.SchemeData;
-import com.yml.icas.repository.RegistrationRepo;
-import com.yml.icas.repository.MemberRepo;
-import com.yml.icas.repository.RoleRepo;
-import com.yml.icas.repository.SchemeDataRepo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -21,12 +9,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 @Slf4j
 @SpringBootApplication
@@ -36,7 +20,7 @@ public class MemberApplication {
         SpringApplication.run(MemberApplication.class, args);
     }
 
-    @Bean
+    /*@Bean
     CommandLineRunner runner(HRRepository hrRepository, MemberRepo memberRepo, RegistrationRepo memberRegistrationRepo,
                              SchemeDataRepo schemeDataRepo, RoleRepo roleRepo) {
         return args -> {
@@ -388,10 +372,10 @@ public class MemberApplication {
                 mr.setMDate(new java.util.Date());
                 mr.setStatus("sudo");
                 mr.setDeleted(false);
-                /*Set<Role> roles = new HashSet<>();
+                Set<Role> roles = new HashSet<>();
                 roles.add(roleRepo.findByRole("user"));
                 roles.add(roleRepo.findByRole("admin"));
-                mr.getRoles().addAll(roles);*/
+                mr.getRoles().addAll(roles);
                 Member newm = memberRepo.save(mr);
 
                 Registration mreg = new Registration();
@@ -418,7 +402,7 @@ public class MemberApplication {
 
             ///System.out.println(guestService.memberValidation(2024,"100"));
         };
-    }
+    }*/
 
     @Bean
     public CorsFilter corsFilter() {

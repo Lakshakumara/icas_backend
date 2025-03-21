@@ -23,10 +23,10 @@ public class DownloadRestImpl implements DownloadRest {
     DownloadServiceImpl downloadService;
 
     @Override
-    public ResponseEntity<byte[]> downloadOPDApplication(Integer claimId) {
+    public ResponseEntity<byte[]> downloadClaimApplication(Integer claimId) {
         log.info("downloadOPDApplication {}", claimId);
         try {
-            return downloadService.downloadOPDApplication(claimId);
+            return downloadService.downloadClaimApplication(claimId);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

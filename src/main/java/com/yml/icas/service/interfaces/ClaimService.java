@@ -12,7 +12,7 @@ import java.util.Set;
 public interface ClaimService {
     Integer addClaim(ClaimDTO claimDTO);
 
-    ResponseEntity<Integer> saveOpd(ClaimOPDDTO claimOPDDTO);
+    //ResponseEntity<Integer> saveOpd(ClaimOPDDTO claimOPDDTO);
 
     ResponseEntity<Integer> updateClaim(Map<String, Object>[] dataSets);
 
@@ -29,5 +29,8 @@ public interface ClaimService {
 
     Page<ClaimDataDTO> getClaimData(Map<String, String> params);
 
-    Set<ClaimHistoryDTO> getClaimHistory(Map<String, String> params);
+    Set<HistoryDTO> getClaimHistorySummary(Map<String, String> params);
+    Page<ClaimHistoryDTO> getClaimDataHistory(Map<String, String> params);
+
+    Page<ClaimDataHistoryDTO> getClaimDataHistoryAll(Map<String, String> params);
 }

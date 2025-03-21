@@ -8,9 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Set;
 
 public interface BeneficiaryRepo extends JpaRepository<Beneficiary, Integer> {
-    @Query("select new com.yml.icas.dto.BeneficiaryDTO(bd.id, bd.beneficiary.name," +
+    @Query("select new com.yml.icas.dto.BeneficiaryDTO(bd.beneficiary.id, bd.beneficiary.name," +
             "bd.beneficiary.nic, bd.relationship, bd.percent, bd.registerDate, " +
-            "bd.registerYear, bd.deleted) from BeneficiaryData bd " +
-            "where bd.registerYear=:year and bd.member.empNo=:empNo")
-    Set<BeneficiaryDTO> findAllByEmpNo(int year, String empNo);
+            "bd.registerYear, bd.deleted) " +
+            "from BeneficiaryData bd " +
+            "where (:searchYear IS NULL OR :searchYear = 0 OR bd.registerYear=:searchYear) " +
+            "and (:name IS NULL OR :name = '' OR lower(bd.beneficiary.name) = lower(:name))" +
+            " and bd.member.empNo=:empNo")
+    Set<BeneficiaryDTO> getEmployeeBeneficiaries(int searchYear, String empNo, String name);
 }

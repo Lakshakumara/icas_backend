@@ -1,11 +1,15 @@
 package com.yml.icas.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
+@JsonInclude(JsonInclude.Include.NON_NULL)
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 public class ClaimDataDTO {
     private Integer id;

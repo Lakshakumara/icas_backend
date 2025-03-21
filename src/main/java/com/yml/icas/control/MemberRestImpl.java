@@ -1,9 +1,8 @@
 package com.yml.icas.control;
 
 import com.yml.icas.dto.BeneficiaryDTO;
+import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
-import com.yml.icas.dto.ObjectMapper;
-import com.yml.icas.model.Member;
 import com.yml.icas.service.MemberServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +22,11 @@ public class MemberRestImpl implements MemberRest {
     MemberServiceImpl memberService;
 
     @Override
-    public ResponseEntity<MemberDTO> signupNew(MemberDTO memberDTO) {
+    public ResponseEntity<MemberDTO> signup(MemberDTO memberDTO) {
         try {
-            log.info(memberDTO.toString());
-            Member member = memberService.signUpNew(memberDTO);
-            return ResponseEntity.ok(ObjectMapper.mapToMemberDTO(member));
+            log.info("Received to backend "+ memberDTO.toString());
+            MemberDTO member = memberService.signUpNew(memberDTO);
+            return ResponseEntity.ok(member);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(new MemberDTO(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -54,18 +53,36 @@ public class MemberRestImpl implements MemberRest {
         }
     }
 
+    /*@Override
+    public ResponseEntity<Set<BeneficiaryDTO>> getMemberBeneficiariesWithoutName(int year, String empNo) {
+        return getMemberBeneficiaries(year, empNo, null);
+    }*/
+
     @Override
-    public ResponseEntity<Set<BeneficiaryDTO>> getBeneficiaries(int year, String empNo) {
+    public ResponseEntity<Set<BeneficiaryDTO>> getMemberBeneficiaries(int year, String empNo, String name) {
+        log.info("year={} empNo={} name={}",year, empNo, name);
         Set<BeneficiaryDTO> beneficiaryDTOS= new HashSet<>();
         try {
-            beneficiaryDTOS =  memberService.getBeneficiaries(year, empNo);
+            beneficiaryDTOS =  memberService.getMemberBeneficiaries(year, empNo, name);
             return ResponseEntity.ok(beneficiaryDTOS);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(beneficiaryDTOS, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @Override
+    public ResponseEntity<Set<DependantDTO>> getMemberDependants(int year, String empNo, String name) {
 
+        log.info("year={} empNo={} name={}",year, empNo, name);
+        Set<DependantDTO> dependants= new HashSet<>();
+        try {
+            dependants =  memberService.getMemberDependants(year, empNo, name);
+            return ResponseEntity.ok(dependants);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(dependants, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @Override
     public ResponseEntity<String[]> getRelationShip(String rs) {
         return memberService.getRelationShip(rs);

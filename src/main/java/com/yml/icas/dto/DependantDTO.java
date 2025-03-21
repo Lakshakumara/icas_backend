@@ -17,5 +17,6 @@ public class DependantDTO {
     private String relationship;
     private Date registerDate;
     private Integer registerYear;
+    private String age;
     private boolean deleted;
 }

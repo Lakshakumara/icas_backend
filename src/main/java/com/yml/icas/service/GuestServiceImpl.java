@@ -1,16 +1,19 @@
 package com.yml.icas.service;
 
-import com.yml.icas.dto.HistoryDTO;
+import com.yml.icas.dto.ClaimDataHistoryDTO;
 import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.model.Member;
-import com.yml.icas.repository.RegistrationRepo;
+import com.yml.icas.repository.ClaimDataRepo;
 import com.yml.icas.repository.MemberRepo;
+import com.yml.icas.repository.RegistrationRepo;
 import com.yml.icas.repository.SchemeDataRepo;
 import com.yml.icas.service.interfaces.GuestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,8 +29,12 @@ public class GuestServiceImpl implements GuestService {
 
     @Autowired
     RegistrationRepo memberRegistrationRepo;
+
     @Autowired
     SchemeDataRepo schemeDataRepo;
+
+    @Autowired
+    ClaimDataRepo claimDataRepo;
 
     @Override
     public ResponseEntity<Map<String, Object>> memberValidation(Integer year, String empNo) {
@@ -62,18 +69,16 @@ public class GuestServiceImpl implements GuestService {
     }
 
     @Override
-    public Set<HistoryDTO> getHis() {
-        HistoryDTO opd = new HistoryDTO("2,4.1-OPD", schemeDataRepo.getOPD(), schemeDataRepo.getMaxAmount("2.1"));
-        HistoryDTO sh = new HistoryDTO("1-Surgical & Hospital Expenses", schemeDataRepo.getSH(), schemeDataRepo.getMaxAmount("1"));
-        HistoryDTO pa = new HistoryDTO("3-Personal Accident", schemeDataRepo.getPA(), schemeDataRepo.getMaxAmount("3.2.a"));
-        HistoryDTO cr = new HistoryDTO("5-Critical Illness", schemeDataRepo.getCR(), schemeDataRepo.getMaxAmount("5.1"));
-
-
-        Set<HistoryDTO> data = new HashSet<>();
-        data.add(opd);
-        data.add(sh);
-        data.add(pa);
-        data.add(cr);
-        return data;
+    public Page<Set<Map<String, Object>>> getHis() {
+        Pageable pageable = PageRequest.of(0, 50);
+        String empNo = "100";
+        List<String> idTextList = null;
+        Page<ClaimDataHistoryDTO> ch = claimDataRepo
+                .getClaimDataHistoryAll(empNo, null, pageable);
+        ch.stream().forEach(p->{
+            log.info("\n values {}",  p);
+        });
+        log.info("\n fetch {}",  ch.getContent());
+        return null;
     }
 }

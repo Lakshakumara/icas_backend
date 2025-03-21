@@ -5,6 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
+@Deprecated
 public class ClaimOPDDTO {
     private Integer id;
     private Integer memberId;

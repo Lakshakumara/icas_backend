@@ -1,5 +1,6 @@
 package com.yml.icas.util;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class MyConstants {
@@ -35,5 +36,9 @@ public class MyConstants {
     public static Date TODAY() {
         return new Date();
     }
-
+    public static int getYear(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        return c.get(Calendar.YEAR);
+    }
 }

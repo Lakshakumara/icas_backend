@@ -15,7 +15,7 @@ import java.io.IOException;
 public interface DownloadRest {
 
     @GetMapping(path = "/application/opd/{claimId}")
-    ResponseEntity<byte[]> downloadOPDApplication(@PathVariable(name = "claimId") Integer claimId);
+    ResponseEntity<byte[]> downloadClaimApplication(@PathVariable(name = "claimId") Integer claimId);
 
 
     @GetMapping(path = "/application/{year}/{empNo}")
