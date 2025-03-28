@@ -36,7 +36,6 @@ public class JwtUtil {
                     .getBody()
                     .getSubject();
         } catch (Exception e) {
-            e.printStackTrace();
             return null; // Invalid token
         }
     }

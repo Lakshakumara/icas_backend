@@ -249,7 +249,7 @@ public class MemberServiceImpl implements MemberService {
         log.info("memberDTO received to service: {}", memberDTO);
         MemberDTO response = null;
 
-        int regYear = 0;
+        int regYear;
         try {
             // Validate the incoming memberDTO
             if (!validateMemberRest(memberDTO)) {
@@ -366,11 +366,8 @@ public class MemberServiceImpl implements MemberService {
             }
 
             Set<RoleDTO> roles = memberDTO.getRoles();
-            log.info("roles list {}", roles.stream().toList());
             updateRoles(member.getId(), roles.stream().map(RoleDTO::getRole).toList());
-            roles.forEach(r -> {
-                log.info("roles {}", r.getRole());
-            });
+
 
 
             // Retrieve the updated member with all associations
@@ -392,8 +389,7 @@ public class MemberServiceImpl implements MemberService {
                     "Online Application Received",
                     "email-registration",
                     variables, application, "Application.pdf");
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception ignored) {
         }
         return response;
     }
@@ -539,7 +535,6 @@ public class MemberServiceImpl implements MemberService {
         try {
             return new ResponseEntity<>(memberDependantDataRepo.findDistinctByRelationshipLike(rs), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(new String[]{}, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -576,7 +571,6 @@ public class MemberServiceImpl implements MemberService {
             log.info("searchParams from {} result \n{}", searchParams, memberDTOPage);
             return memberDTOPage;
         } catch (Exception ex) {
-            ex.printStackTrace();
             return null;
         }
     }
@@ -589,9 +583,9 @@ public class MemberServiceImpl implements MemberService {
             if (search != null && !search.isEmpty())
                 memberPage = memberRepo.findAllByNameContainsIgnoreCase(search, pageable);
             else memberPage = memberRepo.findAll(pageable);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception ignored) {
         }
+        assert memberPage != null;
         return memberPage.map(ObjectMapper::mapToMemberDTO);
     }
 

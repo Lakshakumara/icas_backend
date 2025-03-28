@@ -26,14 +26,14 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String token = request.getHeader("Authorization");
-        System.out.println("Incoming request: " + request.getRequestURI());
-        System.out.println("Authorization Header: " + token);
+        //System.out.println("Incoming request: " + request.getRequestURI());
+        //System.out.println("Authorization Header: " + token);
 
         if (token != null && token.startsWith("Bearer ")) {
             String username = JwtUtil.validateToken(token.substring(7));
             List<String> roles = JwtUtil.extractRoles(token.substring(7));
 
-            System.out.println("Validated Token - User: " + username);
+            //System.out.println("Validated Token - User: " + username);
 
             if (username != null && roles != null) {
                 // Extract roles from token
@@ -43,12 +43,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(username, null, authorities);
-                System.out.println("Set Authentication: " + authToken.getAuthorities());
+                //System.out.println("Set Authentication: " + authToken.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                System.out.println("Authenticated User: " + username);
-                System.out.println("User Roles: " + roles);  // ✅ Print roles for debugging
-                System.out.println("User Roles (SecurityContext): " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+                //System.out.println("Authenticated User: " + username);
+                //System.out.println("User Roles: " + roles);  // ✅ Print roles for debugging
+               // System.out.println("User Roles (SecurityContext): " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
             }
         }
         filterChain.doFilter(request, response);

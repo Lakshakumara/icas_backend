@@ -19,18 +19,6 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    /*public AuthService(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }*/
-
-    public String encodePassword(String rawPassword) {
-        return passwordEncoder.encode(rawPassword);
-    }
-
-    public boolean matchPassword(String rawPassword, String hashedPassword) {
-        return passwordEncoder.matches(rawPassword, hashedPassword);
-    }
-
     public String authenticate(String username, String password) {
         Member user = memberRepo.findByEmpNo(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -38,9 +26,7 @@ public class AuthService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Invalid credentials");
         }
-user.getRoles().forEach(r->{
-    log.info(r.getRole());
-});
+
         return JwtUtil.generateToken(username, user.getRoles().stream().map(Role::getRole).toList()); // Generate JWT token
     }
 }
