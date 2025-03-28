@@ -1,6 +1,11 @@
 package com.yml.icas;
 
+import com.yml.icas.hr.HRRepository;
+import com.yml.icas.repository.MemberRepo;
+import com.yml.icas.repository.RegistrationRepo;
+import com.yml.icas.service.MemberServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +16,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @SpringBootApplication
@@ -20,11 +26,10 @@ public class MemberApplication {
         SpringApplication.run(MemberApplication.class, args);
     }
 
-    /*@Bean
-    CommandLineRunner runner(HRRepository hrRepository, MemberRepo memberRepo, RegistrationRepo memberRegistrationRepo,
-                             SchemeDataRepo schemeDataRepo, RoleRepo roleRepo) {
+    @Bean
+    CommandLineRunner runner(MemberServiceImpl memberService) {
         return args -> {
-            if (hrRepository.count() == 0) {
+           /* if (hrRepository.count() == 0) {
                 HR saman = new HR();
                 saman.setEmpNo("100");
                 saman.setName("Mrs DA Leena Perera");
@@ -399,10 +404,10 @@ public class MemberApplication {
                 }
             }
             System.out.println("Configuration done");
-
-            ///System.out.println(guestService.memberValidation(2024,"100"));
+*/
+            //memberService.updateExistingPasswords();
         };
-    }*/
+    }
 
     @Bean
     public CorsFilter corsFilter() {

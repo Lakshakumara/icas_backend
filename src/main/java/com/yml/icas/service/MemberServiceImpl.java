@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Value("${app.frontend.base-url}")
     private String baseUrl;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     private MemberRepo memberRepo;
@@ -55,6 +57,19 @@ public class MemberServiceImpl implements MemberService {
     @Autowired
     private EmailService emailService;
 
+    public MemberServiceImpl(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+    public void updateExistingPasswords() {
+        List<Member> users = memberRepo.findAll();
+        for (Member user : users) {
+            if (!user.getPassword().startsWith("$2a$")) { // Check if already hashed
+                String hashedPassword = passwordEncoder.encode(user.getPassword());
+                user.setPassword(hashedPassword);
+                memberRepo.save(user);
+            }
+        }
+    }
     @Override
     public ResponseEntity<Integer> updateMember(String criteria, Map<String, Object> dataSet) {
         log.info("dataSet {}", dataSet);
@@ -257,7 +272,8 @@ public class MemberServiceImpl implements MemberService {
                 member.setDob(memberDTO.getDob());
                 member.setDesignation(memberDTO.getDesignation());
                 member.setDepartment(memberDTO.getDepartment());
-                member.setPassword(memberDTO.getPassword());
+                String hashedPassword = passwordEncoder.encode(memberDTO.getPassword());
+                member.setPassword(hashedPassword);
                 member.setMDate(memberDTO.getMDate());
                 member.setStatus(memberDTO.getStatus());
                 member.setPhotoUrl(memberDTO.getPhotoUrl());
