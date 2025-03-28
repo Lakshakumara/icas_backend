@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 
-
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/download")
 public interface DownloadRest {

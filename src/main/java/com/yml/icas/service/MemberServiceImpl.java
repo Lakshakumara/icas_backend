@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Value("${app.frontend.base-url}")
     private String baseUrl;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     private MemberRepo memberRepo;
@@ -55,6 +57,19 @@ public class MemberServiceImpl implements MemberService {
     @Autowired
     private EmailService emailService;
 
+    public MemberServiceImpl(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+    public void updateExistingPasswords() {
+        List<Member> users = memberRepo.findAll();
+        for (Member user : users) {
+            if (!user.getPassword().startsWith("$2a$")) { // Check if already hashed
+                String hashedPassword = passwordEncoder.encode(user.getPassword());
+                user.setPassword(hashedPassword);
+                memberRepo.save(user);
+            }
+        }
+    }
     @Override
     public ResponseEntity<Integer> updateMember(String criteria, Map<String, Object> dataSet) {
         log.info("dataSet {}", dataSet);
@@ -106,135 +121,13 @@ public class MemberServiceImpl implements MemberService {
         return new ResponseEntity<>(rows, HttpStatus.OK);
     }
 
-    public Member signUpNewold(MemberDTO memberDTO) {
-        log.info("memberDTO received to service" + memberDTO.getMemberRegistrations().toString());
-        Member response = null;
-        try {
-            if (!validateMemberRest(memberDTO)) {
-                return new Member();
-            }
-            Member member = memberRepo.findByEmpNoIgnoreCase(memberDTO.getEmpNo());
-            if (member == null) {
-                member = ObjectMapper.mapToMember(memberDTO);
-            }
-            Member mapMember = ObjectMapper.mapToMember(memberDTO);
-
-
-            Member savedMember = memberRepo.save(mapMember);
-
-            log.info("after save before reg " + savedMember.getMemberRegistrations());
-            log.info("memberRegistrationRepo " + memberRegistrationRepo.findAll());
-           /* for (MemberRegistration mm : savedMember.getMemberRegistrations()) {
-                log.info("after save before reg"+mm.getId());
-                log.info("getYear "+mm.getYear() );
-                log.info("getSchemeType "+mm.getSchemeType()) ;
-                log.info("getAcceptedBy "+mm.getAcceptedBy());
-                log.info("getAcceptedDate"+ mm.getAcceptedDate());
-
-            }*/
-
-            Registration memberRegistration = new Registration();
-            RegistrationDTO temp = (memberDTO.getMemberRegistrations().stream().toList()).get(0);
-            log.info("temp {} ", temp);
-            memberRegistration.setYear(temp.getYear());
-            memberRegistration.setRegisterDate(temp.getRegisterDate());
-            memberRegistration.setSchemeType(temp.getSchemeType());
-            memberRegistration.setMember(new Member(savedMember.getId()));
-
-            savedMember.getMemberRegistrations().add(memberRegistration);
-
-
-           /* log.info("after 2 nd save"+ mapMember.getMemberRegistrations());
-            for (MemberRegistration mm : savedMember.getMemberRegistrations()) {
-                log.info("after 2nd reg "+mm.getId());
-                log.info("getYear "+mm.getYear() );
-                log.info("getSchemeType "+mm.getSchemeType()) ;
-                log.info("getAcceptedBy "+mm.getAcceptedBy());
-                log.info("getAcceptedDate "+ mm.getAcceptedDate());
-
-            }*/
-
-            savedMember = memberRepo.save(mapMember);
-
-            log.info("after save after reg {} ", savedMember.getMemberRegistrations());
-            log.info("memberRegistrationRepo After All {}", memberRegistrationRepo.findAll());
-
-            /*for (MemberRegistration mm : savedMember.getMemberRegistrations()) {
-                log.info("after save after reg "+mm.getId());
-                log.info("getYear "+mm.getYear() );
-                log.info("getSchemeType "+mm.getSchemeType()) ;
-                log.info("getAcceptedBy "+mm.getAcceptedBy());
-                log.info("getAcceptedDate"+ mm.getAcceptedDate());
-            }*/
-
-            Set<DependantDTO> dependants = memberDTO.getDependants();
-            Member finalMember = savedMember;
-            dependants.forEach(d -> {
-                Dependant dependant = new Dependant();
-                dependant.setId(d.getId());
-                dependant.setName(d.getName());
-                dependant.setNic(d.getNic());
-                dependant.setDob(d.getDob());
-                Dependant newDep = dependantRepo.save(dependant);
-                DependantData mdd = new DependantData();
-                mdd.setRegisterYear(d.getRegisterYear());
-                mdd.setRegisterDate(d.getRegisterDate());
-                mdd.setRelationship(d.getRelationship());
-                mdd.setDependant(newDep);
-                mdd.setMember(finalMember);
-                memberDependantDataRepo.save(mdd);
-            });
-
-            Set<BeneficiaryDTO> beneficiaries = memberDTO.getBeneficiaries();
-            beneficiaries.forEach(d -> {
-                Beneficiary beneficiary = new Beneficiary();
-                beneficiary.setId(d.getId());
-                beneficiary.setName(d.getName());
-                beneficiary.setNic(d.getNic());
-                Beneficiary newBen = beneficiaryRepo.save(beneficiary);
-                BeneficiaryData bnd = new BeneficiaryData();
-                bnd.setPercent(d.getPercent());
-                bnd.setRelationship(d.getRelationship());
-                bnd.setBeneficiary(newBen);
-                bnd.setRegisterDate(d.getRegisterDate());
-                bnd.setRegisterYear(d.getRegisterYear());
-                bnd.setMember(finalMember);
-                beneficiaryDataRepo.save(bnd);
-            });
-
-            Member successMember = memberRepo.findByEmpNoIgnoreCase(memberDTO.getEmpNo());
-
-            if (!Objects.isNull(successMember)) {
-                Map<String, Object> variables = new HashMap<>();
-                variables.put("name", successMember.getName());
-                variables.put("schemaLink", generateSchemeDownloadLink());
-                Optional<Integer> newRegYear = successMember.getMemberRegistrations().stream()
-                        .max(Comparator.comparing(Registration::getYear))
-                        .map(Registration::getYear);
-                if (newRegYear.isPresent()) {
-                    variables.put("applicationLink", baseUrl + "/download/application/" + newRegYear.get() + "/" + successMember.getEmpNo());
-                }
-                byte[] application = IcasUtil.genApplication(successMember);
-                emailService.sendEmailWithAttachment(
-                        successMember.getEmail(),
-                        "Online Application Received",
-                        "email-registration",
-                        variables, application, "Application.pdf");
-                response = successMember;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return response;
-    }
-
     @Transactional
     @Override
     public MemberDTO signUpNew(MemberDTO memberDTO) {
         log.info("memberDTO received to service: {}", memberDTO);
         MemberDTO response = null;
 
-        int regYear = 0;
+        int regYear;
         try {
             // Validate the incoming memberDTO
             if (!validateMemberRest(memberDTO)) {
@@ -257,7 +150,8 @@ public class MemberServiceImpl implements MemberService {
                 member.setDob(memberDTO.getDob());
                 member.setDesignation(memberDTO.getDesignation());
                 member.setDepartment(memberDTO.getDepartment());
-                member.setPassword(memberDTO.getPassword());
+                String hashedPassword = passwordEncoder.encode(memberDTO.getPassword());
+                member.setPassword(hashedPassword);
                 member.setMDate(memberDTO.getMDate());
                 member.setStatus(memberDTO.getStatus());
                 member.setPhotoUrl(memberDTO.getPhotoUrl());
@@ -350,11 +244,8 @@ public class MemberServiceImpl implements MemberService {
             }
 
             Set<RoleDTO> roles = memberDTO.getRoles();
-            log.info("roles list {}", roles.stream().toList());
             updateRoles(member.getId(), roles.stream().map(RoleDTO::getRole).toList());
-            roles.forEach(r -> {
-                log.info("roles {}", r.getRole());
-            });
+
 
 
             // Retrieve the updated member with all associations
@@ -376,8 +267,7 @@ public class MemberServiceImpl implements MemberService {
                     "Online Application Received",
                     "email-registration",
                     variables, application, "Application.pdf");
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception ignored) {
         }
         return response;
     }
@@ -507,7 +397,6 @@ public class MemberServiceImpl implements MemberService {
             return new ResponseEntity<>(Objects.requireNonNullElseGet(ObjectMapper.mapToMemberDTO(member), MemberDTO::new), HttpStatus.OK);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(new MemberDTO(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -523,7 +412,6 @@ public class MemberServiceImpl implements MemberService {
         try {
             return new ResponseEntity<>(memberDependantDataRepo.findDistinctByRelationshipLike(rs), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(new String[]{}, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -560,7 +448,6 @@ public class MemberServiceImpl implements MemberService {
             log.info("searchParams from {} result \n{}", searchParams, memberDTOPage);
             return memberDTOPage;
         } catch (Exception ex) {
-            ex.printStackTrace();
             return null;
         }
     }
@@ -573,9 +460,9 @@ public class MemberServiceImpl implements MemberService {
             if (search != null && !search.isEmpty())
                 memberPage = memberRepo.findAllByNameContainsIgnoreCase(search, pageable);
             else memberPage = memberRepo.findAll(pageable);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception ignored) {
         }
+        assert memberPage != null;
         return memberPage.map(ObjectMapper::mapToMemberDTO);
     }
 
@@ -624,6 +511,128 @@ public class MemberServiceImpl implements MemberService {
     }
 }
     /*
+
+        public Member signUpNewold(MemberDTO memberDTO) {
+        log.info("memberDTO received to service" + memberDTO.getMemberRegistrations().toString());
+        Member response = null;
+        try {
+            if (!validateMemberRest(memberDTO)) {
+                return new Member();
+            }
+            Member member = memberRepo.findByEmpNoIgnoreCase(memberDTO.getEmpNo());
+            if (member == null) {
+                member = ObjectMapper.mapToMember(memberDTO);
+            }
+            Member mapMember = ObjectMapper.mapToMember(memberDTO);
+
+
+            Member savedMember = memberRepo.save(mapMember);
+
+            log.info("after save before reg " + savedMember.getMemberRegistrations());
+            log.info("memberRegistrationRepo " + memberRegistrationRepo.findAll());
+            for (MemberRegistration mm : savedMember.getMemberRegistrations()) {
+                log.info("after save before reg"+mm.getId());
+                log.info("getYear "+mm.getYear() );
+                log.info("getSchemeType "+mm.getSchemeType()) ;
+                log.info("getAcceptedBy "+mm.getAcceptedBy());
+                log.info("getAcceptedDate"+ mm.getAcceptedDate());
+
+            }
+
+Registration memberRegistration = new Registration();
+RegistrationDTO temp = (memberDTO.getMemberRegistrations().stream().toList()).get(0);
+            log.info("temp {} ", temp);
+            memberRegistration.setYear(temp.getYear());
+        memberRegistration.setRegisterDate(temp.getRegisterDate());
+        memberRegistration.setSchemeType(temp.getSchemeType());
+        memberRegistration.setMember(new Member(savedMember.getId()));
+
+        savedMember.getMemberRegistrations().add(memberRegistration);
+
+
+           /log.info("after 2 nd save"+ mapMember.getMemberRegistrations());
+            for (MemberRegistration mm : savedMember.getMemberRegistrations()) {
+                log.info("after 2nd reg "+mm.getId());
+                log.info("getYear "+mm.getYear() );
+                log.info("getSchemeType "+mm.getSchemeType()) ;
+                log.info("getAcceptedBy "+mm.getAcceptedBy());
+                log.info("getAcceptedDate "+ mm.getAcceptedDate());
+
+            }
+
+savedMember = memberRepo.save(mapMember);
+
+            log.info("after save after reg {} ", savedMember.getMemberRegistrations());
+        log.info("memberRegistrationRepo After All {}", memberRegistrationRepo.findAll());
+
+            for (MemberRegistration mm : savedMember.getMemberRegistrations()) {
+                log.info("after save after reg "+mm.getId());
+                log.info("getYear "+mm.getYear() );
+                log.info("getSchemeType "+mm.getSchemeType()) ;
+                log.info("getAcceptedBy "+mm.getAcceptedBy());
+                log.info("getAcceptedDate"+ mm.getAcceptedDate());
+            }
+
+Set<DependantDTO> dependants = memberDTO.getDependants();
+Member finalMember = savedMember;
+            dependants.forEach(d -> {
+Dependant dependant = new Dependant();
+                dependant.setId(d.getId());
+        dependant.setName(d.getName());
+        dependant.setNic(d.getNic());
+        dependant.setDob(d.getDob());
+Dependant newDep = dependantRepo.save(dependant);
+DependantData mdd = new DependantData();
+                mdd.setRegisterYear(d.getRegisterYear());
+        mdd.setRegisterDate(d.getRegisterDate());
+        mdd.setRelationship(d.getRelationship());
+        mdd.setDependant(newDep);
+                mdd.setMember(finalMember);
+                memberDependantDataRepo.save(mdd);
+            });
+
+Set<BeneficiaryDTO> beneficiaries = memberDTO.getBeneficiaries();
+            beneficiaries.forEach(d -> {
+Beneficiary beneficiary = new Beneficiary();
+                beneficiary.setId(d.getId());
+        beneficiary.setName(d.getName());
+        beneficiary.setNic(d.getNic());
+Beneficiary newBen = beneficiaryRepo.save(beneficiary);
+BeneficiaryData bnd = new BeneficiaryData();
+                bnd.setPercent(d.getPercent());
+        bnd.setRelationship(d.getRelationship());
+        bnd.setBeneficiary(newBen);
+                bnd.setRegisterDate(d.getRegisterDate());
+        bnd.setRegisterYear(d.getRegisterYear());
+        bnd.setMember(finalMember);
+                beneficiaryDataRepo.save(bnd);
+            });
+
+Member successMember = memberRepo.findByEmpNoIgnoreCase(memberDTO.getEmpNo());
+
+            if (!Objects.isNull(successMember)) {
+Map<String, Object> variables = new HashMap<>();
+                variables.put("name", successMember.getName());
+        variables.put("schemaLink", generateSchemeDownloadLink());
+Optional<Integer> newRegYear = successMember.getMemberRegistrations().stream()
+        .max(Comparator.comparing(Registration::getYear))
+        .map(Registration::getYear);
+                if (newRegYear.isPresent()) {
+        variables.put("applicationLink", baseUrl + "/download/application/" + newRegYear.get() + "/" + successMember.getEmpNo());
+        }
+byte[] application = IcasUtil.genApplication(successMember);
+                emailService.sendEmailWithAttachment(
+        successMember.getEmail(),
+                        "Online Application Received",
+                                "email-registration",
+variables, application, "Application.pdf");
+response = successMember;
+            }
+                    } catch (Exception ex) {
+        ex.printStackTrace();
+        }
+                return response;
+    }
         public Member addRegistration(Member member) {
             log.info("addRegistration 323", member.getId());
             Set<MemberRegistration> regData = memberRegistrationRepo.findByMember(new Member(member.getId()));

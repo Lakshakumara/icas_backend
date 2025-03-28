@@ -21,8 +21,7 @@ public class MemberApplication {
     }
 
     /*@Bean
-    CommandLineRunner runner(HRRepository hrRepository, MemberRepo memberRepo, RegistrationRepo memberRegistrationRepo,
-                             SchemeDataRepo schemeDataRepo, RoleRepo roleRepo) {
+    CommandLineRunner runner(MemberServiceImpl memberService) {
         return args -> {
             if (hrRepository.count() == 0) {
                 HR saman = new HR();
@@ -400,7 +399,7 @@ public class MemberApplication {
             }
             System.out.println("Configuration done");
 
-            ///System.out.println(guestService.memberValidation(2024,"100"));
+            //memberService.updateExistingPasswords();
         };
     }*/
 

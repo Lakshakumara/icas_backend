@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 @CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "/member")
 public interface MemberRest {
 
