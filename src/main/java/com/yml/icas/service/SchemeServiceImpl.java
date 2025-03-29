@@ -7,7 +7,6 @@ import com.yml.icas.model.SchemeData;
 import com.yml.icas.repository.SchemeDataRepo;
 import com.yml.icas.service.interfaces.SchemeService;
 import com.yml.icas.util.MyConstants;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class SchemeServiceImpl implements SchemeService {
     @Autowired
@@ -39,10 +37,9 @@ public class SchemeServiceImpl implements SchemeService {
                         .stream()
                         .map(ObjectMapper::mapToSchemeDTO).toList();
             }
-            schemeDTOS.forEach(schemeDTO -> log.info(String.valueOf(schemeDTO)));
+           // schemeDTOS.forEach(schemeDTO -> log.info(String.valueOf(schemeDTO)));
             return new ResponseEntity<>(schemeDTOS, HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -54,7 +51,6 @@ public class SchemeServiceImpl implements SchemeService {
                     schemeDataRepo.save(
                             ObjectMapper.mapToSchemeData(schemeDTO))), HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -66,7 +62,6 @@ public class SchemeServiceImpl implements SchemeService {
             return new ResponseEntity<>(ObjectMapper.mapToSchemeDTO(schemeData.get(0)), HttpStatus.OK);
 
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -80,7 +75,6 @@ public class SchemeServiceImpl implements SchemeService {
                             ObjectMapper.mapToSchemeData(schemeDTO))), HttpStatus.OK);
 
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -97,9 +91,7 @@ public class SchemeServiceImpl implements SchemeService {
             List<SchemeData> idText = schemeDataRepo
                     .getByCategory(category);
             schemeTitleDTOS = ObjectMapper.mapToSchemeTitleDTO(idText);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        } catch (Exception ignored) {}
         return schemeTitleDTOS;
     }
 }

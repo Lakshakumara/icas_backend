@@ -12,6 +12,7 @@ import java.util.Set;
 public interface DependantRepo extends JpaRepository<Dependant, Integer> {
 
     Dependant findByName(@Param("name") String name);
+
     @Query("SELECT d FROM Dependant d WHERE d.name = :name AND d.nic = :nic AND d.dob = :dob")
     Dependant findByNameNicDob(@Param("name") String name, @Param("nic") String nic, @Param("dob") Date dob);
 

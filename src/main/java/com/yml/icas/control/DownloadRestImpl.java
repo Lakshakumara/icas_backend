@@ -36,6 +36,7 @@ public class DownloadRestImpl implements DownloadRest {
     @Override
     public ResponseEntity<byte[]> downloadApplication(Integer year, String empNo) {
         try {
+            log.info("downloadApplication");
             return downloadService.downloadApplication(year, empNo);
         } catch (Exception e) {
             e.printStackTrace();
