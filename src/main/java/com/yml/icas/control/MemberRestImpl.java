@@ -3,6 +3,7 @@ package com.yml.icas.control;
 import com.yml.icas.dto.BeneficiaryDTO;
 import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
+import com.yml.icas.model.User;
 import com.yml.icas.service.MemberServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,7 @@ public class MemberRestImpl implements MemberRest {
         memberService.updateRoles(memberId, request.getRoles());
         return ResponseEntity.noContent().build();
     }
+
     @Override
     public ResponseEntity<Integer> updateMember(String criteria, Map<String, Object> dataSet) {
         log.info(criteria +"dataset {}",dataSet);

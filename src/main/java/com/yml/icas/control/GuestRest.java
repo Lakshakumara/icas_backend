@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Map;
 import java.util.Set;
 
-//@CrossOrigin(origins = {"http://192.168.43.181:4200", "http://localhost:4200"}))
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/guest")
 public interface GuestRest {

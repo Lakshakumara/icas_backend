@@ -271,20 +271,6 @@ public class ObjectMapper {
         );
     }
 }
-    /*public static Claim mapToClaimOPD(ClaimOPDDTO claimOPDDTO) {
-        Claim cd = new Claim();
-        if (Objects.isNull(claimOPDDTO)) return cd;
-        cd.setId(claimOPDDTO.getId());
-        cd.setMember(new Member(claimOPDDTO.getMemberId()));
-        cd.setRequestFor(claimOPDDTO.getRequestFor());
-        cd.setCategory(claimOPDDTO.getCategory());
-        cd.setStartDate(claimOPDDTO.getStartDate());
-        cd.setClaimDate(claimOPDDTO.getClaimDate());
-        cd.setRequestAmount(claimOPDDTO.getRequestAmount());
-        cd.setClaimStatus(claimOPDDTO.getClaimStatus());
-        cd.setAcceptedDate(claimOPDDTO.getAcceptedDate());
-        return cd;
-    }*/
  /* public static ClaimData mapToClaimData(ClaimDTO claimDTO) {
         if (Objects.isNull(claimDTO)) return null;
         ClaimData c = new ClaimData();
