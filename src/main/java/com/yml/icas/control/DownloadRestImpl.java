@@ -28,7 +28,6 @@ public class DownloadRestImpl implements DownloadRest {
         try {
             return downloadService.downloadClaimApplication(claimId);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -39,7 +38,6 @@ public class DownloadRestImpl implements DownloadRest {
             log.info("downloadApplication");
             return downloadService.downloadApplication(year, empNo);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -64,7 +62,6 @@ public class DownloadRestImpl implements DownloadRest {
             headers.setContentDispositionFormData("filename", "Voucher" + ".pdf");
             return new ResponseEntity<>(downloadService.downloadVoucher(voucherId), headers, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

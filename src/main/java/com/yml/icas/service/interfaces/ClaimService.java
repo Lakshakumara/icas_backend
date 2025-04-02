@@ -12,8 +12,6 @@ import java.util.Set;
 public interface ClaimService {
     Integer addClaim(ClaimDTO claimDTO);
 
-    //ResponseEntity<Integer> saveOpd(ClaimOPDDTO claimOPDDTO);
-
     ResponseEntity<Integer> updateClaim(Map<String, Object>[] dataSets);
 
     ClaimDTO getClaim(Integer claimId);

@@ -17,9 +17,12 @@ public class AuthService {
     private MemberRepo memberRepo;
 
     @Autowired
+    MemberServiceImpl memberService;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public String authenticate(String username, String password) {
+       // memberService.updateExistingPasswords();
         Member user = memberRepo.findByEmpNo(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 

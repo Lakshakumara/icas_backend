@@ -1,6 +1,7 @@
 package com.yml.icas.dto;
 
-import lombok.AllArgsConstructor;
+import com.yml.icas.util.IcasUtil;
+import com.yml.icas.util.MyConstants;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,6 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class MemberDTO {
     private Integer id;
     private String empNo;
@@ -22,6 +22,7 @@ public class MemberDTO {
     private String nic;
     private String sex;
     private Date dob;
+    private String age;
     private String designation;
     private String department;
     private String password;
@@ -36,6 +37,10 @@ public class MemberDTO {
     private Set<RegistrationDTO> memberRegistrations = new HashSet<>();
     private Set<DependantDTO> dependants = new HashSet<>();
     private Set<BeneficiaryDTO> beneficiaries = new HashSet<>();
+
+    public String getAge() {
+        return IcasUtil.calAge(dob, MyConstants.TODAY());
+    }
 
     /**
      *
@@ -67,6 +72,7 @@ public class MemberDTO {
         this.nic = nic;
         this.sex = sex;
         this.dob = dob;
+        //this.age =
         this.designation = designation;
         this.department = department;
         this.status = status;

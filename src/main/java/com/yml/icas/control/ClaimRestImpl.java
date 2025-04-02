@@ -51,16 +51,6 @@ public class ClaimRestImpl implements ClaimRest {
         }
     }
 
-   /* @Override
-    public ResponseEntity<Integer> opdClaimSave(ClaimOPDDTO claimOPDDTO) {
-        //log.info("claimRestImpl {}",claimOPDDTO);
-        try {
-            return claimService.saveOpd(claimOPDDTO);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
 
     @Override
     public ResponseEntity<ClaimDTO> getClaim(Integer claimId) {
@@ -131,13 +121,4 @@ public class ClaimRestImpl implements ClaimRest {
         Page<ClaimDataHistoryDTO> claimDataHistoryAll = claimService.getClaimDataHistoryAll(params);
         return ResponseEntity.ok(claimDataHistoryAll);
     }
-
-   /* public ResponseEntity<Integer> setClaimAccept(ClaimOPDDTO claimOPDDTO) {
-        try {
-            return claimService.saveOpd(claimOPDDTO);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
 }

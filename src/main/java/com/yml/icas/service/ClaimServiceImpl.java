@@ -76,7 +76,6 @@ public class ClaimServiceImpl implements ClaimService {
         cd.setRejectedDate(Converter.toDate(dataSet.get("rejectDate")));
         cd.setRejectRemarks((String) dataSet.get("rejectRemarks"));
         cd.setRemarks((String) dataSet.get("remarks"));
-        log.info("saved ClaimData {}", cd);
         claimDataRepo.save(cd);
         return 1;
     }
@@ -101,7 +100,6 @@ public class ClaimServiceImpl implements ClaimService {
     }
     @Override
     public ResponseEntity<Integer> updateClaim(Map<String, Object>[] dataSets) {
-        log.info("received Claim update data Set {}", (Object) dataSets);
         int rows = 0;
         Long voucherId = new Date().getTime();
         List<Stage> stages = new ArrayList<>();
@@ -128,7 +126,6 @@ public class ClaimServiceImpl implements ClaimService {
                     stages.add(new Stage("Medical Board Evaluation", "Sent", MyConstants.TODAY().toString()));
 
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("mec_approved")) {
-                    log.info("received Object {} ", dataSet.get("mecreturndate"));
                     log.info("received String {} ", (String) dataSet.get("mecreturndate"));
                     //log.info("received Date {} ", LocalDate.parse((CharSequence) dataSet.get("mecreturndate")));
                     rows += claimRepo.mecApproval(claimId,
@@ -159,11 +156,9 @@ public class ClaimServiceImpl implements ClaimService {
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("claimdata")) {
                     isEmail = false;
                     rows += addClaimData(dataSet);
-                    log.info("data saved {}", rows);
                 } else if (dataSet.get("criteria").toString().equalsIgnoreCase("claimdataupdate")) {
                     isEmail = false;
                     rows += updateClaimData(dataSet);
-                    log.info("data saved {}", rows);
                 }
 
                 /*else if (dataSet.get("criteria").toString().equalsIgnoreCase("opdupdate")) {
@@ -198,7 +193,6 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     public Page<ClaimDTO> getAllClaim(Map<String, String> params) {
-        log.info("getAllClaim params {}", params);
         Pageable pageable = IcasUtil.createPageable(params);
         Page<Claim> claimList;
 
@@ -221,7 +215,6 @@ public class ClaimServiceImpl implements ClaimService {
         }
         assert claimList != null;
         Page<ClaimDTO> cd = claimList.map(ObjectMapper::mapToClaimDTO);
-        for (ClaimDTO c:cd) {log.info(String.valueOf(c));}
         return cd;
     }
 
@@ -263,9 +256,6 @@ public class ClaimServiceImpl implements ClaimService {
                 null,
                 pageable);
         Page<ClaimDTO> cd = claimList.map(ObjectMapper::mapToClaimDTO);
-        for (ClaimDTO c:cd) {
-            log.info(String.valueOf(c));
-        }
         return cd;
     }
 
@@ -404,40 +394,9 @@ class Stage {
 }
 
   /*
-    private Claim getClaimOPD(ClaimOPDDTO claimOPDDTO) {
-        Claim cd = new Claim();
-        if (Objects.isNull(claimOPDDTO)) return cd;
-        cd.setId(claimOPDDTO.getId());
-        cd.setMember(memberRepo.getReferenceById(claimOPDDTO.getMemberId()));
-        cd.setRequestFor(claimOPDDTO.getRequestFor());
-        cd.setCategory(claimOPDDTO.getCategory());
-        cd.setStartDate(claimOPDDTO.getStartDate());
-        cd.setClaimDate(claimOPDDTO.getClaimDate());
-        cd.setRequestAmount(claimOPDDTO.getRequestAmount());
-        cd.setClaimStatus(claimOPDDTO.getClaimStatus());
-        cd.setAcceptedDate(claimOPDDTO.getAcceptedDate());
-        return cd;
-    }
+
    public Page<Claim> searchClaims(Map<String, String> params) {
         return claimRepository.searchClaims(params);
-    }
-
-
-
-    @Override
-    public ResponseEntity<Integer> saveOpd(ClaimOPDDTO claimOPDDTO) {
-        Claim claim;
-        try {
-            claim = claimRepo.save(getClaimOPD(claimOPDDTO));
-            List<Stage> stages = new ArrayList<>();
-            stages.add(new Stage("Online Application", "Received", ""));
-            stages.add(new Stage("Department Head Approval", "Pending", ""));
-            emailClaimProgress(Objects.requireNonNull(ObjectMapper.mapToClaimDTO(claim)), stages);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(claim.getId(), HttpStatus.OK);
     }
 
     @Override

@@ -53,9 +53,8 @@ public class DownloadServiceImpl implements DownloadService {
                         .contentType(MediaType.TEXT_PLAIN)
                         .body(errorMessage.getBytes());
             }
-            memberRegistration.forEach(r->{
-                log.info("memberRegistration {}", r);
-            });
+            memberRegistration.forEach(r-> log.info("memberRegistration {}", r));
+
             MemberDTO memberDTO = memberRepo.getMemberDTOEmpNo(empNo);
             log.info("MemberDTO {}", memberDTO);
             memberDTO.setMemberRegistrations(memberRegistration);
@@ -91,6 +90,7 @@ public class DownloadServiceImpl implements DownloadService {
                 return new ResponseEntity<>((claimId + " not Found").getBytes(), HttpStatus.INTERNAL_SERVER_ERROR);
             ClaimDTO claimDTO = ObjectMapper.mapToClaimDTO(claim);
             log.info("claimDTO {}", claimDTO);
+            assert claimDTO != null;
             byte[] pdf = IcasUtil.genClaimApplication(claimDTO);
 
             HttpHeaders headers = new HttpHeaders();
@@ -112,11 +112,7 @@ public class DownloadServiceImpl implements DownloadService {
             List<Claim> claims = claimRepo.findAllByVoucherId(voucherId);
             log.info("voucher claim {}", claims);
             Set<ClaimDTO> claimDtos = claims.stream().map(ObjectMapper::mapToClaimDTO).collect(Collectors.toSet());
-            byte[] pdf = IcasUtil.genVoucher(voucherId, claimDtos);
-
-            //create the report in PDF format
-
-            return pdf;
+            return IcasUtil.genVoucher(voucherId, claimDtos);
         } catch (Exception e) {
             log.info(e.toString());
             return MyConstants.ERROR_MSG1.getBytes();

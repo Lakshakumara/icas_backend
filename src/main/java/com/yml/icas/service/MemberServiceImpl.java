@@ -34,6 +34,9 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     private MemberRepo memberRepo;
 
     @Autowired
@@ -68,6 +71,14 @@ public class MemberServiceImpl implements MemberService {
                 user.setPassword(hashedPassword);
                 memberRepo.save(user);
             }
+        }
+    }
+
+    public void userTableEntry() {
+        List<Member> members = memberRepo.findAll();
+        for (Member member : members) {
+            User user = new User(member.getEmpNo(), "user"+member.getEmpNo(), member.getRoles());
+            userRepository.save(user);
         }
     }
     @Override
@@ -272,11 +283,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public ResponseEntity<MemberDTO> getMember(String empNo) {
-        log.info("fetch MemberDTO {}", empNo);
+
+        //userTableEntry();
+        //log.info("user Updated");
         try {
             Member member = memberRepo.getDTO_empNo(empNo);
             return new ResponseEntity<>(Objects.requireNonNullElseGet(ObjectMapper.mapToMemberDTO(member), MemberDTO::new), HttpStatus.OK);
-
         } catch (Exception ex) {
             return new ResponseEntity<>(new MemberDTO(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -376,8 +388,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Set<DependantDTO> getMemberDependants(int year, String empNo, String name) {
         try {
-            Set<DependantDTO> dependants = dependantRepo.getEmployeeDependants(year, empNo, name);
-            return dependants;
+            return dependantRepo.getEmployeeDependants(year, empNo, name);
         } catch (Exception ex) {
             return new HashSet<>();
         }

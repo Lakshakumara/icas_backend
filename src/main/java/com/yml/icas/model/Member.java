@@ -20,7 +20,6 @@ import java.util.Set;
 @NamedQuery(name = "Member.getAllMembers", query = "select new com.yml.Icas.wrapper.MemberWrapper(" +
         "m.id,m.empNo, m.name, m.address, m.email, m.contactNo, m.civilStatus, m.nic, m.sex, m.dob, " +
         "m.designation, m.department, m.mDate,m.status,m.role, m.deleted) from Member m where m.role='user'")*/
-
 @Setter
 @Getter
 @Entity
@@ -109,6 +108,10 @@ public class Member implements Serializable {
             joinColumns = @JoinColumn(name = "member_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
+    private User user;
 
     @Column(name = "deleted")
     private boolean deleted;
