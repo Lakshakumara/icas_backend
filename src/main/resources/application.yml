@@ -16,7 +16,7 @@ spring:
   datasource:
     username: postgres
     url: jdbc:postgresql://localhost:5432/insurance
-    password: 
+    password: abcd
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -38,7 +38,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: mediclaim@ousl.lk
-    password: 
+    password: Med@ousl
     properties:
       mail:
         smtp:
