@@ -3,7 +3,6 @@ package com.yml.icas.control;
 import com.yml.icas.dto.BeneficiaryDTO;
 import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
-import com.yml.icas.model.User;
 import com.yml.icas.service.MemberServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ public class MemberRestImpl implements MemberRest {
         try {
             return memberService.getMember(empNo);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -43,7 +41,6 @@ public class MemberRestImpl implements MemberRest {
         try {
             return new ResponseEntity<>(memberService.searchMember(searchParams), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -61,7 +58,6 @@ public class MemberRestImpl implements MemberRest {
             beneficiaryDTOS = memberService.getMemberBeneficiaries(year, empNo, name);
             return ResponseEntity.ok(beneficiaryDTOS);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(beneficiaryDTOS, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

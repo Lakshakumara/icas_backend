@@ -43,7 +43,6 @@ public class SchemeServiceImpl implements SchemeService {
             schemeDTOS.forEach(schemeDTO -> log.info(String.valueOf(schemeDTO)));
             return new ResponseEntity<>(schemeDTOS, HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

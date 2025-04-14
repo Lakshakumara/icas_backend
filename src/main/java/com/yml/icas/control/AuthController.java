@@ -1,10 +1,8 @@
 package com.yml.icas.control;
 
-import com.yml.icas.model.User;
 import com.yml.icas.service.AuthService;
 import com.yml.icas.service.CustomUserDetailsService;
 import com.yml.icas.util.JwtUtil;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.Optional;
 
 @Slf4j
 @CrossOrigin(origins = "*")
