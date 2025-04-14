@@ -24,14 +24,8 @@ public class MemberRestImpl implements MemberRest {
 
     @Override
     public ResponseEntity<MemberDTO> signup(MemberDTO memberDTO) {
-        try {
-            log.info("Received to backend "+ memberDTO.toString());
-            MemberDTO member = memberService.signUpNew(memberDTO);
-            return ResponseEntity.ok(member);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(new MemberDTO(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        MemberDTO member = memberService.signUpNew(memberDTO);
+        return ResponseEntity.ok(member);
     }
 
     @Override
@@ -61,42 +55,44 @@ public class MemberRestImpl implements MemberRest {
 
     @Override
     public ResponseEntity<Set<BeneficiaryDTO>> getMemberBeneficiaries(int year, String empNo, String name) {
-        log.info("year={} empNo={} name={}",year, empNo, name);
-        Set<BeneficiaryDTO> beneficiaryDTOS= new HashSet<>();
+        log.info("year={} empNo={} name={}", year, empNo, name);
+        Set<BeneficiaryDTO> beneficiaryDTOS = new HashSet<>();
         try {
-            beneficiaryDTOS =  memberService.getMemberBeneficiaries(year, empNo, name);
+            beneficiaryDTOS = memberService.getMemberBeneficiaries(year, empNo, name);
             return ResponseEntity.ok(beneficiaryDTOS);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(beneficiaryDTOS, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @Override
     public ResponseEntity<Set<DependantDTO>> getMemberDependants(int year, String empNo, String name) {
 
-        log.info("year={} empNo={} name={}",year, empNo, name);
-        Set<DependantDTO> dependants= new HashSet<>();
+        log.info("year={} empNo={} name={}", year, empNo, name);
+        Set<DependantDTO> dependants = new HashSet<>();
         try {
-            dependants =  memberService.getMemberDependants(year, empNo, name);
+            dependants = memberService.getMemberDependants(year, empNo, name);
             return ResponseEntity.ok(dependants);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(dependants, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @Override
     public ResponseEntity<String[]> getRelationShip(String rs) {
         return memberService.getRelationShip(rs);
     }
 
-    public ResponseEntity<Void> updateRoles( Integer memberId, UpdateRolesRequest request) {
+    public ResponseEntity<Void> updateRoles(Integer memberId, UpdateRolesRequest request) {
         memberService.updateRoles(memberId, request.getRoles());
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<Integer> updateMember(String criteria, Map<String, Object> dataSet) {
-        log.info(criteria +"dataset {}",dataSet);
+        log.info(criteria + "dataset {}", dataSet);
         return memberService.updateMember(criteria, dataSet);
     }
 

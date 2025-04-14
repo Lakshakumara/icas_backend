@@ -33,7 +33,7 @@ public class ObjectMapper {
                                 c.getRequestAmount(),
                                 c.getAdjustAmount(),
                                 c.getAdjustRemarks())
-                        )
+                )
                 .collect(Collectors.toSet()));
         cd.setCategory(claim.getCategory());
         cd.setRequestFor(claim.getRequestFor());
@@ -151,9 +151,8 @@ public class ObjectMapper {
         memberDTO.setPhotoUrl(member.getPhotoUrl());
         memberDTO.setDeleted(member.isDeleted());
         memberDTO.setRegistrationOpen(member.getRegistrationOpen());
-
-        memberDTO.getRoles().addAll(member.getRoles().stream().map(r -> new RoleDTO(r.getRole()))
-                .collect(Collectors.toSet()));
+       // memberDTO.getRoles().addAll(member.getRoles().stream().map(r -> new RoleDTO(r.getRole()))
+          //      .collect(Collectors.toSet()));
 
         memberDTO.getMemberRegistrations().addAll(member.getMemberRegistrations().stream().map(r -> {
             RegistrationDTO rd = new RegistrationDTO();
@@ -223,6 +222,7 @@ public class ObjectMapper {
         dependantDTO.setDob(dependant.getDob());
         return dependantDTO;
     }
+
     public static DependantDTO mapToDependant(Dependant dependant, int year) {
         if (Objects.isNull(dependant)) return null;
         DependantDTO dependantDTO = new DependantDTO();
@@ -231,16 +231,17 @@ public class ObjectMapper {
         dependantDTO.setNic(dependant.getNic());
         dependantDTO.setDob(dependant.getDob());
         dependantDTO.setAge(IcasUtil.calAge(dependant.getDob(), MyConstants.TODAY()));
-        dependant.getDependantData().forEach(dd->{
-           if (dd.getRegisterYear() == year){
-               dependantDTO.setRegisterYear(year);
-               dependantDTO.setRegisterDate(dd.getRegisterDate());
-               dependantDTO.setRelationship(dd.getRelationship());
-           }
+        dependant.getDependantData().forEach(dd -> {
+            if (dd.getRegisterYear() == year) {
+                dependantDTO.setRegisterYear(year);
+                dependantDTO.setRegisterDate(dd.getRegisterDate());
+                dependantDTO.setRelationship(dd.getRelationship());
+            }
         });
         return dependantDTO;
     }
-@Deprecated
+
+    @Deprecated
     public static RegistrationDTO mapToMemberRegistrationDTO(Set<Registration> memberRegistration) {
         if (Objects.isNull(memberRegistration)) return null;
         RegistrationDTO memberRegistrationDTO = new RegistrationDTO();

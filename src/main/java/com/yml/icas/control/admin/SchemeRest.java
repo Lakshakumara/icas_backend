@@ -55,12 +55,7 @@ public class SchemeRest {
 
     @GetMapping(path = "/{category}")
     public ResponseEntity<List<SchemeDTO>> getScheme(@PathVariable("category") String category) {
-        try {
-            return schemeService.getScheme(category);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return schemeService.getScheme(category);
     }
 
     @GetMapping(path = "/titles/{category}")
