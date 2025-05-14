@@ -26,7 +26,6 @@ public class SchemeRest {
         try {
             return schemeService.addScheme(schemeDTO);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -37,7 +36,6 @@ public class SchemeRest {
         try {
             return schemeService.addAllScheme(schemeDTOs);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -48,19 +46,13 @@ public class SchemeRest {
         try {
             return schemeService.updateScheme(id, schemeDTO);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping(path = "/{category}")
     public ResponseEntity<List<SchemeDTO>> getScheme(@PathVariable("category") String category) {
-        try {
-            return schemeService.getScheme(category);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return schemeService.getScheme(category);
     }
 
     @GetMapping(path = "/titles/{category}")
@@ -69,7 +61,6 @@ public class SchemeRest {
             Set<SchemeTitleDTO> scheme = schemeService.getSchemeTitles(category);
             return new ResponseEntity<>(scheme, HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

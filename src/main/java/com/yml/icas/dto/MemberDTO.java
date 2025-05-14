@@ -72,7 +72,6 @@ public class MemberDTO {
         this.nic = nic;
         this.sex = sex;
         this.dob = dob;
-        //this.age =
         this.designation = designation;
         this.department = department;
         this.status = status;

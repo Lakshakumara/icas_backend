@@ -1,15 +1,19 @@
 package com.yml.icas.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
 @Getter
 @Setter
 @Entity
+@Data
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(name = "user_empno_unique", columnNames = "empNo")
 })
@@ -34,7 +38,15 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User() {}
+    // 🔐 Reset token field
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "token_expiry")
+    private LocalDateTime tokenExpiry;
+
+    public User() {
+    }
 
     public User(String empNo, String password, Set<Role> roles) {
         this.empNo = empNo;

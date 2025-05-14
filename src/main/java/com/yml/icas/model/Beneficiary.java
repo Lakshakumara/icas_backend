@@ -25,4 +25,14 @@ public class Beneficiary implements Serializable {
 
     @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL)
     private Set<BeneficiaryData> beneficiaryData = new HashSet<>();
+
+    public Beneficiary(Integer id, String name, String nic) {
+        this.id = id;
+        this.name = name;
+        this.nic = nic;
+    }
+
+    public Beneficiary() {
+
+    }
 }

@@ -1,34 +1,21 @@
 package com.yml.icas.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.yml.icas.model.User;
+import com.yml.icas.service.CustomUserDetails;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 @Component
 public class JwtUtil {
 
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("your-super-secure-secret-key-that-is-at-least-32-characters".getBytes());
-
-    public static String generateToken(String username, List<String> roles) {
-        List<String> prefixedRoles = roles.stream()
-                .map(role -> "ROLE_" + role.toUpperCase()) // ✅ Convert "user" to "ROLE_USER"
-                .toList();
-
-        return Jwts.builder()
-                .setSubject(username) // ✅ Fix: Use setSubject()
-                .claim("roles", prefixedRoles)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour expiry
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
     public static String validateToken(String token) {
         try {
             return Jwts.parserBuilder()
@@ -38,25 +25,35 @@ public class JwtUtil {
                     .getBody()
                     .getSubject();
         } catch (Exception e) {
-            return null; // Invalid token
+            throw new CustomJwtException("Invalid token", HttpStatus.UNAUTHORIZED);
         }
     }
 
-    public static List extractRoles(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.get("roles", List.class);  // ✅ Extract roles from token
+    public static List<HashMap<String, String>> extractRoles(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get("roles", List.class);
+        } catch (ExpiredJwtException e) {
+            throw new CustomJwtException("Token expired", HttpStatus.UNAUTHORIZED); // 👈 custom exception
+        } catch (JwtException e) {
+            throw new CustomJwtException("Invalid token", HttpStatus.UNAUTHORIZED); // 👈 handle other token errors
+        }
     }
 
     public String generateToken(UserDetails userDetails) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
+        User user = customUserDetails.getUser();
+        System.out.println(user);
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("roles", userDetails.getAuthorities())
+                .claim("defaultPassword", user.isDefaultPassword())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 10 hours
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }

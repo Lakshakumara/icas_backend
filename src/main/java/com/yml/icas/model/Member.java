@@ -100,6 +100,7 @@ public class Member implements Serializable {
     @Column(name = "photourl", columnDefinition = "TEXT")
     private String photoUrl;
 
+/*
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
@@ -108,7 +109,7 @@ public class Member implements Serializable {
             joinColumns = @JoinColumn(name = "member_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
-
+*/
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     private User user;
@@ -153,7 +154,6 @@ public class Member implements Serializable {
                 ", password='" + password + '\'' +
                 ", mDate=" + mDate +
                 ", status='" + status + '\'' +
-                ", roles=" + roles +
                 ", deleted=" + deleted +
                 ", registrationOpen=" + registrationOpen +
                 '}';

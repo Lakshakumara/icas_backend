@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login").permitAll() // Allow login without authentication
                         //.requestMatchers("/member/**").hasAuthority("ROLE_USER")
-                        // .requestMatchers("/member/**").authenticated()
+                         //.requestMatchers("/member/**").permitAll()
                         //.anyRequest().permitAll()
                         .anyRequest().authenticated()
                 )

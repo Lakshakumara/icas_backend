@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(name = "dependant", indexes = {
         @Index(name = "idx_dep_name", columnList = "name")
 }, uniqueConstraints = {
-        @UniqueConstraint(name = "member_nic_unique", columnNames = {"name","nic","dob"})
+        @UniqueConstraint(name = "dependant_name_nic_dob_unique", columnNames = {"name","nic","dob"})
 })
 public class Dependant implements Serializable {
     private static final long serialVersionId = 3L;
@@ -40,11 +40,17 @@ public class Dependant implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date dob;
 
+    public Dependant(Integer id, String name, String nic, Date dob) {
+        this.id = id;
+        this.name = name;
+        this.nic = nic;
+        this.dob = dob;
+    }
+
     @Override
     public String toString() {
         return "Dependant{" +
                 "id=" + id +
-                ", dependantData=" + dependantData +
                 ", name='" + name + '\'' +
                 ", nic='" + nic + '\'' +
                 ", dob=" + dob +
