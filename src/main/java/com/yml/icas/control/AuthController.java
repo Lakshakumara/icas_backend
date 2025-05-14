@@ -1,11 +1,11 @@
 package com.yml.icas.control;
 
+import com.yml.icas.dto.MessageResponse;
 import com.yml.icas.service.AuthService;
 import com.yml.icas.service.CustomUserDetailsService;
 import com.yml.icas.util.JwtUtil;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Map;
 
-@Slf4j
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/auth")
@@ -44,7 +44,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        log.info("Login {} {}", loginRequest.getEmpNo(), loginRequest.getPassword());
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmpNo(), loginRequest.getPassword())
@@ -54,13 +53,21 @@ public class AuthController {
             String token = jwtUtil.generateToken(userDetails);
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse(e.getMessage()));
         }
     }
 
     @PostMapping("/change-default-password")
     public ResponseEntity<?> changeDefaultPassword(@RequestBody ChangePasswordRequest request, Principal principal) {
         return authService.changeDefaultPassword(request, principal);
+    }
+    @PostMapping("/auth/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        return authService.forgotPassword(request);
+    }
+    @PostMapping("/auth/reset-password")
+    public ResponseEntity<?> resetForgottenPassword(@RequestBody ResetForgottenPasswordRequest request) {
+        return authService.resetForgottenPassword(request);
     }
 }
 
@@ -86,3 +93,4 @@ class LoginRequest {
     private String empNo;
     private String password;
 }
+
