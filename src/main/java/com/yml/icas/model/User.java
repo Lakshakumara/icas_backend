@@ -13,7 +13,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Data
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(name = "user_empno_unique", columnNames = "empNo")
 })
@@ -33,7 +32,7 @@ public class User implements Serializable {
     private boolean defaultPassword = true;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "users_roles",
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
@@ -53,5 +52,17 @@ public class User implements Serializable {
         this.password = password;
         this.roles = roles;
     }
-}
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", empNo='" + empNo + '\'' +
+                ", password='" + password + '\'' +
+                ", defaultPassword=" + defaultPassword +
+                ", roles=" + roles +
+                ", resetToken='" + resetToken + '\'' +
+                ", tokenExpiry=" + tokenExpiry +
+                '}';
+    }
+}

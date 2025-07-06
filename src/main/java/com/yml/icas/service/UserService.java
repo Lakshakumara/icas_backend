@@ -26,9 +26,7 @@ public class UserService {
         if (userRepository.existsByEmpNo(empNo)) {
             throw new RuntimeException("User already exists");
         }
-
         Set<Role> roles = roleRepository.findByRoleIn(roleNames);
-
         User user = new User(empNo, passwordEncoder.encode(rawPassword), roles);
         return userRepository.save(user);
     }

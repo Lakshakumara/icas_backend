@@ -9,11 +9,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepo extends JpaRepository<Member, Integer> {
 
     Optional<Member> findByEmpNo(String empNo);
+    @Query("SELECT m FROM Member m order by m.id")
+    List<Member> getAll();
 
     @Query("SELECT m FROM Member m WHERE " +
             "(:filter IS NULL OR :filter = '' OR " +

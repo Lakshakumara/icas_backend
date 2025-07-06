@@ -4,11 +4,9 @@ import com.yml.icas.dto.ClaimDataHistoryDTO;
 import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.dto.ObjectMapper;
 import com.yml.icas.model.Member;
-import com.yml.icas.repository.ClaimDataRepo;
-import com.yml.icas.repository.MemberRepo;
-import com.yml.icas.repository.RegistrationRepo;
-import com.yml.icas.repository.SchemeDataRepo;
+import com.yml.icas.repository.*;
 import com.yml.icas.service.interfaces.GuestService;
+import com.yml.icas.service.interfaces.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +33,15 @@ public class GuestServiceImpl implements GuestService {
 
     @Autowired
     ClaimDataRepo claimDataRepo;
+
+    @Autowired
+    RoleRepo roleRepo;
+
+    @Autowired
+    MemberService memberService;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public ResponseEntity<Map<String, Object>> memberValidation(Integer year, String empNo) {
@@ -79,6 +86,16 @@ public class GuestServiceImpl implements GuestService {
             log.info("\n values {}",  p);
         });
         log.info("\n fetch {}",  ch.getContent());
+
+       /* Role r = roleRepo.findByRole("ROLE_USER");
+        List<Member> allMembers = memberService.getAllMembers();
+        for (Member m : allMembers) {
+            User userx = new User(m.getEmpNo(), m.getPassword(), Set.of(r));
+            System.out.println(userx);
+            userRepository.save(userx);
+            m.setUser(userx);
+            memberRepo.save(m);
+        }*/
         return null;
     }
 }

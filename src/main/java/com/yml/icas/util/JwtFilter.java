@@ -27,9 +27,6 @@ public class JwtFilter extends OncePerRequestFilter {
     ) throws IOException {
         try {
             String token = request.getHeader("Authorization");
-           // System.out.println("Incoming request: " + request.getRequestURI());
-            //System.out.println("Authorization token: " + token);
-
             if (token != null && token.startsWith("Bearer ")) {
                 String username = JwtUtil.validateToken(token.substring(7));
                 List<HashMap<String, String>> roles = JwtUtil.extractRoles(token.substring(7));
@@ -44,9 +41,6 @@ public class JwtFilter extends OncePerRequestFilter {
                     //taken from imegoscode
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                    //System.out.println("Authenticated User: " + username);
-                    //System.out.println("User Roles (SecurityContext): " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
                 }
             }
             filterChain.doFilter(request, response);

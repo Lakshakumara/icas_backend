@@ -18,9 +18,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/insurance
     password: abcd
   flyway:
-    enabled: false
+    enabled: true
     locations: classpath:db/migration
-    baseline-on-migrate: false
+    baseline-on-migrate: true
   logging:
     level:
       org:

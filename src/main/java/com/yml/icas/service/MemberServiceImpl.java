@@ -456,6 +456,10 @@ System.out.println("received "+memberDTO.getName());
         return memberPage.map(ObjectMapper::mapToMemberDTO);
     }
 
+    public List<Member> getAllMembers() {
+        return memberRepo.getAll();
+    }
+
     public void updateRoles(Integer memberId, List<String> roles) {
         Set<Role> updatedRoles = roles.stream().map(roleName -> roleRepo.findByRole(roleName)).collect(Collectors.toSet());
         Member member = memberRepo.findById(memberId).orElseThrow(() -> new RuntimeException("Member not found"));
