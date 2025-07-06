@@ -62,11 +62,11 @@ public class AuthController {
     public ResponseEntity<?> changeDefaultPassword(@RequestBody ChangePasswordRequest request, Principal principal) {
         return authService.changeDefaultPassword(request, principal);
     }
-    @PostMapping("/auth/forgot-password")
+    @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         return authService.forgotPassword(request);
     }
-    @PostMapping("/auth/reset-password")
+    @PostMapping("/reset-password")
     public ResponseEntity<?> resetForgottenPassword(@RequestBody ResetForgottenPasswordRequest request) {
         return authService.resetForgottenPassword(request);
     }

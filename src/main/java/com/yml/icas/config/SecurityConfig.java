@@ -42,6 +42,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource)) // Apply CORS config
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login").permitAll() // Allow login without authentication
+                        .requestMatchers("/auth/forgot-password").permitAll() // Allow forgot password without authentication
+
                         //.requestMatchers("/member/**").hasAuthority("ROLE_USER")
                          //.requestMatchers("/member/**").permitAll()
                         //.anyRequest().permitAll()

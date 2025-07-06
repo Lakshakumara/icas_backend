@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface MemberService {
-    List<Member> getAllMembers();
+
     ResponseEntity<Integer> updateMember(String criteria, Map<String, Object> dataSet);
 
    // ResponseEntity<byte[]> signUp(MemberDTO memberDTO);

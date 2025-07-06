@@ -3,7 +3,9 @@ package com.yml.icas.service;
 import com.yml.icas.control.ChangePasswordRequest;
 import com.yml.icas.control.ResetForgottenPasswordRequest;
 import com.yml.icas.dto.MessageResponse;
+import com.yml.icas.model.Member;
 import com.yml.icas.model.User;
+import com.yml.icas.repository.MemberRepo;
 import com.yml.icas.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,8 +28,10 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
+    private  final MemberRepo memberRepo;
 
     private final PasswordEncoder passwordEncoder;
+    private  final EmailService emailService;
 
     public ResponseEntity<?> changeDefaultPassword(ChangePasswordRequest request, Principal principal) {
         String empNo = principal.getName(); // fetched from JWT
@@ -51,9 +56,15 @@ public class AuthService {
     }
 
     public ResponseEntity<?> forgotPassword(Map<String, String> request) {
-        String empNo = request.get("empNo");
+        String email = request.get("email");
+        Optional<Member> optionalMember = memberRepo.findByEmail(email);
+        if (optionalMember.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new MessageResponse("Email is not Register as a Member"));
+        }
+        Member member = optionalMember.get();
 
-        Optional<User> optionalUser = userRepository.findByEmpNo(empNo);
+        Optional<User> optionalUser = userRepository.findByEmpNo(member.getEmpNo());
         if (optionalUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new MessageResponse("User not found"));
@@ -68,8 +79,14 @@ public class AuthService {
         user.setTokenExpiry(LocalDateTime.now().plusHours(1)); // optional
         userRepository.save(user);
 
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("name", member.getName());
+        variables.put("email", email);
+        variables.put("resetToken", resetToken);
+System.out.println(variables);
+        System.out.println(resetToken);
         // Send token via email (you'd integrate email sending here)
-        // mailService.sendResetEmail(user.getEmail(), resetToken);
+        emailService.sendResetEmail(email, "Password Reset Link", "pwResetEmail",variables);
 
         return ResponseEntity.ok(new MessageResponse("Reset link sent to your email"));
     }

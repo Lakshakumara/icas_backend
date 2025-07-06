@@ -24,8 +24,6 @@ public class EmailService {
     @Autowired
     private TemplateEngine templateEngine;
 
-    @Autowired
-    private Environment env;
     @Async
     public CompletableFuture<Void> sendEmailAsync(String email, String subject, String template, Map<String, Object> variables) {
         // Send the email in the background without blocking the main thread
@@ -35,6 +33,7 @@ public class EmailService {
     }
     @Async
     public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables) {
+        System.out.println("sendEmail called");
         Context context = new Context();
         context.setVariables(variables);
         String body = templateEngine.process(templateName, context);
@@ -45,6 +44,7 @@ public class EmailService {
             helper.setSubject(subject);
             helper.setText(body, true);
             mailSender.send(message);
+            System.out.println("In sendResetEmail Done");
         } catch (Exception e) {
             Log.info("Email not sent to "+ to);
         }
@@ -76,6 +76,14 @@ public class EmailService {
         context.setVariables(variables);
         String body = templateEngine.process(templateName, context);
         return body; // Placeholder, implement your template processing logic
+    }
+
+    @Async
+    public CompletableFuture<Void> sendResetEmail(String email, String subject, String template, Map<String, Object> variables) {
+        // Send the email in the background without blocking the main thread
+        System.out.println("In sendResetEmail");
+        sendEmail(email, subject, template, variables);
+        return CompletableFuture.completedFuture(null); // Return a completed future
     }
 
 }
