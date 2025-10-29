@@ -51,6 +51,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmpNo());
             String token = jwtUtil.generateToken(userDetails);
+            System.out.println("Generated token "+token);
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse(e.getMessage()));
@@ -61,11 +62,15 @@ public class AuthController {
     public ResponseEntity<?> changeDefaultPassword(@RequestBody ChangePasswordRequest request, Principal principal) {
         return authService.changeDefaultPassword(request, principal);
     }
-    @PostMapping("/auth/forgot-password")
+    @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         return authService.forgotPassword(request);
     }
-    @PostMapping("/auth/reset-password")
+    /*@GetMapping("/verify-reset-token")
+    public ResponseEntity<?> verifyResetToken(@RequestParam String token) {
+        return authService.verifyResetToken(token);
+    }*/
+    @PostMapping("/reset-password")
     public ResponseEntity<?> resetForgottenPassword(@RequestBody ResetForgottenPasswordRequest request) {
         return authService.resetForgottenPassword(request);
     }
@@ -93,4 +98,3 @@ class LoginRequest {
     private String empNo;
     private String password;
 }
-

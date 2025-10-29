@@ -53,7 +53,7 @@ public class JwtUtil {
                 .claim("roles", userDetails.getAuthorities())
                 .claim("defaultPassword", user.isDefaultPassword())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 10 hours
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 48)) // 10 hours
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }

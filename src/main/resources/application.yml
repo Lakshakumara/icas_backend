@@ -1,7 +1,7 @@
 app:
   frontend:
-    base-url: http://mediclaim.ousl.lk
-    #http://localhost:4200
+    base-url: #http://mediclaim.ousl.lk
+      http://localhost:4200
 
 server:
   port: 9000
@@ -38,7 +38,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: mediclaim@ousl.lk
-    password: Med@ousl
+    password: rbqv kadv yhli dmqe
     properties:
       mail:
         smtp:

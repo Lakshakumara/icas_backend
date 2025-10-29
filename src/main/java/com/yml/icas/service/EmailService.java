@@ -45,8 +45,10 @@ public class EmailService {
             helper.setSubject(subject);
             helper.setText(body, true);
             mailSender.send(message);
+            System.out.println("Email sent to "+ to);
         } catch (Exception e) {
-            Log.info("Email not sent to "+ to);
+            e.printStackTrace();
+            System.out.println("Email not sent to "+ to);
         }
     }
     @Async
@@ -77,5 +79,4 @@ public class EmailService {
         String body = templateEngine.process(templateName, context);
         return body; // Placeholder, implement your template processing logic
     }
-
 }

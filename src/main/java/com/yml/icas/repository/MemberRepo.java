@@ -2,6 +2,7 @@ package com.yml.icas.repository;
 
 import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.model.Member;
+import com.yml.icas.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -14,7 +15,8 @@ import java.util.Optional;
 public interface MemberRepo extends JpaRepository<Member, Integer> {
 
     Optional<Member> findByEmpNo(String empNo);
-
+    @Query("SELECT m FROM Member m WHERE LOWER(m.email) = LOWER(:email)")
+    Optional<Member> findByEmail(String email);
     @Query("SELECT m FROM Member m WHERE " +
             "(:filter IS NULL OR :filter = '' OR " +
             "lower(m.empNo) LIKE lower(concat(:filter, '%')) OR " +

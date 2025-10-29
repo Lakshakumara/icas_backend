@@ -28,9 +28,9 @@ import static com.yml.icas.util.MyConstants.REGISTRATION_PENDING;
 @Slf4j
 @Service
 public class MemberServiceImpl implements MemberService {
-
     @Value("${app.frontend.base-url}")
     private String baseUrl;
+
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
