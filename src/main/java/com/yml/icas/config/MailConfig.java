@@ -20,7 +20,6 @@ public class MailConfig {
         Integer port = env.getProperty("spring.mail.port", Integer.class);
         String username = env.getProperty("spring.mail.username");
         String password = env.getProperty("spring.mail.password");
-
         if (host == null || port == null || username == null || password == null) {
             throw new IllegalStateException("Mail properties not set correctly");
         }

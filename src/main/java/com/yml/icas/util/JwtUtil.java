@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 public class JwtUtil {
 
-    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("your-super-secure-secret-key-that-is-at-least-32-characters".getBytes());
+    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("soft-solution-software-by-yml-kumara-ousl-training".getBytes());
     public static String validateToken(String token) {
         try {
             return Jwts.parserBuilder()
@@ -47,7 +47,6 @@ public class JwtUtil {
     public String generateToken(UserDetails userDetails) {
         CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
         User user = customUserDetails.getUser();
-        System.out.println(user);
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("roles", userDetails.getAuthorities())
@@ -58,4 +57,3 @@ public class JwtUtil {
                 .compact();
     }
 }
-
