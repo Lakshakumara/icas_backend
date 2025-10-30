@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -85,33 +86,33 @@ public class AuthService {
         variables.put("username", member.getEmpNo());
         variables.put("resetUrl", baseUrl+"/reset-password?token="+resetToken);
         variables.put("expiryHours", 1);
-        emailService.sendEmail(member.getEmail(), "Password Reset Link","email-forgot-password", variables);
+        //emailService.sendEmailAsync(member.getEmail(), "Password Reset Link","email-forgot-password", variables);
 
-        return ResponseEntity.ok(new MessageResponse("Reset link sent to your email"));
+        try {
+            // 🔹 Use the improved async method (returns CompletableFuture)
+            CompletableFuture<Boolean> result = emailService.sendEmailAsyncNew(
+                    member.getEmail(),
+                    "Password Reset Link",
+                    "email-forgot-password",
+                    variables
+            );
 
-        /*
-        Old code
-        String empNo = request.get("empNo");
+            // Option 1 — Fire and forget (non-blocking)
+            // result.exceptionally(ex -> {
+            //     log.error("Failed to send reset email to {}", email, ex);
+            //     return false;
+            // });
 
-        Optional<User> optionalUser = userRepository.findByEmpNo(empNo);
-        if (optionalUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new MessageResponse("User not found"));
+            // Option 2 — Wait for result (blocking briefly until email thread finishes)
+            result.join(); // Wait for the async method to complete
+            return ResponseEntity.ok(new MessageResponse("Reset link sent to your email"));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse("Failed to send reset email. Please try again later."));
         }
 
-        User user = optionalUser.get();
-
-        // Generate a reset token (could also use UUID + expiry, etc.)
-        String resetToken = UUID.randomUUID().toString();
-
-        user.setResetToken(resetToken);
-        user.setTokenExpiry(LocalDateTime.now().plusHours(1)); // optional
-        userRepository.save(user);
-
-        // Send token via email (you'd integrate email sending here)
-        // mailService.sendResetEmail(user.getEmail(), resetToken);
-
-        return ResponseEntity.ok(new MessageResponse("Reset link sent to your email"));*/
+           // return ResponseEntity.ok(new MessageResponse("Reset link sent to your email"));
     }
 
     public ResponseEntity<?> resetForgottenPassword(ResetForgottenPasswordRequest request) {
@@ -136,9 +137,4 @@ public class AuthService {
 
         return ResponseEntity.ok(new MessageResponse("Password reset successfully"));
     }
-
-    /*public ResponseEntity<?> verifyResetToken(String token) {
-
-        return ResponseEntity.ok(new MessageResponse("Password reset successfully"));
-    }*/
 }

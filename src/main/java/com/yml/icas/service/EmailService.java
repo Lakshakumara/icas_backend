@@ -26,6 +26,36 @@ public class EmailService {
 
     @Autowired
     private Environment env;
+
+    @Async
+    public CompletableFuture<Boolean> sendEmailAsyncNew(
+            String to,
+            String subject,
+            String templateName,
+            Map<String, Object> variables) {
+
+        try {
+            Context context = new Context();
+            context.setVariables(variables);
+            String body = templateEngine.process(templateName, context);
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(body, true);
+
+            mailSender.send(message);
+
+            System.out.println("Email sent to " + to);
+            return CompletableFuture.completedFuture(true);
+        } catch (Exception e) {
+            System.err.println(" Email sending failed to " + to + ": " + e.getMessage());
+            return CompletableFuture.failedFuture(e); // key difference
+        }
+    }
+
+
     @Async
     public CompletableFuture<Void> sendEmailAsync(String email, String subject, String template, Map<String, Object> variables) {
         // Send the email in the background without blocking the main thread
