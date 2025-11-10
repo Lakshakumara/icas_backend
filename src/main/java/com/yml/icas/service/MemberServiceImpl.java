@@ -4,7 +4,6 @@ import com.yml.icas.dto.*;
 import com.yml.icas.model.*;
 import com.yml.icas.repository.*;
 import com.yml.icas.service.interfaces.MemberService;
-import com.yml.icas.util.CustomJwtException;
 import com.yml.icas.util.IcasUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;

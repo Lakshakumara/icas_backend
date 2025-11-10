@@ -25,7 +25,6 @@ public class ClaimRestImpl implements ClaimRest {
         try {
             return new ResponseEntity<>(claimService.getVoucherIds(), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -35,7 +34,6 @@ public class ClaimRestImpl implements ClaimRest {
         try {
             return new ResponseEntity<>(claimService.getDashboardData(year, empNo), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(new HashSet<>(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -45,18 +43,15 @@ public class ClaimRestImpl implements ClaimRest {
         try {
             return new ResponseEntity<>(claimService.addClaim(claimDTO), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     @Override
     public ResponseEntity<ClaimDTO> getClaim(Integer claimId) {
         try {
             return new ResponseEntity<>(claimService.getClaim(claimId), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -66,7 +61,6 @@ public class ClaimRestImpl implements ClaimRest {
         try {
             return new ResponseEntity<>(claimService.getClaimData(params), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -82,7 +76,6 @@ public class ClaimRestImpl implements ClaimRest {
         try {
             return claimService.updateClaim(dataSet);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -92,7 +85,6 @@ public class ClaimRestImpl implements ClaimRest {
         try {
             return new ResponseEntity<>(claimService.deleteClaimData(id), HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
