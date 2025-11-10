@@ -3,6 +3,7 @@ package com.yml.icas.control;
 import com.yml.icas.dto.MessageResponse;
 import com.yml.icas.service.AuthService;
 import com.yml.icas.service.CustomUserDetailsService;
+import com.yml.icas.util.CustomJwtException;
 import com.yml.icas.util.JwtUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +27,6 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -36,11 +36,24 @@ public class AuthController {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-   /* @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
-        String token = authService.authenticate(authRequest.getUsername(), authRequest.getPassword());
-        return ResponseEntity.ok(new AuthResponse(token));
-    }*/
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        try {
+            String subject = JwtUtil.validateToken(token);
+            System.out.println("subject "+subject);
+            return ResponseEntity.ok(Map.of("valid", true, "subject", subject));
+        } catch (CustomJwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("valid", false, "message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/check-member/{empNo}")
+    public ResponseEntity<?> checkMember(@PathVariable String empNo) {
+        boolean exists = authService.existsByEmpNo(empNo);
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -51,7 +64,6 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmpNo());
             String token = jwtUtil.generateToken(userDetails);
-            System.out.println("Generated token "+token);
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse(e.getMessage()));
@@ -85,7 +97,7 @@ class AuthRequest {
 
 @Getter
 class AuthResponse {
-    private String token;
+    private final String token;
 
     public AuthResponse(String token) {
         this.token = token;

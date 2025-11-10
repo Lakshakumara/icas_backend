@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -31,7 +32,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // 🟠 Update user password
+    // Update user password
     public User updatePassword(String empNo, String newPassword) {
         User user = userRepository.findByEmpNo(empNo)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -40,14 +41,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // 🔴 Delete user
+    //Delete user
     public void deleteUser(String empNo) {
         User user = userRepository.findByEmpNo(empNo)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
     }
 
-    // 🟢 Add roles to a user
+    // Add roles to a user
     public User addRolesToUser(String empNo, Set<String> roleNames) {
         User user = userRepository.findByEmpNo(empNo)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -57,13 +58,26 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // 🟠 Remove roles from a user
+    // Remove roles from a user
     public User removeRolesFromUser(String empNo, Set<String> roleNames) {
         User user = userRepository.findByEmpNo(empNo)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.getRoles().removeIf(role -> roleNames.contains(role.getRole()));
         return userRepository.save(user);
+    }
+    public User updateUserRoles(String empNo, List<String> roleNames) {
+        User user = userRepository.findByEmpNo(empNo)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Set<Role> roles = roleRepository.findByRoleIn(roleNames);
+        user.setRoles(roles);
+        return userRepository.save(user);
+    }
+
+    public Set<Role> getUserRoles(String empNo) {
+        User user = userRepository.findByEmpNo(empNo)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return  user.getRoles();
     }
 }
 

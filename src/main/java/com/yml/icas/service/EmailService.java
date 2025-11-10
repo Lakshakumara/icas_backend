@@ -1,7 +1,6 @@
 package com.yml.icas.service;
 
 import jakarta.mail.internet.MimeMessage;
-import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
@@ -58,8 +57,6 @@ public class EmailService {
 
     @Async
     public CompletableFuture<Void> sendEmailAsync(String email, String subject, String template, Map<String, Object> variables) {
-        // Send the email in the background without blocking the main thread
-        System.out.println("In email Thread");
         sendEmail(email, subject, template, variables);
         return CompletableFuture.completedFuture(null); // Return a completed future
     }
@@ -75,10 +72,7 @@ public class EmailService {
             helper.setSubject(subject);
             helper.setText(body, true);
             mailSender.send(message);
-            System.out.println("Email sent to "+ to);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Email not sent to "+ to);
+        } catch (Exception ignored) {
         }
     }
     @Async

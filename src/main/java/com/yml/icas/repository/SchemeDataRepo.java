@@ -14,9 +14,6 @@ public interface SchemeDataRepo extends JpaRepository<SchemeData, Integer> {
     @Query("Select s from SchemeData s where s.category=:category order by s.id")
     List<SchemeData> getByCategory(@Param("category") String category);
 
-   /* @Query("select new com.yml.icas.dto.HistoryDTO(s.category, s.idText) from SchemeData s ")
-    Set<HistoryDTO> getHisCat();*/
-
     @Query("select s.idText from SchemeData s where s.title !='' and s.category='OPD' order by s.idText")
     List<String> getOPD();
 

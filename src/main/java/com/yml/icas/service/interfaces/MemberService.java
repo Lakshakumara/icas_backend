@@ -3,6 +3,7 @@ package com.yml.icas.service.interfaces;
 import com.yml.icas.dto.BeneficiaryDTO;
 import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
+import com.yml.icas.dto.RoleDTO;
 import com.yml.icas.model.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,6 @@ public interface MemberService {
     Page<MemberDTO> searchMember(Map<String, Object> searchParams);
 
     Page<MemberDTO> getMembers(int page, int size, String search);
-
-    void updateRoles(Integer memberId, List<String> roles);
 
     Set<BeneficiaryDTO> getMemberBeneficiaries(int year, String empNo, String name);
     Set<DependantDTO> getMemberDependants(int year, String empNo, String name);

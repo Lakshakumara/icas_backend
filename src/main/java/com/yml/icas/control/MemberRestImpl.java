@@ -64,14 +64,11 @@ public class MemberRestImpl implements MemberRest {
 
     @Override
     public ResponseEntity<Set<DependantDTO>> getMemberDependants(int year, String empNo, String name) {
-
-        log.info("year={} empNo={} name={}", year, empNo, name);
         Set<DependantDTO> dependants = new HashSet<>();
         try {
             dependants = memberService.getMemberDependants(year, empNo, name);
             return ResponseEntity.ok(dependants);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new ResponseEntity<>(dependants, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -81,19 +78,9 @@ public class MemberRestImpl implements MemberRest {
         return memberService.getRelationShip(rs);
     }
 
-    public ResponseEntity<Void> updateRoles(Integer memberId, UpdateRolesRequest request) {
-        memberService.updateRoles(memberId, request.getRoles());
-        return ResponseEntity.noContent().build();
-    }
-
     @Override
     public ResponseEntity<Integer> updateMember(String criteria, Map<String, Object> dataSet) {
-        log.info(criteria + "dataset {}", dataSet);
+        log.info(criteria + " dataset {}", dataSet);
         return memberService.updateMember(criteria, dataSet);
     }
-
-    /*public ResponseEntity<Page<MemberDTO>> getMembers(int page, int size, String search) {
-        Page<MemberDTO> members = memberService.getMembers(page, size, search);
-        return ResponseEntity.ok(members);
-    }*/
 }

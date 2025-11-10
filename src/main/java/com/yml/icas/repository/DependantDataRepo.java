@@ -10,12 +10,6 @@ public interface DependantDataRepo extends JpaRepository<DependantData, Integer>
     @Query("SELECT d FROM DependantData d WHERE d.member.id = :member_id AND d.registerYear = :registeryear AND d.dependant.id = :dependant_id")
     DependantData findDuplicateData(@Param("member_id") int member_id,  @Param("dependant_id") int dependant_id, @Param("registeryear") int registeryear);
 
-
     @Query("SELECT m.relationship FROM DependantData m WHERE m.relationship LIKE %:rs%")
     String[] findDistinctByRelationshipLike(@Param("rs") String rs);
-/*
-    DependantData findMemberDependantDataByAndDependant_Name(@Param("dependantName") String dependantName);
-
-    List<DependantData> findMemberDependantDataByMember_IdAndRegisterYear(
-            @Param("memberId") Integer memberId, @Param("year") Integer year);*/
 }

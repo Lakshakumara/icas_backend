@@ -3,11 +3,12 @@ package com.yml.icas.control;
 import com.yml.icas.dto.BeneficiaryDTO;
 import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
-import com.yml.icas.model.User;
+import com.yml.icas.dto.RoleDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,6 +49,4 @@ public interface MemberRest {
     @RequestMapping(method = RequestMethod.GET, value = "/relationship/{rs}")
     ResponseEntity<String[]> getRelationShip(@PathVariable(name = "rs") String rs);
 
-    @PutMapping("/{memberId}/roles")
-    ResponseEntity<Void> updateRoles(@PathVariable Integer memberId, @RequestBody UpdateRolesRequest roles);
-}
+    }

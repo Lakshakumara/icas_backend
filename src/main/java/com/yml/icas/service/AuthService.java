@@ -111,8 +111,6 @@ public class AuthService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new MessageResponse("Failed to send reset email. Please try again later."));
         }
-
-           // return ResponseEntity.ok(new MessageResponse("Reset link sent to your email"));
     }
 
     public ResponseEntity<?> resetForgottenPassword(ResetForgottenPasswordRequest request) {
@@ -136,5 +134,9 @@ public class AuthService {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("Password reset successfully"));
+    }
+
+    public boolean existsByEmpNo(String empNo) {
+        return memberRepo.existsByEmpNoIgnoreCase(empNo);
     }
 }

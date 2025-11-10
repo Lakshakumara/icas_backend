@@ -16,7 +16,7 @@ import java.util.List;
 public class JwtUtil {
 
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("soft-solution-software-by-yml-kumara-ousl-training".getBytes());
-    public static String validateToken(String token) {
+    /*public static String validateToken(String token) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(SECRET_KEY)
@@ -27,7 +27,28 @@ public class JwtUtil {
         } catch (Exception e) {
             throw new CustomJwtException("Invalid token", HttpStatus.UNAUTHORIZED);
         }
+    }*/
+    public static String validateToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            Date expiration = claims.getExpiration();
+            if (expiration != null && expiration.before(new Date())) {
+                throw new CustomJwtException("Token expired", HttpStatus.UNAUTHORIZED);
+            }
+
+            return claims.getSubject();
+        } catch (ExpiredJwtException e) {
+            throw new CustomJwtException("Token expired", HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            throw new CustomJwtException("Invalid token", HttpStatus.UNAUTHORIZED);
+        }
     }
+
 
     public static List<HashMap<String, String>> extractRoles(String token) {
         try {

@@ -2,17 +2,19 @@ package com.yml.icas.repository;
 
 import com.yml.icas.dto.MemberDTO;
 import com.yml.icas.model.Member;
-import com.yml.icas.model.User;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
 public interface MemberRepo extends JpaRepository<Member, Integer> {
+    boolean existsByEmpNoIgnoreCase(String empNo);
 
     Optional<Member> findByEmpNo(String empNo);
     @Query("SELECT m FROM Member m WHERE LOWER(m.email) = LOWER(:email)")
@@ -38,29 +40,13 @@ public interface MemberRepo extends JpaRepository<Member, Integer> {
             "m.designation, m.department, m.status, m.photoUrl, m.registrationOpen) " +
             "FROM Member m WHERE LOWER(m.empNo) = LOWER(:empNo)")
     MemberDTO getMemberDTOEmpNo(@Param("empNo") String empNo);
-
-    @Query("UPDATE Member set registrationOpen =:regYear where deleted = false" +
-            " and registrationOpen != :regYear ")
-    void updateRegistrationAll(Integer regYear);
-
-    @Query("UPDATE Member set registrationOpen =:regYear where deleted = false" +
+    @Modifying
+    @Transactional
+    @Query("UPDATE Member m set m.registrationOpen =:year where m.deleted=false and m.registrationOpen != :year ")
+    void updateRegistrationAll(@Param("year") Integer year);
+    @Modifying
+    @Transactional
+    @Query("UPDATE Member set registrationOpen =:year where deleted = false" +
             " and empNo =:empNo ")
-    void updateRegistrationMember(String empNo, Integer regYear);
-
-    /*
-Page<Member> findAllByEmpNoContainsIgnoreCase(String empNo, Pageable pageable);
-@Query("Select m from Member m where lower(m.empNo) = lower(:empNo)")
-    Member getMember(@Param("empNo") String empNo);
-    Page<Member> findByNameContainingIgnoreCase(String name, Pageable pageable);
-
-    @Query("Select m.id from Member m where lower(m.empNo) = lower(:empNo)")
-    Integer getMemberId(@Param("empNo") String empNo);
-
-    @Query("Select m from Member m, MemberRegistration mr " +
-            " where m.id = mr.member.id and mr.year= :regYear")
-    Set<Member> findByRegYear(@Param("regYear") Integer regYear);
-
-    @Query("Select m from Member m where m.status = :status")
-    Set<Member> findAllByStatusIgnoreCase(@Param("status") String status);
-*/
+    void updateRegistrationMember(@Param("empNo") String empNo, @Param("year") Integer yer);
 }

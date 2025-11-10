@@ -22,8 +22,6 @@ public interface RegistrationRepo extends JpaRepository<Registration, Integer> {
     Integer acceptRegistration(@Param("acceptedBy") Integer acceptedBy,
                                @Param("accepteddate") LocalDate accepteddate, @Param("memberId") Integer memberId);
 
-
-
     @Query("SELECT r FROM Registration r WHERE " +
             "(:filter IS NULL OR :filter = '' OR " +
             "lower(r.member.empNo) LIKE lower(concat('%', :filter, '%')) OR " +

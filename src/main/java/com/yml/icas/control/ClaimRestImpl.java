@@ -42,7 +42,6 @@ public class ClaimRestImpl implements ClaimRest {
 
     @Override
     public ResponseEntity<Integer> addClaim(ClaimDTO claimDTO) {
-        log.info("addClaim {}", claimDTO);
         try {
             return new ResponseEntity<>(claimService.addClaim(claimDTO), HttpStatus.OK);
         } catch (Exception ex) {

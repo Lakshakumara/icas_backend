@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login").permitAll() // Allow login without authentication
                         .requestMatchers("/auth/forgot-password").permitAll()
                         .requestMatchers("/auth/reset-password").permitAll()
+                        .requestMatchers("/auth/check-member/*").permitAll()
                         //.requestMatchers("/member/**").hasAuthority("ROLE_USER")
                          //.requestMatchers("/member/**").permitAll()
                         //.anyRequest().permitAll()
