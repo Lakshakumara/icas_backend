@@ -45,7 +45,7 @@ public class DownloadServiceImpl implements DownloadService {
     @Override
     public ResponseEntity<byte[]> downloadApplication(Integer year, String empNo) {
         try {
-            log.info("in Services {} {}", year, empNo);
+            //log.info("in Services {} {}", year, empNo);
             Set<RegistrationDTO> memberRegistration = registrationRepo.getMemberRegistration(year, empNo);
             if (memberRegistration.isEmpty()) {
                 String errorMessage = empNo + " not Found for the Year " + year;
@@ -56,24 +56,24 @@ public class DownloadServiceImpl implements DownloadService {
             memberRegistration.forEach(r-> log.info("memberRegistration {}", r));
 
             MemberDTO memberDTO = memberRepo.getMemberDTOEmpNo(empNo);
-            log.info("MemberDTO {}", memberDTO);
+            //log.info("MemberDTO {}", memberDTO);
             memberDTO.setMemberRegistrations(memberRegistration);
-            log.info("MemberDTO setMemberRegistrations {}", memberDTO);
+            //log.info("MemberDTO setMemberRegistrations {}", memberDTO);
             memberDTO.setBeneficiaries(beneficiaryRepo.getEmployeeBeneficiaries(year, empNo, null));
-            log.info("MemberDTO setBeneficiaries {}", memberDTO);
+           // log.info("MemberDTO setBeneficiaries {}", memberDTO);
             memberDTO.setDependants(dependantRepo.getEmployeeDependants(year, empNo, null));
-            log.info("MemberDTO setDependants {}", memberDTO);
-            byte[] pdf = IcasUtil.genApplication(memberDTO);
+            //log.info("MemberDTO setDependants {}", memberDTO);
+            byte[] pdf = IcasUtil.genApplication(memberDTO, year);
 
             HttpHeaders headers = new HttpHeaders();
             //set the PDF format
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("filename", year + "_" + empNo + ".pdf");
             //create the report in PDF format
-            log.info("fetch Member for PDF {}", memberDTO);
+            //log.info("fetch Member for PDF {}", memberDTO);
             return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            //log.error(e.getMessage(), e);
             String errorMessage = "Internal Server Error: " + e.getMessage();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)

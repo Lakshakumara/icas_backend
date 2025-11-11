@@ -2,8 +2,6 @@ package com.yml.icas.util;
 
 import com.yml.icas.dto.ClaimDTO;
 import com.yml.icas.dto.MemberDTO;
-import com.yml.icas.dto.ObjectMapper;
-import com.yml.icas.model.Member;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -35,10 +33,10 @@ public class IcasUtil {
 
     }
 
-    public static byte[] genApplication(MemberDTO memberDTO) {
+    public static byte[] genApplication(MemberDTO memberDTO, Integer year) {
         Map<String, Object> empParams = new HashMap<>();
         empParams.put("title", "APPLICATION FORM TO JOIN THE MEDICAL WELFARE SCHEME FOR " +
-                "PERMANENT EMPLOYEES IN THE UNIVERSITY");
+                "PERMANENT EMPLOYEES IN THE UNIVERSITY-"+year);
         String ageText = calAge(memberDTO.getDob(), MyConstants.TODAY());
 
         memberDTO.getMemberRegistrations().forEach(r -> {
@@ -57,52 +55,6 @@ public class IcasUtil {
         empParams.put("sex", memberDTO.getSex());
         empParams.put("designation", memberDTO.getDesignation());
         empParams.put("department", memberDTO.getDepartment());
-
-        empParams.put("dependants", new JRBeanCollectionDataSource(memberDTO.getDependants()));
-
-        empParams.put("beneficiary", new JRBeanCollectionDataSource(memberDTO.getBeneficiaries()));
-        try {
-            InputStream reportStream = IcasUtil.class.getResourceAsStream("/memberApplication.jrxml");
-            if (reportStream == null) {
-                throw new FileNotFoundException("JRXML file not found in classpath");
-            }
-            JasperPrint empReport = JasperFillManager.fillReport(
-                    JasperCompileManager.compileReport(reportStream), // compile from InputStream
-                    empParams, // dynamic parameters passed
-                    new JREmptyDataSource()
-            );
-            return JasperExportManager.exportReportToPdf(empReport);
-        } catch (Exception e) {
-            return e.getMessage().getBytes();
-        }
-    }
-
-    public static byte[] genApplication(Member member) {
-        Map<String, Object> empParams = new HashMap<>();
-        empParams.put("title", "APPLICATION FORM TO JOIN THE MEDICAL WELFARE SCHEME FOR " +
-                "PERMANENT EMPLOYEES IN THE UNIVERSITY");
-
-        MemberDTO memberDTO = ObjectMapper.mapToMemberDTO(member);
-
-        assert memberDTO != null;
-        String ageText = calAge(memberDTO.getDob(), MyConstants.TODAY());
-
-        empParams.put("schemeType", memberDTO.getCurrentRegistration().getSchemeType());
-
-        empParams.put("empNo", memberDTO.getEmpNo());
-        empParams.put("name", memberDTO.getName());
-        empParams.put("address", memberDTO.getAddress());
-        empParams.put("email", memberDTO.getEmail());
-        empParams.put("contactNo", memberDTO.getContactNo());
-        empParams.put("civilStatus", memberDTO.getCivilStatus());
-        empParams.put("nic", memberDTO.getNic());
-        empParams.put("dob", memberDTO.getDob());
-        empParams.put("age", ageText);
-        empParams.put("sex", memberDTO.getSex());
-        empParams.put("designation", memberDTO.getDesignation());
-        empParams.put("department", memberDTO.getDepartment());
-
-        //empParams.put("member", new JRBeanCollectionDataSource(Arrays.asList(memberDTO)));
 
         empParams.put("dependants", new JRBeanCollectionDataSource(memberDTO.getDependants()));
 
@@ -236,20 +188,6 @@ public class IcasUtil {
         }
     }
 
-    /*public static Pageable createPageable(Map<String, Object> params) {
-        Pageable pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
-                Integer.parseInt(params.get("pageSize").toString()));
-        String sortField = params.get("sortField").toString();
-        String sortDirection = params.get("sortOrder").toString();
-        if(sortField != null && !sortField.isEmpty() && !sortDirection.isEmpty()){
-             // "asc" or "desc
-            Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
-            pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
-                    Integer.parseInt(params.get("pageSize").toString()), sort);
-        }
-        return pageable;
-    }*/
-
     public static Pageable createPageableObjects(Map<String, Object> params) {
         Pageable pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
                 Integer.parseInt(params.get("pageSize").toString()));
@@ -310,3 +248,65 @@ public class IcasUtil {
         return calendar.getTime();
     }
 }
+/*
+ public static byte[] genApplication(Member member) {
+        Map<String, Object> empParams = new HashMap<>();
+        empParams.put("title", "APPLICATION FORM TO JOIN THE MEDICAL WELFARE SCHEME FOR " +
+                "PERMANENT EMPLOYEES IN THE UNIVERSITY");
+
+        MemberDTO memberDTO = ObjectMapper.mapToMemberDTO(member);
+
+        assert memberDTO != null;
+        String ageText = calAge(memberDTO.getDob(), MyConstants.TODAY());
+
+        empParams.put("schemeType", memberDTO.getCurrentRegistration().getSchemeType());
+
+        empParams.put("empNo", memberDTO.getEmpNo());
+        empParams.put("name", memberDTO.getName());
+        empParams.put("address", memberDTO.getAddress());
+        empParams.put("email", memberDTO.getEmail());
+        empParams.put("contactNo", memberDTO.getContactNo());
+        empParams.put("civilStatus", memberDTO.getCivilStatus());
+        empParams.put("nic", memberDTO.getNic());
+        empParams.put("dob", memberDTO.getDob());
+        empParams.put("age", ageText);
+        empParams.put("sex", memberDTO.getSex());
+        empParams.put("designation", memberDTO.getDesignation());
+        empParams.put("department", memberDTO.getDepartment());
+
+        //empParams.put("member", new JRBeanCollectionDataSource(Arrays.asList(memberDTO)));
+
+        empParams.put("dependants", new JRBeanCollectionDataSource(memberDTO.getDependants()));
+
+        empParams.put("beneficiary", new JRBeanCollectionDataSource(memberDTO.getBeneficiaries()));
+        try {
+            InputStream reportStream = IcasUtil.class.getResourceAsStream("/memberApplication.jrxml");
+            if (reportStream == null) {
+                throw new FileNotFoundException("JRXML file not found in classpath");
+            }
+            JasperPrint empReport = JasperFillManager.fillReport(
+                    JasperCompileManager.compileReport(reportStream), // compile from InputStream
+                    empParams, // dynamic parameters passed
+                    new JREmptyDataSource()
+            );
+            return JasperExportManager.exportReportToPdf(empReport);
+        } catch (Exception e) {
+            return e.getMessage().getBytes();
+        }
+    }
+
+ */
+
+ /*public static Pageable createPageable(Map<String, Object> params) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
+                Integer.parseInt(params.get("pageSize").toString()));
+        String sortField = params.get("sortField").toString();
+        String sortDirection = params.get("sortOrder").toString();
+        if(sortField != null && !sortField.isEmpty() && !sortDirection.isEmpty()){
+             // "asc" or "desc
+            Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+            pageable = PageRequest.of(Integer.parseInt(params.get("pageIndex").toString()),
+                    Integer.parseInt(params.get("pageSize").toString()), sort);
+        }
+        return pageable;
+    }*/
