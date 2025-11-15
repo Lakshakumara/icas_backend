@@ -38,4 +38,9 @@ public interface RegistrationRepo extends JpaRepository<Registration, Integer> {
             "WHERE r.member.empNo=:empNo " +
             "AND (:year IS NULL OR :year = 0 OR r.year = :year)")
     Set<RegistrationDTO> getMemberRegistration(@Param("year") Integer year, @Param("empNo") String empNo);
+    @Query("SELECT new com.yml.icas.dto.RegistrationDTO(r.id, r.member.id,r.year,r.schemeType,r.registerDate, r.acceptedDate,r.acceptedBy) " +
+            "FROM Registration r " +
+            "WHERE r.member.empNo=:empNo " +
+            "AND r.year = :year")
+    RegistrationDTO getRegistration(@Param("empNo") String empNo,@Param("year") Integer year);
 }

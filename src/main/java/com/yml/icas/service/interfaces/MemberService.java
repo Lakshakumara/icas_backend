@@ -3,6 +3,7 @@ package com.yml.icas.service.interfaces;
 import com.yml.icas.dto.BeneficiaryDTO;
 import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
+import com.yml.icas.dto.RegistrationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
@@ -27,4 +28,6 @@ public interface MemberService {
 
     Set<BeneficiaryDTO> getMemberBeneficiaries(int year, String empNo, String name);
     Set<DependantDTO> getMemberDependants(int year, String empNo, String name);
+
+    RegistrationDTO getRegistration(String empNo, int year);
 }

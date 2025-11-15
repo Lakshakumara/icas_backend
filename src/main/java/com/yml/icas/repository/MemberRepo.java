@@ -33,6 +33,13 @@ public interface MemberRepo extends JpaRepository<Member, Integer> {
 
     @EntityGraph(value = "Member.withRegistrations", type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT m FROM Member m WHERE LOWER(m.empNo) = LOWER(:empNo)")
+    /*@Query("""
+    SELECT DISTINCT m
+    FROM Member m
+    LEFT JOIN FETCH m.memberRegistrations r
+    WHERE LOWER(m.empNo) = LOWER(:empNo)
+    ORDER BY r.year DESC
+    """)*/
     Member getDTO_empNo(@Param("empNo") String empNo);
 
 

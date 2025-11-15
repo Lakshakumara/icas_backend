@@ -15,12 +15,12 @@ spring:
     name: member
   datasource:
     username: postgres
-    url: jdbc:postgresql://10.72.88.38:5432/insurance
+    url: jdbc:postgresql://localhost:5432/insurance
     password: abcd
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
-    baseline-on-migrate: true
+    baseline-on-migrate: false
   logging:
     level:
       org:
@@ -47,3 +47,14 @@ spring:
             enable: true
             required: true
         debug: false
+
+
+# ===============================
+# SQL SERVER HR VIEW DATABASE
+# ===============================
+hr:
+  datasource:
+    url: jdbc:sqlserver://YOUR_MSSQL_HOST;databaseName=HRDB
+    username: hr_user
+    password: xxxx
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver

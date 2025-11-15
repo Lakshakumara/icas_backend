@@ -9,9 +9,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @NamedQuery(name = "Member.findByEmpNo", query = "select m from Member m where m.empNo=:empNo")
 /*@NamedQuery(name = "Member.getMemberWrap", query = "select new com.yml.Icas.wrapper.MemberWrapper(" +
@@ -111,7 +109,8 @@ public class Member implements Serializable {
     private Integer registrationOpen = 0;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Registration> memberRegistrations = new HashSet<>();
+    @OrderBy("year DESC")
+    private List<Registration> memberRegistrations = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<DependantData> dependantData = new HashSet<>();

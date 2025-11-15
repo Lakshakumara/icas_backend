@@ -3,6 +3,7 @@ package com.yml.icas.control;
 import com.yml.icas.dto.BeneficiaryDTO;
 import com.yml.icas.dto.DependantDTO;
 import com.yml.icas.dto.MemberDTO;
+import com.yml.icas.dto.RegistrationDTO;
 import com.yml.icas.service.MemberServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,11 @@ public class MemberRestImpl implements MemberRest {
     }
 
     @Override
+    public ResponseEntity<RegistrationDTO> getRegistration(String empNo, int year) {
+        return ResponseEntity.ok(memberService.getRegistration(empNo, year));
+    }
+
+    @Override
     public ResponseEntity<Page<MemberDTO>> searchMember(Map<String, Object> searchParams) {
         try {
             return new ResponseEntity<>(memberService.searchMember(searchParams), HttpStatus.OK);
@@ -45,10 +51,6 @@ public class MemberRestImpl implements MemberRest {
         }
     }
 
-    /*@Override
-    public ResponseEntity<Set<BeneficiaryDTO>> getMemberBeneficiariesWithoutName(int year, String empNo) {
-        return getMemberBeneficiaries(year, empNo, null);
-    }*/
 
     @Override
     public ResponseEntity<Set<BeneficiaryDTO>> getMemberBeneficiaries(int year, String empNo, String name) {

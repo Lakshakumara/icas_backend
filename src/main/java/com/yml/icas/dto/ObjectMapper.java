@@ -166,29 +166,6 @@ public class ObjectMapper {
         }).collect(Collectors.toSet()));
 
         memberDTO.setCurrentRegistration(mapToMemberRegistrationDTO(member.getMemberRegistrations()));
-/*
-        memberDTO.setDependants(member.getDependantData().stream().map(d -> {
-            DependantDTO dependantDTO = new DependantDTO();
-            dependantDTO.setId(d.getDependant().getId());
-            dependantDTO.setName(d.getDependant().getName());
-            dependantDTO.setNic(d.getDependant().getNic());
-            dependantDTO.setDob(d.getDependant().getDob());
-            dependantDTO.setRelationship(d.getRelationship());
-            dependantDTO.setRegisterYear(d.getRegisterYear());
-            return dependantDTO;
-        }).collect(Collectors.toSet()));
-
-        memberDTO.setBeneficiaries(member.getBeneficiaryData().stream().map(b -> {
-            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO();
-            beneficiaryDTO.setId(b.getBeneficiary().getId());
-            beneficiaryDTO.setName(b.getBeneficiary().getName());
-            beneficiaryDTO.setNic(b.getBeneficiary().getNic());
-            beneficiaryDTO.setRelationship(b.getRelationship());
-            beneficiaryDTO.setPercent(b.getPercent());
-            beneficiaryDTO.setRegisterDate(b.getRegisterDate());
-            return beneficiaryDTO;
-        }).collect(Collectors.toSet()));*/
-
         return memberDTO;
     }
 
@@ -242,7 +219,7 @@ public class ObjectMapper {
     }
 
     @Deprecated
-    public static RegistrationDTO mapToMemberRegistrationDTO(Set<Registration> memberRegistration) {
+    public static RegistrationDTO mapToMemberRegistrationDTO(List<Registration> memberRegistration) {
         if (Objects.isNull(memberRegistration)) return null;
         RegistrationDTO memberRegistrationDTO = new RegistrationDTO();
         Optional<Registration> max = memberRegistration.stream().max(Comparator.comparingInt(Registration::getYear));

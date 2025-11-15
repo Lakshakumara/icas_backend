@@ -136,7 +136,7 @@ public class MemberServiceImpl implements MemberService {
             Set<Role> roles = dd.stream()
                     .map(roledto -> roleRepo.findByRole(roledto.getRole()))
                     .collect(Collectors.toSet());
-            User user= userRepository.save(new User(memberDTO.getEmpNo(), hashedPassword, roles));
+            User user = userRepository.save(new User(memberDTO.getEmpNo(), hashedPassword, roles));
             member.setUser(user);
             member = memberRepo.save(member);
         } else {
@@ -183,8 +183,8 @@ public class MemberServiceImpl implements MemberService {
             Dependant dependantNew;
             if (newDep.isPresent()) {
                 dependantNew = newDep.get();
-                System.out.println("Old Dep"+ dependantNew);
-            }else{
+                System.out.println("Old Dep" + dependantNew);
+            } else {
                 Dependant dependant = new Dependant();
                 dependant.setId(d.getId());
                 dependant.setName(d.getName());
@@ -230,8 +230,8 @@ public class MemberServiceImpl implements MemberService {
         // Retrieve the updated member with all associations
         MemberDTO response = memberRepo.getMemberDTOEmpNo(memberDTO.getEmpNo());
         response.setMemberRegistrations(memberRegistrationRepo.getMemberRegistration(0, memberDTO.getEmpNo()));
-System.out.println("received "+memberDTO.getName());
-        System.out.println("Saved "+response);
+        System.out.println("received " + memberDTO.getName());
+        System.out.println("Saved " + response);
         // Send confirmation email
         /*Map<String, Object> variables = new HashMap<>();
         variables.put("name", response.getName());
@@ -250,6 +250,8 @@ System.out.println("received "+memberDTO.getName());
     public ResponseEntity<MemberDTO> getMember(String empNo) {
         try {
             Member member = memberRepo.getDTO_empNo(empNo);
+            //member.getMemberRegistrations()
+            //        .sort(Comparator.comparing(Registration::getYear).reversed());
             return new ResponseEntity<>(Objects.requireNonNullElseGet(ObjectMapper.mapToMemberDTO(member), MemberDTO::new), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(new MemberDTO(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -324,21 +326,9 @@ System.out.println("received "+memberDTO.getName());
             return new HashSet<>();
         }
     }
-}
 
-    /*
-
-    private String generateSchemeDownloadLink() {
-        return baseUrl + "/download/scheme/2023";
+    @Override
+    public RegistrationDTO getRegistration(String empNo, int year) {
+        return memberRegistrationRepo.getRegistration(empNo, year);
     }
-
-    public void updateExistingPasswords() {
-        List<Member> users = memberRepo.findAll();
-        for (Member user : users) {
-            if (!user.getPassword().startsWith("$2a$")) { // Check if already hashed
-                String hashedPassword = passwordEncoder.encode(user.getPassword());
-                user.setPassword(hashedPassword);
-                memberRepo.save(user);
-            }
-        }
-    }*/
+}
