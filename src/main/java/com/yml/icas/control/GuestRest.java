@@ -20,5 +20,7 @@ public interface GuestRest {
 
     @GetMapping()
     ResponseEntity<Page<Set<Map<String, Object>>>> getHis();
+    @GetMapping(path = "/test")
+    ResponseEntity<?> test();
 
 }

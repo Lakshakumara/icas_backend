@@ -16,14 +16,14 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.yml.icas",    // HR repositories
+        basePackages = "com.yml.icas.hr.repository",    // HR repositories
         entityManagerFactoryRef = "hrEntityManagerFactory",
         transactionManagerRef = "hrTransactionManager"
 )
 public class HrDataSourceConfig {
 
     @Bean
-    @ConfigurationProperties("hr.datasource")
+    @ConfigurationProperties("spring.hr-datasource")
     public DataSource hrDataSource() {
         return DataSourceBuilder.create().build();
     }
@@ -33,7 +33,7 @@ public class HrDataSourceConfig {
             EntityManagerFactoryBuilder builder) {
         return builder
                 .dataSource(hrDataSource())
-                .packages("com.sss.backend.hr.model")   // HR entity classes
+                .packages("com.yml.icas.hr.model")   // HR entity classes
                 .persistenceUnit("hrPU")
                 .build();
     }

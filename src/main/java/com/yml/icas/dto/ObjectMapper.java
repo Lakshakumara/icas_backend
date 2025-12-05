@@ -151,8 +151,6 @@ public class ObjectMapper {
         memberDTO.setPhotoUrl(member.getPhotoUrl());
         memberDTO.setDeleted(member.isDeleted());
         memberDTO.setRegistrationOpen(member.getRegistrationOpen());
-       // memberDTO.getRoles().addAll(member.getRoles().stream().map(r -> new RoleDTO(r.getRole()))
-          //      .collect(Collectors.toSet()));
 
         memberDTO.getMemberRegistrations().addAll(member.getMemberRegistrations().stream().map(r -> {
             RegistrationDTO rd = new RegistrationDTO();
@@ -167,27 +165,6 @@ public class ObjectMapper {
 
         memberDTO.setCurrentRegistration(mapToMemberRegistrationDTO(member.getMemberRegistrations()));
         return memberDTO;
-    }
-
-    public static Member mapToMember(MemberDTO memberDTO) {
-        Member member = new Member();
-        member.setEmpNo(memberDTO.getEmpNo());
-        member.setName(memberDTO.getName());
-        member.setAddress(memberDTO.getAddress());
-        member.setEmail(memberDTO.getEmail());
-        member.setContactNo(memberDTO.getContactNo());
-        member.setCivilStatus(memberDTO.getCivilStatus());
-        member.setNic(memberDTO.getNic());
-        member.setSex(memberDTO.getSex());
-        member.setDob(memberDTO.getDob());
-        member.setDesignation(memberDTO.getDesignation());
-        member.setDepartment(memberDTO.getDepartment());
-        member.setPassword(memberDTO.getPassword());
-        member.setMDate(memberDTO.getMDate());
-        member.setStatus(memberDTO.getStatus());
-        member.setPhotoUrl(memberDTO.getPhotoUrl());
-        member.setDeleted(memberDTO.isDeleted());
-        return member;
     }
 
     public static DependantDTO mapToDependant(Dependant dependant) {
@@ -248,4 +225,25 @@ public class ObjectMapper {
                 claimData.getAdjustRemarks()
         );
     }
+
+   /* public static Member mapToMember(MemberDTO memberDTO) {
+        Member member = new Member();
+        member.setEmpNo(memberDTO.getEmpNo());
+        member.setName(memberDTO.getName());
+        member.setAddress(memberDTO.getAddress());
+        member.setEmail(memberDTO.getEmail());
+        member.setContactNo(memberDTO.getContactNo());
+        member.setCivilStatus(memberDTO.getCivilStatus());
+        member.setNic(memberDTO.getNic());
+        member.setSex(memberDTO.getSex());
+        member.setDob(memberDTO.getDob());
+        member.setDesignation(memberDTO.getDesignation());
+        member.setDepartment(memberDTO.getDepartment());
+        member.setPassword(memberDTO.getPassword());
+        member.setMDate(memberDTO.getMDate());
+        member.setStatus(memberDTO.getStatus());
+        member.setPhotoUrl(memberDTO.getPhotoUrl());
+        member.setDeleted(memberDTO.isDeleted());
+        return member;
+    }*/
 }

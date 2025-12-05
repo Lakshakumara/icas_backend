@@ -7,11 +7,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@Entity
 @NoArgsConstructor
 @Table(name = "schemeplan", uniqueConstraints = {
         @UniqueConstraint(name = "schemePlan_IdText_unique", columnNames = "idtext")
 })
+@Entity
 public class SchemeData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,12 +26,13 @@ public class SchemeData {
     private String idText;
 
     private String title;
+
     @Column(name = "descriptionen", length = 1000)
-
     private String descriptionen;
-    @Column(name = "descriptionsi", length = 1000)
 
+    @Column(name = "descriptionsi", length = 1000)
     private String descriptionsi;
+
     @Column(name = "descriptionta", length = 1000)
     private String descriptionta;
 

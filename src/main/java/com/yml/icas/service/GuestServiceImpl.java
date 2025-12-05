@@ -56,17 +56,6 @@ public class GuestServiceImpl implements GuestService {
             } else {
                 response.put("isMember", true);
                 response.put("member", memberDTO);
- /*
-                Set<MemberRegistration> mr = memberRegistrationRepo.findByMember(new Member(member.getId()));
-                log.info("guest MemberRegistration {}", mr);
-                Set<Map<String, Object>> aa = mr.stream().map(data -> {
-                    data.setMember(null);
-                    Map<String, Object> i = new HashMap<>();
-                    i.put("id", data.getId());
-                    i.put("year", data.getYear());
-                    return i;
-                }).collect(Collectors.toSet());
-                response.put("registration", aa);*/
             }
             statusGest = HttpStatus.OK;
         } catch (Exception ex) {
@@ -78,7 +67,7 @@ public class GuestServiceImpl implements GuestService {
     @Override
     public Page<Set<Map<String, Object>>> getHis() {
         Pageable pageable = PageRequest.of(0, 50);
-        String empNo = "100";
+        String empNo = "339";
         List<String> idTextList = null;
         Page<ClaimDataHistoryDTO> ch = claimDataRepo
                 .getClaimDataHistoryAll(empNo, null, pageable);
@@ -87,15 +76,6 @@ public class GuestServiceImpl implements GuestService {
         });
         log.info("\n fetch {}",  ch.getContent());
 
-       /* Role r = roleRepo.findByRole("ROLE_USER");
-        List<Member> allMembers = memberService.getAllMembers();
-        for (Member m : allMembers) {
-            User userx = new User(m.getEmpNo(), m.getPassword(), Set.of(r));
-            System.out.println(userx);
-            userRepository.save(userx);
-            m.setUser(userx);
-            memberRepo.save(m);
-        }*/
         return null;
     }
 }

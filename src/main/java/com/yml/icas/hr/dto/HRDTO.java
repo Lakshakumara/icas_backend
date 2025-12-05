@@ -1,4 +1,4 @@
-package com.yml.icas.hr;
+package com.yml.icas.hr.dto;
 
 
 import lombok.Data;

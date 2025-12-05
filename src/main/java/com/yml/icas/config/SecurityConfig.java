@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/reset-password").permitAll()
                         .requestMatchers("/auth/check-member/*").permitAll()
                         //.requestMatchers("/member/**").hasAuthority("ROLE_USER")
-                         //.requestMatchers("/member/**").permitAll()
+                         .requestMatchers("/guest/**").permitAll()
                         //.anyRequest().permitAll()
                         .anyRequest().authenticated()
                 )

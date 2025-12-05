@@ -18,6 +18,7 @@ public class ClaimData implements Serializable {
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "scheme_data_id")
     private SchemeData schemeData;
 
     @ManyToOne

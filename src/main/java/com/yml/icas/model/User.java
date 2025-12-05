@@ -13,7 +13,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(name = "user_empno_unique", columnNames = "empNo")
+        @UniqueConstraint(name = "user_empno_unique", columnNames = "emp_no")
 })
 public class User implements Serializable {
 
@@ -21,7 +21,7 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "empNo", nullable = false, unique = true)
+    @Column(name = "emp_no", nullable = false, unique = true)
     private String empNo;  // Use empNo as username
 
     @Column(name = "password", nullable = false)

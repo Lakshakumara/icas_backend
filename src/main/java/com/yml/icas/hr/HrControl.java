@@ -1,6 +1,6 @@
 package com.yml.icas.hr;
 
-import com.yml.icas.repository.SchemeDataRepo;
+import com.yml.icas.hr.model.HR;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +14,6 @@ public class HrControl {
     @Autowired
     HrService hrService;
 
-    @Autowired
-    SchemeDataRepo schemeDataRepo;
-
     @GetMapping("/{empNo}")
     public ResponseEntity<HR> getEmployee(@PathVariable("empNo") String empNo) {
         try {
@@ -28,7 +25,7 @@ public class HrControl {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PostMapping(path = "/add")
+   /* @PostMapping(path = "/add")
     ResponseEntity<HR> addHR(@RequestBody HRDTO hrdto){
         try {
             return ResponseEntity.ok(hrService.save(getHR(hrdto)));
@@ -36,24 +33,5 @@ public class HrControl {
             ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-    private HR getHR(HRDTO hrdto){
-        HR r = new HR();
-        r.setId(hrdto.getId());
-        r.setAddress(hrdto.getAddress());
-        r.setContactNo(hrdto.getContactNo());
-        r.setDob(hrdto.getDob());
-        r.setDesignation(hrdto.getDesignation());
-        r.setDepartment(hrdto.getDepartment());
-        r.setEmail(hrdto.getEmail());
-        r.setEmpNo(hrdto.getEmpNo());
-        r.setNic(hrdto.getNic());
-        r.setName(hrdto.getName());
-        r.setSex(hrdto.getSex());
-        r.setCivilStatus(hrdto.getCivilStatus());
-        r.setDeleted(hrdto.isDeleted());
-        r.setDeletedDate(hrdto.getDeletedDate());
-        r.setPhotoUrl(hrdto.getPhotoUrl());
-        return r;
-    }
+    }*/
 }
